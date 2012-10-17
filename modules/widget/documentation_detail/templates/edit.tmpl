@@ -1,0 +1,19 @@
+<form>
+	<div class="status_section">
+		<div class="hide_if_not_saved">
+  		<label>{{writeString=wns.created_info}}:</label><span class="created_info status"></span><br />
+  		<label>{{writeString=wns.updated.info}}:</label><span class="updated_info status"></span><br />
+			<label>ID:</label><span class="detail_id">{{id}}</span>
+		</div>
+	</div>
+	<label for="name" class="validate-name_required">{{writeString=wns.name}}*</label>
+	<input type="text" name="name" class="ui-widget-content" /><br />
+	<label for="title">{{writeString=wns.documentation.title}}</label>
+	<input type="text" name="title" size="60" class="ui-widget-content autowidth" /><br />
+	<label for="youtube_url">{{writeString=wns.documentation.youtube_url}}</label>
+	<input type="text" name="youtube_url" size="60" class="ui-widget-content autowidth" /><br />
+	<label for="description">{{writeString=wns.documentation.description}}</label>
+	<div class="documentation_description" data-widget-type="rich_text">
+		<textarea name="description" class="ui-widget-content" rows="20" cols="40"></textarea>
+	</div>
+</form>

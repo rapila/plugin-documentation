@@ -1,0 +1,61 @@
+Widget.types.documentation_detail = {
+	initialize: function() {
+		var _this = this;
+		this.content = Widget.parseHTML("{{includeTemplate=edit}}");
+		this.content.find('div.hide_if_not_saved').hide();
+		this.documentation_description = this.content.find('div.documentation_description');
+		
+		Widget.callStatic('detail', 'create_for_instance', this);
+		this.handle('opened', function() { 
+			this.init_textarea();
+		});
+		this.handle('saving', function(event, data) {
+			data.description = _this.documentation_description_editor.get_data();
+		}.bind(_this));
+	},
+	
+	fill_data: function() {
+		this.detail_widget.disable();		
+		this.init_textarea();
+		this.loadData(function(documentation_data) {
+			this.content.find("input[name='name']").val(documentation_data.Name);
+			this.content.find("input[name='title']").val(documentation_data.Title);
+			this.content.find("input[name='youtube_url']").val(documentation_data.YoutubeUrl);
+			this.content.find(".updated_info").text(documentation_data.UpdatedInfo);
+			this.content.find(".created_info").text(documentation_data.CreatedInfo);
+			this.content.find("span[class='detail_id']").text(documentation_data.Id);
+			this.detail_widget.set_title(this.detail_widget.settings.title = documentation_data.Name);
+			this.documentation_description.ensureWidget(function(widget) {
+				widget.set_data(documentation_data.Description);
+			});
+			this.content.find('div.hide_if_not_saved').show();
+			this.detail_widget.enable();		
+		});
+	},
+	
+	init_textarea: function() {
+		var _this = this;
+		if(!this.documentation_description.didPrepareWidget()) {
+			this.documentation_description.attr('data-widget-session', this.settings.richtext_session).prepareWidget(function(rich_text_widget) {
+				_this.documentation_description_editor = rich_text_widget;
+				jQuery.extend(rich_text_widget.settings, _this.settings.richtext_settings);
+			}, jQuery.noop);
+		}
+	},
+
+	settings: {
+		detail_widget: {
+			title: "{{writeString=wns.documentation.create}}",
+			width: 650
+		},
+		richtext_settings: {
+			height: 300,
+			width: 550,
+			toolbar_Full: [
+				['Italic'],['Link', 'Unlink'],['BulletedList', 'NumberedList'],
+				['Undo','Redo'],
+				['Source']
+			]
+		}
+	}
+};

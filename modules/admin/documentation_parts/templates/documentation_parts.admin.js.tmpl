@@ -1,0 +1,81 @@
+jQuery(function() {
+
+	var sidebar = AdminInterface.sidebar;
+	var content_list = AdminInterface.content;
+	var info_bar = AdminInterface.info_bar;
+	
+	var handlers = [];
+	
+	sidebar.children('[data-widget-type]').prepareWidget(function(widget) {
+		sidebar = widget;
+	}.deferred(handlers));
+	content_list.children('[data-widget-type]').prepareWidget(function(widget) {
+		content_list = widget;
+	}.deferred(handlers));
+	info_bar.prepareWidget(function(widget) {
+		info_bar = widget;
+	}.deferred(handlers));
+
+	jQuery.when.apply(jQuery, handlers).then(function() {
+
+		// Add info_bar elements
+		info_bar.add_button('add-new-item', function() {
+			Widget.create('documentation_part_detail', function(widget) {
+				widget.settings.initial_documentation_id = sidebar.active_row().data('documentation_id');
+				widget.content.find("select[name='documentation_id']").val(content_list.getOption('documentation_id'));
+				widget.open();
+				widget.save_callback = function() {
+					content_list.reload();
+				};
+			});
+		}, 'n', true).add_button('add-new-item', function() {
+			Widget.create('sidebar_input', function(widget) {
+				widget.add_new_sidebar_input("{{writeString=wns.documentation.default_name}}", 'Documentation', sidebar, 'rapila-documentation_changed');
+			});
+		}).add_search_input("{{writeString=wns.search.enter_search}}", function(search) {
+			if(content_list.setSearch(search)) {
+				content_list.reload();
+			}
+		}).add_row_count_info_for_list(content_list);
+
+		var remove_item = info_bar.add_button('remove-item', function() {
+			var rowData = sidebar.collect_row_data(sidebar.active_row());
+			if(rowData.documentation_id) {
+				content_list.getOption('documentationHasParts', rowData.documentation_id, function(result) {
+					if(!result) {
+						return sidebar.delete_row(sidebar.active_row());
+					}
+					var delete_message = AdminInterface.strings.get_string('wns.documentation.delete_warning', { name: rowData.name});
+					Widget.confirm("{{writeString=wns.rapila_alert.information}}", delete_message, function(confirmed) {
+						if(confirmed) {
+							sidebar.delete_row(sidebar.active_row());
+						}
+					}.bind(this));
+				});
+			}
+		}).disable();
+		
+		var edit_item = info_bar.add_button('edit-item', function() {
+			Widget.create('documentation_detail', function(widget) {
+				widget.setDocumentationId(sidebar.active_row_datas()[0].documentation_id);
+				widget.open();
+				widget.fill_data();
+				widget.save_callback = function() {
+					sidebar.reload();
+				};
+			});
+		}).disable();
+	
+		// Sidebar
+		sidebar.settings.row_click_active_mode = 'activate';
+		sidebar.handle('list-selection_changed', function(event, selection) {
+			var documentation_id = selection[0] && selection[0].documentation_id;
+			var has_detail = selection.length === 1 && documentation_id.constructor === Number;
+			remove_item[has_detail ? 'enable' : 'disable']();
+			edit_item[has_detail ? 'enable' : 'disable']();
+			content_list.setOption('documentation_id', documentation_id);
+			content_list.reload();
+		});
+	});
+});
+

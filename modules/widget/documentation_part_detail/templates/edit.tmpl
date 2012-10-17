@@ -1,0 +1,37 @@
+<form>
+	<div class="status_section">
+		<div class="image_area ui-state-droppable" title="Bild hier hinein ziehen">
+			<span class="description">Bild<span title="{{writeString=wns.documentation_part.remove_image}}" class="remove"> ✘</span></span>
+			<div class="documentation_part_image"></div>
+		</div>
+		<div class="hide_if_not_saved">
+  		<label>{{writeString=wns.created_info}}:</label><span class="created_info status"></span><br />
+  		<label>{{writeString=wns.updated.info}}:</label><span class="updated_info status"></span><br />
+			<label>ID:</label><span class="detail_id">{{id}}</span>
+		</div>
+	</div>
+	<div>
+		<div class="group_fields">
+			<label for="name" class="validate-documentation_part.name_required">{{writeString=wns.documentation_part.name}}*</label>
+			<input type="text" name="name" class="ui-widget-content"/><br />
+		</div>
+		<div class="group_fields">
+			<label for="documentation_id" class="validate-documentation_required">{{writeString=wns.documentation}}*</label>
+			<select name="documentation_id" class="ui-widget-content autowidth" data-widget-type="documentation_input"></select><br />
+		</div>
+		<div class="group_fields">
+			<label for="is_inactive">{{writeString=wns.documentation_part.is_inactive}}</label>
+			<input type="checkbox" name="is_inactive" /><br />
+		</div>
+		<div class="group_fields">
+			<label for="is_overview">{{writeString=wns.documentation_part.is_overview}}</label>
+			<input type="checkbox" name="is_overview" /><br />
+		</div>
+	</div>
+	<label for="body" class="validate-documentation_part.body_required">{{writeString=wns.documentation_part.body}}*</label>
+	<div class="documentation_part_body" data-widget-type="rich_text">
+		<textarea name="body" class="ui-widget-content" rows="20" cols="40"></textarea>
+	</div>
+</form>
+
+

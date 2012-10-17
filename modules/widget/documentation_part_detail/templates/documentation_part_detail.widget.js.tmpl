@@ -1,0 +1,128 @@
+Widget.types['documentation_part_detail'] = {
+	initialize: function() {
+		var _this = this;
+		this.content = Widget.parseHTML("{{includeTemplate=edit}}");
+		this.uploader = Widget.create('file_upload');
+		this.content.find('div.hide_if_not_saved').hide();
+		this.documentation_part_body = this.content.find('div.documentation_part_body');
+		
+		Widget.callStatic('detail', 'create_for_instance', this);
+		
+		// documentation_input
+		this.content.find("select[name='documentation_id']").prepareWidget(function(documentation_input_widget) {
+			documentation_input_widget.settings.initial_selection = _this.settings.initial_documentation_id;
+		}, jQuery.noop);
+		
+		// documentation_part image		
+		var image_area = _this.content.find('.image_area');
+		image_area.find('.remove').click(function() {
+			_this.image_id = null;
+		});
+		this.uploader.allow_drag_to(image_area, null, function(target, file) {
+			if(file.type.indexOf('image/') !== 0) {
+				Widget.notifyUser('alert', 'Muss ein Bild sein (Datei vom Typ «JPG», «PNG», «GIF»)');
+				return false;
+			}
+			return {document_kind: 'image', document_id: _this.image_id, document_category_id: _this.settings.documentation_image_category_id, callback: _this.upload_success.bind(_this), error: _this.upload_error.bind(_this)};
+		}, true);
+		
+		var image_id = null;
+		Object.defineProperty(_this, 'image_id', {
+			get: function() {
+				return image_id;
+			},
+			set: function(documentation_part_image) {
+				image_id = documentation_part_image;
+				var remove_link = image_area.find('.remove');
+				if(image_id) {
+					remove_link.show();
+					Widget.callStatic('document_detail', 'documentPreview', image_id, 180, function(html) {
+						image_area.find('.documentation_part_image').html(html);
+					});
+				} else {
+					image_area.find('.documentation_part_image').empty();
+					remove_link.hide();
+				}
+			}
+		});
+		this.handle('opened', function() { 
+			this.init_textarea();
+		});
+		this.handle('saved', function(event, id) {
+			this.current_detail_id = id;
+			this.setDocumentationPartId(id);
+		});
+		this.handle('saving', function(event, data) {
+			data.image_id = _this.image_id;
+			data.body = _this.documentation_part_body_editor.get_data();
+		}.bind(_this));
+	},
+	
+	fill_data: function() {
+		this.detail_widget.disable();		
+		var _this = this;
+		this.init_textarea();
+		this.loadData(function(documentation_part_data) {
+			this.current_detail_id = documentation_part_data.Id;
+			this.content.find("select[name='documentation_id']").val(documentation_part_data.DocumentationId);
+			this.content.find("input[name='name']").val(documentation_part_data.Name);
+			this.image_id = documentation_part_data.ImageId;
+			this.content.find(".updated_info").text(documentation_part_data.UpdatedInfo);
+			this.content.find(".created_info").text(documentation_part_data.CreatedInfo);
+			this.content.find("input[name='is_inactive']").prop('checked', documentation_part_data.IsInactive);
+			this.content.find("input[name='is_overview']").prop('checked', documentation_part_data.IsOverview);
+			this.content.find("span[class='detail_id']").text(documentation_part_data.Id);
+			this.detail_widget.set_title(this.detail_widget.settings.title = documentation_part_data.Name);
+			this.documentation_part_body.ensureWidget(function(widget) {
+				widget.set_data(documentation_part_data.DocumentationPartBody);
+			});
+			this.content.find('div.hide_if_not_saved').show();
+			this.detail_widget.enable();		
+		});
+	},
+	
+	upload_success: function(document_id) {
+		this.image_id = document_id;
+		this.save(true);
+	},
+	
+	upload_error: function(error) {
+	},
+	
+	save: function(should_remain_open) {
+		if(should_remain_open) {
+			this.settings.remains_open = true;
+		}
+		this.detail_widget.settings.save_callback();
+		if(should_remain_open) {
+			this.settings.remains_open = false;
+		}
+	},
+
+	init_textarea: function() {
+		var _this = this;
+		if(!this.documentation_part_body.didPrepareWidget()) {
+			this.documentation_part_body.attr('data-widget-session', this.settings.richtext_session).prepareWidget(function(rich_text_widget) {
+				_this.documentation_part_body_editor = rich_text_widget;
+				jQuery.extend(rich_text_widget.settings, _this.settings.richtext_settings);
+			}, jQuery.noop);
+		}
+	},
+	
+	settings: {
+		detail_widget: {
+			title: "{{writeString=wns.documentation_part.create}}",
+			width: 830
+		},
+		initial_documentation_id: null,
+		richtext_settings: {
+			height: 300,
+			width: 550,
+			toolbar_Full: [
+				['Italic'],['Link', 'Unlink'],['BulletedList', 'NumberedList'],
+				['Undo', 'Redo'],
+				['Source']
+			]
+		}
+	}
+};

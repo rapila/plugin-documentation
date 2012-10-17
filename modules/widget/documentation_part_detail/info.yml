@@ -1,0 +1,6 @@
+--- 
+enabled: true
+aspects: 
+  - persistent
+  - detail
+#<File:0x10a36b180>
