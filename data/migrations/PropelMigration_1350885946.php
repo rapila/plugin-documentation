@@ -43,8 +43,8 @@ class PropelMigration_1350885946
 SET FOREIGN_KEY_CHECKS = 0;
 
 ALTER TABLE `documentations`
-    ADD `version` VARCHAR(20) NOT NULL AFTER `name`,
-    ADD `language_id` VARCHAR(3) NOT NULL AFTER `youtube_url`;
+    ADD `version` VARCHAR(20) NOT NULL AFTER `description`,
+    ADD `language_id` VARCHAR(3) NOT NULL AFTER `description`;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
