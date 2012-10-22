@@ -37,7 +37,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 			$oTemplate->replaceIdentifier('youtube_video', $oVideoTempl);
 			$oTemplate->replaceIdentifier('tutorial_name', $oDocumentation->getName());
 		}
-		$sCss = file_get_contents(SITE_DIR.'/web/css/site.css')."\n";
+		// $sCss = file_get_contents(SITE_DIR.'/web/css/site.css')."\n";
 		$oTemplate->replaceIdentifier('documentation_title', $oDocumentation->getTitle());
 		$oTemplate->replaceIdentifier('description', RichtextUtil::parseStorageForFrontendOutput(stream_get_contents($oDocumentation->getDescription())));
 		if($bToPdf === false) {

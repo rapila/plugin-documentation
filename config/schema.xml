@@ -1,9 +1,14 @@
 <table name="documentations" phpName="Documentation">
 	<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
 	<column name="name" type="varchar" size="100" required="true"/>
+	<column name="version" type="varchar" size="20" required="true"/>
 	<column name="title" type="varchar" required="true"/>
 	<column name="description" type="blob" size="255" required="true"/>
 	<column name="youtube_url" type="varchar" size="200"/>
+	<column name="language_id" type="varchar" size="3" required="true" primaryKey="true" />
+	<foreign-key foreignTable="languages" onDelete="cascade">
+		<reference local="language_id" foreign="id" />
+	</foreign-key>
 	<behavior name="denyable">
 		<parameter name="role_key" value="documentations" />
 	</behavior>

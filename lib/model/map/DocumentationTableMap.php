@@ -40,9 +40,11 @@ class DocumentationTableMap extends TableMap
         // columns
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('NAME', 'Name', 'VARCHAR', true, 100, null);
+        $this->addColumn('VERSION', 'Version', 'VARCHAR', true, 20, null);
         $this->addColumn('TITLE', 'Title', 'VARCHAR', true, 255, null);
         $this->addColumn('DESCRIPTION', 'Description', 'BLOB', true, 255, null);
         $this->addColumn('YOUTUBE_URL', 'YoutubeUrl', 'VARCHAR', false, 200, null);
+        $this->addForeignPrimaryKey('LANGUAGE_ID', 'LanguageId', 'VARCHAR' , 'languages', 'ID', true, 3, null);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
         $this->addForeignKey('CREATED_BY', 'CreatedBy', 'INTEGER', 'users', 'ID', false, null, null);
@@ -55,6 +57,7 @@ class DocumentationTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Language', 'Language', RelationMap::MANY_TO_ONE, array('language_id' => 'id', ), 'CASCADE', null);
         $this->addRelation('UserRelatedByCreatedBy', 'User', RelationMap::MANY_TO_ONE, array('created_by' => 'id', ), 'SET NULL', null);
         $this->addRelation('UserRelatedByUpdatedBy', 'User', RelationMap::MANY_TO_ONE, array('updated_by' => 'id', ), 'SET NULL', null);
         $this->addRelation('DocumentationPart', 'DocumentationPart', RelationMap::ONE_TO_MANY, array('id' => 'documentation_id', ), 'CASCADE', null, 'DocumentationParts');

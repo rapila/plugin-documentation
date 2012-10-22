@@ -734,7 +734,7 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
             }
 
             return $this
-                ->addUsingAlias(DocumentationPartPeer::DOCUMENTATION_ID, $documentation->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(DocumentationPartPeer::DOCUMENTATION_ID, $documentation->toKeyValue('Id', 'Id'), $comparison);
         } else {
             throw new PropelException('filterByDocumentation() only accepts arguments of type Documentation or PropelCollection');
         }

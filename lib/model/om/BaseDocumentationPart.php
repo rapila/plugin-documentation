@@ -1694,7 +1694,9 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     public function getDocumentation(PropelPDO $con = null)
     {
         if ($this->aDocumentation === null && ($this->documentation_id !== null)) {
-            $this->aDocumentation = DocumentationQuery::create()->findPk($this->documentation_id, $con);
+            $this->aDocumentation = DocumentationQuery::create()
+                ->filterByDocumentationPart($this) // here
+                ->findOne($con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
