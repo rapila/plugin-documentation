@@ -36,6 +36,7 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 		$oFlash = Flash::getFlash();
 		$oFlash->setArrayToCheck($aDocumentationData);
 		$oFlash->checkForValue('name', 'name_required');
+		$oFlash->checkForValue('version', 'version_required');
 		$oFlash->finishReporting();
 	}
 	
@@ -45,14 +46,14 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 		} else {
 			$oDocumentation = DocumentationQuery::create()->findPk($this->iDocumentationId);
 		}
-		$oDocumentation->setName($aDocumentationData['name']);
-		$oDocumentation->setTitle($aDocumentationData['title']);
-		$oDocumentation->setYoutubeUrl($aDocumentationData['youtube_url']);
+		$oDocumentation->fromArray($aDocumentationData, BasePeer::TYPE_FIELDNAME);
 		$oDocumentation->setDescription(RichtextUtil::parseInputFromEditorForStorage($aDocumentationData['description']));
 		$this->validate($aDocumentationData);
 		if(!Flash::noErrors()) {
 			throw new ValidationException();
 		}
+		ErrorHandler::log('DocumentationData', $aDocumentationData, 'DocumentArray', $oDocumentation->toArray());
+		
 		return $oDocumentation->save();
 	}
 }

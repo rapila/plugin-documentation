@@ -4,6 +4,7 @@ Widget.types.documentation_detail = {
 		this.content = Widget.parseHTML("{{includeTemplate=edit}}");
 		this.content.find('div.hide_if_not_saved').hide();
 		this.documentation_description = this.content.find('div.documentation_description');
+		this.content.find("select[name='language_id']").prepareWidget();
 		
 		Widget.callStatic('detail', 'create_for_instance', this);
 		this.handle('opened', function() { 
@@ -20,6 +21,7 @@ Widget.types.documentation_detail = {
 		this.loadData(function(documentation_data) {
 			this.content.find("input[name='name']").val(documentation_data.Name);
 			this.content.find("input[name='title']").val(documentation_data.Title);
+			this.content.find("input[name='version']").val(documentation_data.Version);
 			this.content.find("input[name='youtube_url']").val(documentation_data.YoutubeUrl);
 			this.content.find(".updated_info").text(documentation_data.UpdatedInfo);
 			this.content.find(".created_info").text(documentation_data.CreatedInfo);
@@ -27,6 +29,9 @@ Widget.types.documentation_detail = {
 			this.detail_widget.set_title(this.detail_widget.settings.title = documentation_data.Name);
 			this.documentation_description.ensureWidget(function(widget) {
 				widget.set_data(documentation_data.Description);
+			});
+			this.content.find("select[name='language_id']").ensureWidget(function(widget) {
+				widget.val(documentation_data.LanguageId);
 			});
 			this.content.find('div.hide_if_not_saved').show();
 			this.detail_widget.enable();		

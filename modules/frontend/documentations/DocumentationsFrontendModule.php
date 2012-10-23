@@ -6,7 +6,7 @@
 class DocumentationsFrontendModule extends FrontendModule {
 	
 	public static $DISPLAY_MODES = array('detail', 'list');
-	public $iYear = null;
+	public $sVersion = null;
 	
 	const MODE_SELECT_KEY = 'display_mode';
 	
@@ -15,10 +15,35 @@ class DocumentationsFrontendModule extends FrontendModule {
 		if(!isset($aOptions[self::MODE_SELECT_KEY])) {
 			return null;
 		}
+		$this->sVersion = isset($aOptions['version']) ? $aOptions['version'] : '1.0';
 
 		$iDocumentationId = isset($aOptions['documentation_id']) && $aOptions['documentation_id'] != null ? $aOptions['documentation_id'] : null;
 		$oDocumentation = DocumentationQuery::create()->findPk($iDocumentationId);
+		if($oDocumentation === null) {
+			return $this->renderList();
+		}
 		return $this->renderDetail($oDocumentation);
+	}
+	
+	public function renderList() {
+		$aDocumentations = $this->listQuery()->find();
+		if(count($aDocumentations) === 0) {
+			return;
+		}
+		$oPage = FrontendManager::$CURRENT_PAGE;
+		$oTemplate = $this->constructTemplate('list');
+		$oItemPrototype = $this->constructTemplate('list_item');
+		foreach($aDocumentations as $oDocumentation) {
+			$oItemTemplate = clone $oItemPrototype;
+			$oItemTemplate->replaceIdentifier('detail_link', LinkUtil::link($oPage->getFullPathArray(array($oDocumentation->getSlug()))));
+			$oItemTemplate->replaceIdentifier('name', $oDocumentation->getName());
+			$oTemplate->replaceIdentifierMultiple('list_item', $oItemTemplate);
+		}
+		return $oTemplate;
+	}
+	
+	public function listQuery() {
+		return DocumentationQuery::create()->filterByVersion($this->sVersion)->orderByName();
 	}
 
 	public function renderDetail($oDocumentation, $bToPdf = false) {

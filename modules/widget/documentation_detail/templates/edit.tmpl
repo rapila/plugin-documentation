@@ -1,5 +1,9 @@
 <form>
 	<div class="status_section">
+		<label for="language_id">{{writeString=wns.language}}*</label><br />
+		<select name="language_id" class="ui-widget-content" data-widget-type="language_input"></select><br />
+		<label for="version" class="validate-version_required">{{writeString=wns.documentation.version}}*</label><br />
+		<input type="text" name="version" class="ui-widget-content autowidth" size="20" /><br />
 		<div class="hide_if_not_saved">
   		<label>{{writeString=wns.created_info}}:</label><span class="created_info status"></span><br />
   		<label>{{writeString=wns.updated.info}}:</label><span class="updated_info status"></span><br />
