@@ -127,7 +127,7 @@ abstract class BaseDocumentationQuery extends ModelCriteria
      * </code>
      *
      * @param array $key Primary key to use for the query
-                         A Primary key composition: [$id, $language_id]
+     *                  A Primary key composition: [$id, $language_id]
      * @param     PropelPDO $con an optional connection object
      *
      * @return   Documentation|Documentation[]|mixed the result, formatted by the current formatter
