@@ -9,13 +9,14 @@ class DocumentationsFrontendModule extends FrontendModule {
 	public $sVersion = null;
 	
 	const MODE_SELECT_KEY = 'display_mode';
+	const DEFAULT_RAPILA_VERSION = '1.0';
 	
 	public function renderFrontend() {		
 		$aOptions = $this->widgetData();
 		if(!isset($aOptions[self::MODE_SELECT_KEY])) {
 			return null;
 		}
-		$this->sVersion = isset($aOptions['version']) ? $aOptions['version'] : '1.0';
+		$this->sVersion = isset($aOptions['version']) ? $aOptions['version'] : self::DEFAULT_RAPILA_VERSION;
 
 		$iDocumentationId = isset($aOptions['documentation_id']) && $aOptions['documentation_id'] != null ? $aOptions['documentation_id'] : null;
 		$oDocumentation = DocumentationQuery::create()->findPk($iDocumentationId);

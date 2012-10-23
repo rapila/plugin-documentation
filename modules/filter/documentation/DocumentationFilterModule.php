@@ -6,20 +6,19 @@ class DocumentationFilterModule extends FilterModule {
 	
 	const ITEM_TYPE = 'documentation';
 	
-	public function onNavigationItemChildrenRequested(NavigationItem $oCurrent) {
-		if(!($oCurrent instanceof PageNavigationItem && $oCurrent->getIdentifier() === 'documentations')) {
+	public function onNavigationItemChildrenRequested(NavigationItem $oNavigationItem) {
+		if(!($oNavigationItem instanceof PageNavigationItem && $oNavigationItem->getIdentifier() === 'documentations')) {
 			return;
 		}
 		
-		$oObject = LanguageObjectQuery::create()->filterByLanguageId(Session::language())->joinContentObject()->useQuery('ContentObject')->filterByPageId($oCurrent->getMe()->getId())->filterByContainerName('content')->filterByObjectType('documentations')->endUse()->findOne();
-		Util::dumpAll($oObject);
+		$oObject = LanguageObjectQuery::create()->filterByLanguageId(Session::language())->joinContentObject()->useQuery('ContentObject')->filterByPageId($oNavigationItem->getMe()->getId())->filterByContainerName('content')->filterByObjectType('documentations')->endUse()->findOne();
 		if(!$oObject) {
 			return;
 		}
 		
 		$oModule = new DocumentationsFrontendModule($oObject);
 		$aOptions = $oModule->widgetData();
-		$oModule->iProjectCategoryId = @$aOptions[ProjectsFrontendModule::PROJECT_CATEGORY_ID];
+		$oModule->sVersion = isset($aOptions['version']) ? $aOptions['version'] : DocumentationsFrontendModule::DEFAULT_RAPILA_VERSION;
 		foreach($oModule->listQuery()->select(array('Slug', 'Name'))->orderByName()->find() as $aParams) {
 			$oNavItem = new VirtualNavigationItem(self::ITEM_TYPE, $aParams['Slug'], $aParams['Name'], null, null);
 			$oNavigationItem->addChild($oNavItem);
@@ -31,5 +30,6 @@ class DocumentationFilterModule extends FilterModule {
 			return;
 		}
 		$_REQUEST['documentation_id'] = $oNavigationItem->getData();
+		ErrorHandler::log($oNavigationItem, $_REQUEST['documentation_id']);
 	}
 }
