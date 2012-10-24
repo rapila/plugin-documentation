@@ -43,7 +43,7 @@ class PropelMigration_1350885946
 SET FOREIGN_KEY_CHECKS = 0;
 
 ALTER TABLE `documentations`
-		ADD `slug` VARCHAR(100) NULL AFTER `name`,
+		ADD `key` VARCHAR(100) NULL AFTER `description`,
 		ADD `version` VARCHAR(20) NOT NULL AFTER `description`,
     ADD `language_id` VARCHAR(3) NOT NULL AFTER `description`;
 
@@ -67,7 +67,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `documentations` DROP `slug`;
+ALTER TABLE `documentations` DROP `key`;
 ALTER TABLE `documentations` DROP `version`;
 ALTER TABLE `documentations` DROP `language_id`;
 

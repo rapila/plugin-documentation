@@ -32,11 +32,21 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 		return $aResult;
 	}
 
-	private function validate($aDocumentationData) {
+	private function validate($aDocumentationData, $oDocumentation) {
 		$oFlash = Flash::getFlash();
 		$oFlash->setArrayToCheck($aDocumentationData);
 		$oFlash->checkForValue('name', 'name_required');
+		$oFlash->checkForValue('key', 'key_required');
 		$oFlash->checkForValue('version', 'version_required');
+		$oFlash->checkForValue('language_id', 'language_required');
+		if($aDocumentationData['key'] != null 
+			&& $aDocumentationData['language_id'] != null 
+			&& $aDocumentationData['version'] != null) {
+			$oCheckDocumentation = DocumentationQuery::create()->filterByLanguageId($aDocumentationData['language_id'])->filterByVersion($aDocumentationData['version'])->filterByKey($aDocumentationData['key'])->findOne();
+			if($oCheckDocumentation && !Util::equals($oDocumentation, $oCheckDocumentation)) {
+				$oFlash->addMessage('documentation_unique_required');
+			}
+		}
 		$oFlash->finishReporting();
 	}
 	
@@ -48,7 +58,7 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 		}
 		$oDocumentation->fromArray($aDocumentationData, BasePeer::TYPE_FIELDNAME);
 		$oDocumentation->setDescription(RichtextUtil::parseInputFromEditorForStorage($aDocumentationData['description']));
-		$this->validate($aDocumentationData);
+		$this->validate($aDocumentationData, $oDocumentation);
 		if(!Flash::noErrors()) {
 			throw new ValidationException();
 		}

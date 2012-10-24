@@ -12,11 +12,11 @@
 	</div>
 	<div>
 		<div class="group_fields">
-			<label for="name" class="validate-documentation_part.name_required">{{writeString=wns.documentation_part.name}}*</label>
+			<label for="name" class="validate-documentation_part_name_required">{{writeString=wns.documentation_part.name}}*</label>
 			<input type="text" name="name" class="ui-widget-content"/><br />
 		</div>
 		<div class="group_fields">
-			<label for="documentation_id" class="validate-documentation_required">{{writeString=wns.documentation}}*</label>
+			<label for="documentation_id" class="validate-documentation_part_documentation_required">{{writeString=wns.documentation}}*</label>
 			<select name="documentation_id" class="ui-widget-content autowidth" data-widget-type="documentation_input"></select><br />
 		</div>
 		<div class="group_fields">
@@ -28,7 +28,7 @@
 			<input type="checkbox" name="is_overview" /><br />
 		</div>
 	</div>
-	<label for="body" class="validate-documentation_part.body_required">{{writeString=wns.documentation_part.body}}*</label>
+	<label for="body" class="validate-documentation_part_body_required">{{writeString=wns.documentation_part.body}}*</label>
 	<div class="documentation_part_body" data-widget-type="rich_text">
 		<textarea name="body" class="ui-widget-content" rows="20" cols="40"></textarea>
 	</div>

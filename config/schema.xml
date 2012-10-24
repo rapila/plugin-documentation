@@ -1,11 +1,11 @@
 <table name="documentations" phpName="Documentation">
 	<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
 	<column name="name" type="varchar" size="100" required="true"/>
-	<column name="slug" type="varchar" size="100" />
-	<column name="version" type="varchar" size="20" required="true"/>
-	<column name="title" type="varchar" required="true"/>
-	<column name="description" type="blob" size="255" required="true"/>
+	<column name="title" type="varchar" size="255" required="true"/>
+	<column name="description" type="blob" size="512" required="true"/>
 	<column name="youtube_url" type="varchar" size="200"/>
+	<column name="key" type="varchar" size="100" />
+	<column name="version" type="varchar" size="20" required="true"/>
 	<column name="language_id" type="varchar" size="3" required="true" />
 	<foreign-key foreignTable="languages" onDelete="cascade">
 		<reference local="language_id" foreign="id" />
@@ -13,6 +13,11 @@
 	<behavior name="denyable">
 		<parameter name="role_key" value="documentations" />
 	</behavior>
+	<unique>
+		<unique-column name="key" />
+		<unique-column name="language_id" />
+		<unique-column name="version" />
+	</unique>
 </table>
 
 <table name="documentation_parts" phpName="DocumentationPart">

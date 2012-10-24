@@ -11,18 +11,18 @@ class DocumentationFilterModule extends FilterModule {
 			return;
 		}
 		
-		$oObject = LanguageObjectQuery::create()->filterByLanguageId(Session::language())->joinContentObject()->useQuery('ContentObject')->filterByPageId($oNavigationItem->getMe()->getId())->filterByContainerName('content')->filterByObjectType('documentations')->endUse()->findOne();
-		if(!$oObject) {
-			return;
-		}
+		// $oObject = LanguageObjectQuery::create()->filterByLanguageId(Session::language())->joinContentObject()->useQuery('ContentObject')->filterByPageId($oNavigationItem->getMe()->getId())->filterByContainerName('content')->filterByObjectType('documentations')->endUse()->findOne();
+		// if(!$oObject) {
+		// 	return;
+		// }
 		
-		$oModule = new DocumentationsFrontendModule($oObject);
-		$aOptions = $oModule->widgetData();
-		$oModule->sVersion = isset($aOptions['version']) ? $aOptions['version'] : DocumentationsFrontendModule::DEFAULT_RAPILA_VERSION;
-		foreach($oModule->listQuery()->select(array('Slug', 'Name'))->orderByName()->find() as $aParams) {
-			$oNavItem = new VirtualNavigationItem(self::ITEM_TYPE, $aParams['Slug'], $aParams['Name'], null, null);
-			$oNavigationItem->addChild($oNavItem);
-		}
+		// $oModule = new DocumentationsFrontendModule($oObject);
+		// $aOptions = $oModule->widgetData();
+		// $oModule->sVersion = isset($aOptions['version']) ? $aOptions['version'] : DocumentationsFrontendModule::DEFAULT_RAPILA_VERSION;
+		// foreach($oModule->listQuery()->select(array('Slug', 'Name'))->orderByName()->find() as $aParams) {
+		// 	$oNavItem = new VirtualNavigationItem(self::ITEM_TYPE, $aParams['Slug'], $aParams['Name'], null, null);
+		// 	$oNavigationItem->addChild($oNavItem);
+		// }
 	}
 	
 	public function onPageHasBeenSet($oPage, $bIsNotFound, $oNavigationItem) {

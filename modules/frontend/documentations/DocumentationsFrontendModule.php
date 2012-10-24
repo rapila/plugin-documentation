@@ -36,7 +36,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 		$oItemPrototype = $this->constructTemplate('list_item');
 		foreach($aDocumentations as $oDocumentation) {
 			$oItemTemplate = clone $oItemPrototype;
-			$oItemTemplate->replaceIdentifier('detail_link', LinkUtil::link($oPage->getFullPathArray(array($oDocumentation->getSlug()))));
+			$oItemTemplate->replaceIdentifier('detail_link', LinkUtil::link($oPage->getFullPathArray(array($oDocumentation->getKey()))));
 			$oItemTemplate->replaceIdentifier('name', $oDocumentation->getName());
 			$oTemplate->replaceIdentifierMultiple('list_item', $oItemTemplate);
 		}
@@ -44,7 +44,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 	}
 	
 	public function listQuery() {
-		return DocumentationQuery::create()->filterByVersion($this->sVersion)->orderByName();
+		return DocumentationQuery::create()->filterByVersion($this->sVersion)->filterByLanguageId(Session::language())->orderByName();
 	}
 
 	public function renderDetail($oDocumentation, $bToPdf = false) {

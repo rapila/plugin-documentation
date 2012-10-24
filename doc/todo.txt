@@ -1,0 +1,14 @@
+Todo
+
+documentations should be available from
+• modules / rapila admin
+• rapi.la user documentation
+• rapila based plugins like SchulCMS documentation should include base documentation
+
+define interface for all documentations
+how are documentations identified
+• module/plugin/part identifier
+• rapila version
+• language_id
+
+file module documentation
