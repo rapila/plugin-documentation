@@ -5,8 +5,13 @@
 
 class DocumentationsFrontendModule extends FrontendModule {
 	
-	public static $DISPLAY_MODES = array('detail', 'list');
+	public static $DISPLAY_MODES = array('detail', 'list', 'most_recent_teaser');
+	
 	public $sVersion = null;
+	
+	public static $DOCUMENTATION = null;
+	
+	public $oPage = null;
 	
 	const MODE_SELECT_KEY = 'display_mode';
 	const DEFAULT_RAPILA_VERSION = '1.0';
@@ -17,25 +22,40 @@ class DocumentationsFrontendModule extends FrontendModule {
 			return null;
 		}
 		$this->sVersion = isset($aOptions['version']) ? $aOptions['version'] : self::DEFAULT_RAPILA_VERSION;
-
-		$iDocumentationId = isset($aOptions['documentation_id']) && $aOptions['documentation_id'] != null ? $aOptions['documentation_id'] : null;
-		$oDocumentation = DocumentationQuery::create()->findPk($iDocumentationId);
-		if($oDocumentation === null) {
-			return $this->renderList();
+		
+		if(self::$DOCUMENTATION !== null) {
+			return $this->renderDetail(self::$DOCUMENTATION);
+		} 
+		switch($aOptions[self::MODE_SELECT_KEY]) {
+			case 'most_recent_teaser' : return $this->renderMostRecentTeaser();
+			case 'list' : return $this->renderList();
 		}
-		return $this->renderDetail($oDocumentation);
+		// Detail is configured but no documentation_id
+		if($aOptions[self::MODE_SELECT_KEY] === 'detail' && !isset($aOptions['documentation_id'])) {
+			return;
+		}
+		// Detail is displayed if exists
+		return $this->renderDetail(DocumentationQuery::create()->findPk($iDocumentationId));
+	}
+	
+	private function setLinkPage() {
+		$this->oPage = FrontendManager::$CURRENT_PAGE;
+		if($this->oPage->getIdentifier() !== 'documentation-page') {
+			$this->oPage = PageQuery::create()->filterByIdentifier('documentation-page')->active()->findOne();
+		}
 	}
 	
 	public function renderList() {
-		$aDocumentations = $this->listQuery()->find();
+		$aDocumentations = self::listQuery()->find();
 		if(count($aDocumentations) === 0) {
 			return;
 		}
-		$oPage = FrontendManager::$CURRENT_PAGE;
+		$this->setLinkPage();
 		$oTemplate = $this->constructTemplate('list');
 		$oItemPrototype = $this->constructTemplate('list_item');
 		foreach($aDocumentations as $oDocumentation) {
 			$oItemTemplate = clone $oItemPrototype;
+			throw new Exception('Kill this PHP!');
 			$oItemTemplate->replaceIdentifier('detail_link', LinkUtil::link($oPage->getFullPathArray(array($oDocumentation->getKey()))));
 			$oItemTemplate->replaceIdentifier('name', $oDocumentation->getName());
 			$oTemplate->replaceIdentifierMultiple('list_item', $oItemTemplate);
@@ -43,8 +63,34 @@ class DocumentationsFrontendModule extends FrontendModule {
 		return $oTemplate;
 	}
 	
-	public function listQuery() {
-		return DocumentationQuery::create()->filterByVersion($this->sVersion)->filterByLanguageId(Session::language())->orderByName();
+	public static function listQuery() {
+		return DocumentationQuery::create()->active()->filterByLanguageId(Session::language())->orderByName();
+	}
+	
+	public function renderMostRecentTeaser() {
+		$oDocumentation = DocumentationQuery::create()->active()->filterByLanguageId(Session::language())->filterByYoutubeUrl(null, Criteria::ISNOTNULL)->orderByCreatedAt(Criteria::DESC)->findOne();
+		if($oDocumentation === null) {
+			return null;
+		}
+		$this->setLinkPage();
+		
+		$oTemplate = $this->constructTemplate('teaser');
+		$oTemplate->replaceIdentifier('title', $oDocumentation->getTitle());
+		$oTemplate->replaceIdentifier('name', $oDocumentation->getName());
+		if($oDocumentation->getYoutubeUrl() != null) {
+			$this->embedVideo($oTemplate, $oDocumentation);
+		}		
+		$oLink = TagWriter::quickTag('a', array('href' => LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))), 'class' => 'read_more'), StringPeer::getString('wns.read_more'));
+		$oTemplate->replaceIdentifier('more_link', $oLink);
+		return $oTemplate;
+	}
+	
+	public function embedVideo($oTemplate, $oDocumentation) {
+		$oVideoTempl = $this->constructTemplate('iframe');
+		$oVideoTempl->replaceIdentifier('src', $oDocumentation->getYoutubeUrl());
+		$oVideoTempl->replaceIdentifier('width', 620);
+		$oVideoTempl->replaceIdentifier('height', 400);
+		$oTemplate->replaceIdentifier('youtube_video', $oVideoTempl);
 	}
 
 	public function renderDetail($oDocumentation, $bToPdf = false) {
@@ -56,14 +102,9 @@ class DocumentationsFrontendModule extends FrontendModule {
 		
 		// render video if exists
 		if($oDocumentation->getYoutubeUrl() != null && $bToPdf === false) {
-			$oVideoTempl = $this->constructTemplate('iframe');
-			$oVideoTempl->replaceIdentifier('src', $oDocumentation->getYoutubeUrl());
-			$oVideoTempl->replaceIdentifier('width', 560);
-			$oVideoTempl->replaceIdentifier('height', 315);
-			$oTemplate->replaceIdentifier('youtube_video', $oVideoTempl);
-			$oTemplate->replaceIdentifier('tutorial_name', $oDocumentation->getName());
+			$this->embedVideo($oTemplate, $oDocumentation);
 		}
-		// $sCss = file_get_contents(SITE_DIR.'/web/css/site.css')."\n";
+		$oTemplate->replaceIdentifier('tutorial_name', $oDocumentation->getName());
 		$oTemplate->replaceIdentifier('documentation_title', $oDocumentation->getTitle());
 		$oTemplate->replaceIdentifier('description', RichtextUtil::parseStorageForFrontendOutput(stream_get_contents($oDocumentation->getDescription())));
 		if($bToPdf === false) {
@@ -87,14 +128,14 @@ class DocumentationsFrontendModule extends FrontendModule {
 			$oPartTemplate->replaceIdentifier('name', '«'.$oPart->getName().'»');
 			$oPartTemplate->replaceIdentifier('anchor', $oPart->getNameNormalized());
 			if($oPart->getDocument()) {
-				$sSrc = !$oPart->getIsOverview() ? $oPart->getDocument()->getDisplayUrl(array('max_width' => 200)) : $oPart->getDocument()->getDisplayUrl();
+				$sSrc = !$oPart->getIsOverview() ? $oPart->getDocument()->getDisplayUrl(array('max_width' => 200)) : $oPart->getDocument()->getDisplayUrl(array('max_width' => 656));
 				if(RichtextUtil::$USE_ABSOLUTE_LINKS) {
 					$sSrc = LinkUtil::absoluteLink($sSrc);
 				}
 				$oPartTemplate->replaceIdentifier('image', TagWriter::quickTag('img', array('class' => (!$oPart->getIsOverview() ? 'image_float' : "image_fullwidth"), 'src' => $sSrc, 'alt' => 'Bildschirmfoto von '.$oPart->getName())));
+				$oPartTemplate->replaceIdentifier('margin_left_class', $oPart->getIsOverview() ? '' : ' margin_left_class');
 			}
 			$oPartTemplate->replaceIdentifier('content', RichtextUtil::parseStorageForFrontendOutput(stream_get_contents($oPart->getBody())));
-			$oPartTemplate->replaceIdentifier('margin_left_class', $oPart->getIsOverview() ? '' : ' margin_left_class');
 			
 			$oTemplate->replaceIdentifierMultiple('part', $oPartTemplate);
 			$i++;

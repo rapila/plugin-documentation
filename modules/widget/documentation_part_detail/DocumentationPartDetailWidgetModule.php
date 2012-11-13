@@ -69,6 +69,7 @@ class DocumentationPartDetailWidgetModule extends PersistentWidgetModule {
 			$oDocumentationPart->getDocument()->delete();
 		}
 		$this->validate($aDocumentationPartData, $oDocumentationPart);
+
 		if(!Flash::noErrors()) {
 			throw new ValidationException();
 		}

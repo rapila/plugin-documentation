@@ -37,7 +37,6 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 		$oFlash->setArrayToCheck($aDocumentationData);
 		$oFlash->checkForValue('name', 'name_required');
 		$oFlash->checkForValue('key', 'key_required');
-		$oFlash->checkForValue('version', 'version_required');
 		$oFlash->checkForValue('language_id', 'language_required');
 		if($aDocumentationData['key'] != null 
 			&& $aDocumentationData['language_id'] != null 
@@ -58,12 +57,13 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 		}
 		$oDocumentation->fromArray($aDocumentationData, BasePeer::TYPE_FIELDNAME);
 		$oDocumentation->setDescription(RichtextUtil::parseInputFromEditorForStorage($aDocumentationData['description']));
+		if($oDocumentation->getYoutubeUrl() == null) {
+			$oDocumentation->setYoutubeUrl(null);
+		}
 		$this->validate($aDocumentationData, $oDocumentation);
 		if(!Flash::noErrors()) {
 			throw new ValidationException();
-		}
-		ErrorHandler::log('DocumentationData', $aDocumentationData, 'DocumentArray', $oDocumentation->toArray());
-		
+		}		
 		return $oDocumentation->save();
 	}
 }
