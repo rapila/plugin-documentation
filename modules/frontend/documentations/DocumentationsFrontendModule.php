@@ -55,8 +55,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 		$oItemPrototype = $this->constructTemplate('list_item');
 		foreach($aDocumentations as $oDocumentation) {
 			$oItemTemplate = clone $oItemPrototype;
-			throw new Exception('Kill this PHP!');
-			$oItemTemplate->replaceIdentifier('detail_link', LinkUtil::link($oPage->getFullPathArray(array($oDocumentation->getKey()))));
+			$oItemTemplate->replaceIdentifier('detail_link', LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))));
 			$oItemTemplate->replaceIdentifier('name', $oDocumentation->getName());
 			$oTemplate->replaceIdentifierMultiple('list_item', $oItemTemplate);
 		}
