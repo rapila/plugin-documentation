@@ -79,7 +79,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 		if($oDocumentation->getYoutubeUrl() != null) {
 			$this->embedVideo($oTemplate, $oDocumentation);
 		}		
-		$oLink = TagWriter::quickTag('a', array('href' => LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))), 'class' => 'read_more'), StringPeer::getString('wns.read_more'));
+		$oLink = TagWriter::quickTag('a', array('rel' => 'internal', 'href' => LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))), 'class' => 'read_more'), StringPeer::getString('wns.read_more'));
 		$oTemplate->replaceIdentifier('more_link', $oLink);
 		return $oTemplate;
 	}
