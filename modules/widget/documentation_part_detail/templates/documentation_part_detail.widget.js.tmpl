@@ -1,4 +1,4 @@
-Widget.types['documentation_part_detail'] = {
+Widget.types.documentation_part_detail = {
 	initialize: function() {
 		var _this = this;
 		this.content = Widget.parseHTML("{{includeTemplate=edit}}");
@@ -60,7 +60,6 @@ Widget.types['documentation_part_detail'] = {
 	
 	fill_data: function() {
 		this.detail_widget.disable();		
-		var _this = this;
 		this.init_textarea();
 		this.loadData(function(documentation_part_data) {
 			this.current_detail_id = documentation_part_data.Id;
@@ -104,7 +103,6 @@ Widget.types['documentation_part_detail'] = {
 		if(!this.documentation_part_body.didPrepareWidget()) {
 			this.documentation_part_body.attr('data-widget-session', this.settings.richtext_session).prepareWidget(function(rich_text_widget) {
 				_this.documentation_part_body_editor = rich_text_widget;
-				jQuery.extend(rich_text_widget.settings, _this.settings.richtext_settings);
 			}, jQuery.noop);
 		}
 	},
@@ -114,15 +112,6 @@ Widget.types['documentation_part_detail'] = {
 			title: "{{writeString=wns.documentation_part.create}}",
 			width: 830
 		},
-		initial_documentation_id: null,
-		richtext_settings: {
-			height: 300,
-			width: 550,
-			toolbar_Full: [
-				['Italic'],['Link', 'Unlink'],['BulletedList', 'NumberedList'],
-				['Undo', 'Redo'],
-				['Source']
-			]
-		}
+		initial_documentation_id: null
 	}
 };
