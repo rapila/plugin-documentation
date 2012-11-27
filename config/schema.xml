@@ -2,7 +2,7 @@
 	<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
 	<column name="name" type="varchar" size="100" required="true"/>
 	<column name="title" type="varchar" size="255" required="true"/>
-	<column name="description" type="blob" size="512" required="true"/>
+	<column name="description" type="blob" required="true"/>
 	<column name="youtube_url" type="varchar" size="200"/>
 	<column name="key" type="varchar" size="100" />
 	<column name="version" type="varchar" size="20" />
@@ -10,7 +10,7 @@
 	<foreign-key foreignTable="languages" onDelete="cascade">
 		<reference local="language_id" foreign="id" />
 	</foreign-key>
-	<column name="is_inactive" type="boolean" size="1" default="0" />
+	<column name="is_published" type="boolean" size="1" default="1" />
 	<behavior name="denyable">
 		<parameter name="role_key" value="documentations" />
 	</behavior>
@@ -24,6 +24,7 @@
 <table name="documentation_parts" phpName="DocumentationPart">
 	<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
 	<column name="name" type="varchar" size="100" required="true"/>
+	<column name="title" type="varchar" size="255" />
 	<column name="name_normalized" type="varchar" size="100" required="true"/>
 	<column name="body" type="blob" />
 	<column name="documentation_id" type="integer" required="true"/>
@@ -36,7 +37,7 @@
 	</foreign-key>
 	<column name="sort" type="integer" />
 	<column name="is_overview" type="boolean" size="1" default="0" />
-	<column name="is_inactive" type="boolean" size="1" default="0" />
+	<column name="is_published" type="boolean" size="1" default="1" />
 	<behavior name="denyable">
 		<parameter name="role_key" value="documentations"/>
 	</behavior>

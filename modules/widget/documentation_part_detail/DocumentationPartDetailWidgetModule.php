@@ -31,25 +31,23 @@ class DocumentationPartDetailWidgetModule extends PersistentWidgetModule {
 		if($oDocumentationPart === null) {
 			return array();
 		}
-		$aResult = array();
-		$aResult['DocumentationId'] = $oDocumentationPart->getDocumentationId();
-		$aResult['ImageId'] = $oDocumentationPart->getImageId();
-		$aResult['Name'] = $oDocumentationPart->getName();
+		$aResult = $oDocumentationPart->toArray();
+		
 		$aResult['CreatedInfo'] = Util::formatCreatedInfo($oDocumentationPart);
 		$aResult['UpdatedInfo'] = Util::formatUpdatedInfo($oDocumentationPart);
     $sBody = '';
 		if(is_resource($oDocumentationPart->getBody())) {
 			$sBody = RichtextUtil::parseStorageForBackendOutput(stream_get_contents($oDocumentationPart->getBody()))->render();
 		}
-		$aResult['DocumentationPartBody'] = $sBody;
+		$aResult['Body'] = $sBody;
 		return $aResult;
 	}
 	
 	private function validate($aDocumentationPartData, $oDocumentationPart) {
 		$oFlash = Flash::getFlash();
 		$oFlash->setArrayToCheck($aDocumentationPartData);
-		$oFlash->checkForValue('name', 'documentation_part.name_required');
-		$oFlash->checkForValue('body', 'documentation_part.body_required');
+		$oFlash->checkForValue('name', 'documentation_part_name_required');
+		$oFlash->checkForValue('body', 'documentation_part_body_required');
 		$oFlash->checkForValue('documentation_id', 'documentation_required');
 		$oFlash->finishReporting();
 	}

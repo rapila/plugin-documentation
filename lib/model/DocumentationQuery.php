@@ -6,7 +6,7 @@
 class DocumentationQuery extends BaseDocumentationQuery {
 
 	public function active() {
-		return $this->filterByIsInactive(false);
+		return $this->filterByIsPublished(true);
 	}
 	
 	public function orderByRand() {

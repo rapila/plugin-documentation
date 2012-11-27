@@ -13,5 +13,9 @@ class Documentation extends BaseDocumentation {
 		}
 		return $oPage->getFullPathArray(array($this->getKey()));
 	}
+	
+	public function getFullName() {
+		return '['.$this->getLanguageId().'] '.$this->getName().(!$this->getIsPublished() ? ' [!]' : '');
+	}
 }
 

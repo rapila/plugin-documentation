@@ -65,15 +65,16 @@ Widget.types.documentation_part_detail = {
 			this.current_detail_id = documentation_part_data.Id;
 			this.content.find("select[name='documentation_id']").val(documentation_part_data.DocumentationId);
 			this.content.find("input[name='name']").val(documentation_part_data.Name);
+			this.content.find("input[name='title']").val(documentation_part_data.Title);
 			this.image_id = documentation_part_data.ImageId;
 			this.content.find(".updated_info").text(documentation_part_data.UpdatedInfo);
 			this.content.find(".created_info").text(documentation_part_data.CreatedInfo);
-			this.content.find("input[name='is_inactive']").prop('checked', documentation_part_data.IsInactive);
+			this.content.find("input[name='is_published']").prop('checked', documentation_part_data.IsPublished);
 			this.content.find("input[name='is_overview']").prop('checked', documentation_part_data.IsOverview);
 			this.content.find("span[class='detail_id']").text(documentation_part_data.Id);
 			this.detail_widget.set_title(this.detail_widget.settings.title = documentation_part_data.Name);
 			this.documentation_part_body.ensureWidget(function(widget) {
-				widget.set_data(documentation_part_data.DocumentationPartBody);
+				widget.set_data(documentation_part_data.Body);
 			});
 			this.content.find('div.hide_if_not_saved').show();
 			this.detail_widget.enable();		

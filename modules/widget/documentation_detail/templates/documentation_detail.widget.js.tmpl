@@ -24,6 +24,7 @@ Widget.types.documentation_detail = {
 			this.content.find("input[name='version']").val(documentation_data.Version);
 			this.content.find("input[name='key']").val(documentation_data.Key);
 			this.content.find("input[name='youtube_url']").val(documentation_data.YoutubeUrl);
+			this.content.find("input[name='is_published']").prop('checked', documentation_data.IsPublished);
 			this.content.find(".updated_info").text(documentation_data.UpdatedInfo);
 			this.content.find(".created_info").text(documentation_data.CreatedInfo);
 			this.content.find("span[class='detail_id']").text(documentation_data.Id);

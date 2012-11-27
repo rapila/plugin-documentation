@@ -42,7 +42,7 @@ class DocumentationPartListWidgetModule extends PersistentWidgetModule {
 	}
 
 	public function getColumnIdentifiers() {
-		return array('id', 'name', 'body_truncated', 'documentation_name', 'sort', 'has_image', 'is_overview', 'is_active', 'delete');
+		return array('id', 'name', 'body_truncated', 'documentation_name', 'sort', 'has_image', 'is_published', 'delete');
 	}
 	
 	public function getMetadataForColumn($sColumnIdentifier) {
@@ -66,11 +66,8 @@ class DocumentationPartListWidgetModule extends PersistentWidgetModule {
 				$aResult['heading'] = StringPeer::getString('wns.documentation_part.has_image');
 				$aResult['is_sortable'] = false;
 				break;
-			case 'is_active':
-				$aResult['heading'] = StringPeer::getString('wns.documentation_part.is_active');
-				break;
-			case 'is_overview':
-				$aResult['heading'] = StringPeer::getString('wns.documentation_part.is_overview');
+			case 'is_published':
+				$aResult['heading'] = StringPeer::getString('wns.documentation_part.is_published');
 				break;
 			case 'delete':
 				$aResult['heading'] = ' ';
@@ -85,9 +82,6 @@ class DocumentationPartListWidgetModule extends PersistentWidgetModule {
 	public function getDatabaseColumnForColumn($sColumnIdentifier) {
 		if($sColumnIdentifier === 'documentation_name') {
 			return DocumentationPartPeer::DOCUMENTATION_ID;
-		}
-		if($sColumnIdentifier === 'is_active') {
-			return DocumentationPartPeer::IS_INACTIVE;
 		}
 		if($sColumnIdentifier === 'body_truncated') {
 			return DocumentationPartPeer::BODY;

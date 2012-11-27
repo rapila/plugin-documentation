@@ -96,7 +96,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 		if($oDocumentation === null) {
 			return null;
 		}
-		$aDocumentationParts = DocumentationPartQuery::create()->filterByDocumentationId($oDocumentation->getId())->filterByIsInactive(false)->orderBySort()->find();
+		$aDocumentationParts = DocumentationPartQuery::create()->filterByDocumentationId($oDocumentation->getId())->filterByIsPublished(true)->orderBySort()->find();
 		$oTemplate = $this->constructTemplate('documentation'.($bToPdf ? '_pdf' : ''));
 		
 		// render video if exists
@@ -105,7 +105,8 @@ class DocumentationsFrontendModule extends FrontendModule {
 		}
 		$oTemplate->replaceIdentifier('tutorial_name', $oDocumentation->getName());
 		$oTemplate->replaceIdentifier('documentation_title', $oDocumentation->getTitle());
-		$oTemplate->replaceIdentifier('description', RichtextUtil::parseStorageForFrontendOutput(stream_get_contents($oDocumentation->getDescription())));
+		$sDescription = RichtextUtil::parseStorageForFrontendOutput(stream_get_contents($oDocumentation->getDescription()));
+		$oTemplate->replaceIdentifier('description', $sDescription);
 		if($bToPdf === false) {
 			$oTemplate->replaceIdentifier('pdf_link', TagWriter::quickTag('a', array('href' => LinkUtil::link(array('export_pdf', $oDocumentation->getId()), 'FileManager'), 'rel' => 'internal', 'class' => 'not_to_be_printed download'), 'PDF runterladen'));
 		}
@@ -121,11 +122,18 @@ class DocumentationsFrontendModule extends FrontendModule {
 		$bRequiresQuicklinks = count($aDocumentationParts) > 1;
 		foreach($aDocumentationParts as $oPart) {
 		  if($bRequiresQuicklinks) {
-  			$oTemplate->replaceIdentifierMultiple('part_links', TagWriter::quickTag('a', array('href' => $sLinkToSelf.'#'.$oPart->getNameNormalized()), $oPart->getName()), null, Template::NO_NEW_CONTEXT);
+				$aParams = array('href' => $sLinkToSelf.'#'.$oPart->getNameNormalized());
+				if($oPart->getTitle()) {
+					$aParams = array_merge($aParams, array('title' => $oPart->getTitle()));
+				}
+  			$oTemplate->replaceIdentifierMultiple('part_links', TagWriter::quickTag('a', $aParams, $oPart->getName()), null, Template::NO_NEW_CONTEXT);
 		  }
 			$oPartTemplate = clone $oPartTmpl;
 			$oPartTemplate->replaceIdentifier('name', '«'.$oPart->getName().'»');
 			$oPartTemplate->replaceIdentifier('anchor', $oPart->getNameNormalized());
+			if($oPart->getId() == 5) {
+				// Util::dumpAll($oPartTemplate);
+			}
 			if($oPart->getDocument()) {
 				$sSrc = !$oPart->getIsOverview() ? $oPart->getDocument()->getDisplayUrl(array('max_width' => 200)) : $oPart->getDocument()->getDisplayUrl(array('max_width' => 656));
 				if(RichtextUtil::$USE_ABSOLUTE_LINKS) {

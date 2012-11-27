@@ -13,8 +13,8 @@ class DocumentationPartsAdminModule extends AdminModule {
 
 		$this->oSidebarWidget = new ListWidgetModule();
 		$this->oSidebarWidget->setListTag(new TagWriter('ul'));
-		$this->oSidebarWidget->setDelegate(new CriteriaListWidgetDelegate($this, 'Documentation', 'name'));
-    $this->oSidebarWidget->setSetting('initial_selection', array('documentation_id' => $this->oListWidget->oDelegateProxy->getDocumentationId()));
+		$this->oSidebarWidget->setDelegate(new CriteriaListWidgetDelegate($this, 'Documentation', 'full_name'));
+		$this->oSidebarWidget->setSetting('initial_selection', array('documentation_id' => $this->oListWidget->oDelegateProxy->getDocumentationId()));
 
 		$this->oInputWidget = new SidebarInputWidgetModule();
 	}
@@ -28,7 +28,7 @@ class DocumentationPartsAdminModule extends AdminModule {
 	}
 	
 	public function getColumnIdentifiers() {
-		return array('documentation_id', 'name', 'magic_column');
+		return array('documentation_id', 'full_name', 'magic_column');
 	}
 	
 	public function getMetadataForColumn($sColumnIdentifier) {
@@ -38,7 +38,7 @@ class DocumentationPartsAdminModule extends AdminModule {
 				$aResult['display_type'] = ListWidgetModule::DISPLAY_TYPE_DATA;
 				$aResult['field_name'] = 'id';
 				break;
-			case 'name':
+			case 'full_name':
 				$aResult['heading'] = StringPeer::getString('wns.documentation.sidebar_heading');
 				break;
 			case 'magic_column':
@@ -53,10 +53,17 @@ class DocumentationPartsAdminModule extends AdminModule {
 		if(DocumentationQuery::create()->count() > 0) {
 			return array(
 				array('documentation_id' => CriteriaListWidgetDelegate::SELECT_ALL,
-							'name' => StringPeer::getString('wns.sidebar.select_all'),
+							'full_name' => StringPeer::getString('wns.sidebar.select_all'),
 							'magic_column' => 'all'));
 		}
 		return array();
+	}
+	
+	public function getDatabaseColumnForColumn($sColumnIdentifier) {
+		if($sColumnIdentifier === 'full_name') {
+			return DocumentationPeer::NAME;
+		}
+		return null;
 	}
 
 	public function usedWidgets() {
