@@ -17,7 +17,6 @@
 	<unique>
 		<unique-column name="key" />
 		<unique-column name="language_id" />
-		<unique-column name="version" />
 	</unique>
 </table>
 
