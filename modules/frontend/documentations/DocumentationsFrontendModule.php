@@ -56,6 +56,8 @@ class DocumentationsFrontendModule extends FrontendModule {
 		foreach($aDocumentations as $oDocumentation) {
 			$oItemTemplate = clone $oItemPrototype;
 			$oItemTemplate->replaceIdentifier('detail_link', LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))));
+			$oItemTemplate->replaceIdentifier('title', $oDocumentation->getTitle());
+			$oItemTemplate->replaceIdentifier('title_or_name', $oDocumentation->getTitle() != null ? $oDocumentation->getTitle() : $oDocumentation->getName());
 			$oItemTemplate->replaceIdentifier('name', $oDocumentation->getName());
 			$oTemplate->replaceIdentifierMultiple('list_item', $oItemTemplate);
 		}
@@ -104,7 +106,6 @@ class DocumentationsFrontendModule extends FrontendModule {
 			$this->embedVideo($oTemplate, $oDocumentation);
 		}
 		$oTemplate->replaceIdentifier('documentation_name', $oDocumentation->getName());
-		$oTemplate->replaceIdentifier('title_or_name', $oDocumentation->getTitle());
 		$sDescription = RichtextUtil::parseStorageForFrontendOutput(stream_get_contents($oDocumentation->getDescription()));
 		$oTemplate->replaceIdentifier('description', $sDescription);
 		if($bToPdf === false) {
