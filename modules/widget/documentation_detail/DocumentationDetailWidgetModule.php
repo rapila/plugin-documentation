@@ -37,14 +37,15 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 		$oFlash->setArrayToCheck($aDocumentationData);
 		$oFlash->checkForValue('name', 'name_required');
 		$oFlash->checkForValue('key', 'key_required');
-		$oFlash->checkForValue('language_id', 'language_required');
-		if($aDocumentationData['key'] != null 
-			&& $aDocumentationData['language_id'] != null 
-			&& $aDocumentationData['version'] != null) {
-			$oCheckDocumentation = DocumentationQuery::create()->filterByLanguageId($aDocumentationData['language_id'])->filterByVersion($aDocumentationData['version'])->filterByKey($aDocumentationData['key'])->findOne();
-			if($oCheckDocumentation && !Util::equals($oDocumentation, $oCheckDocumentation)) {
-				$oFlash->addMessage('documentation_unique_required');
-			}
+		if(LanguageQuery::create()->count() > 1) {
+			$oFlash->checkForValue('language_id', 'language_required');
+		} else {
+			$oLanguage = LanguageQuery::create()->findOne();
+			$oDocumentation->setLanguageId($oLanguage->getId());
+		}
+		$oCheckDocumentation = DocumentationQuery::create()->filterByLanguageId($oDocumentation->getLanguageId())->filterByKey($aDocumentationData['key'])->findOne();
+		if($oCheckDocumentation && !Util::equals($oDocumentation, $oCheckDocumentation)) {
+			$oFlash->addMessage('documentation_unique_required');
 		}
 		$oFlash->finishReporting();
 	}

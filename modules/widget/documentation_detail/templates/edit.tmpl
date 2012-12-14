@@ -1,7 +1,9 @@
 <form>
 	<div class="status_section">
-		<label for="language_id" class="validate-language_required validate-documentation_unique_required">{{writeString=wns.language}}*</label><br />
-		<select name="language_id" class="ui-widget-content" data-widget-type="language_input"></select><br />
+		<div class="language_related">
+			<label for="language_id" class="validate-language_required validate-documentation_unique_required">{{writeString=wns.language}}*</label><br />
+			<select name="language_id" class="ui-widget-content" data-widget-type="language_input"></select><br />
+		</div>
 		<label for="key" class="validate-key_required">{{writeString=wns.documentation.key}}*</label><br />
 		<input type="text" name="key" class="ui-widget-content autowidth" size="28" /><br />
 		<label for="is_published">{{writeString=wns.documentation.is_published}}</label><br />

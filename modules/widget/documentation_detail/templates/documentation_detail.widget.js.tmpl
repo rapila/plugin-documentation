@@ -4,7 +4,11 @@ Widget.types.documentation_detail = {
 		this.content = Widget.parseHTML("{{includeTemplate=edit}}");
 		this.content.find('div.hide_if_not_saved').hide();
 		this.documentation_description = this.content.find('div.documentation_description');
-		this.content.find("select[name='language_id']").prepareWidget();
+		this.content.find("select[name='language_id']").prepareWidget(function(widget) {
+			if(widget._element.is(":visible") === false) {
+				_this.content.find('div.language_related').hide();
+			}
+		}, jQuery.noop);
 		
 		Widget.callStatic('detail', 'create_for_instance', this);
 		this.handle('opened', function() { 
