@@ -40,13 +40,14 @@ class DocumentationPartTableMap extends TableMap
         // columns
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('NAME', 'Name', 'VARCHAR', true, 100, null);
+        $this->addColumn('TITLE', 'Title', 'VARCHAR', false, 255, null);
         $this->addColumn('NAME_NORMALIZED', 'NameNormalized', 'VARCHAR', true, 100, null);
         $this->addColumn('BODY', 'Body', 'BLOB', false, null, null);
         $this->addForeignKey('DOCUMENTATION_ID', 'DocumentationId', 'INTEGER', 'documentations', 'ID', true, null, null);
         $this->addForeignKey('IMAGE_ID', 'ImageId', 'INTEGER', 'documents', 'ID', false, null, null);
         $this->addColumn('SORT', 'Sort', 'INTEGER', false, null, null);
         $this->addColumn('IS_OVERVIEW', 'IsOverview', 'BOOLEAN', false, 1, false);
-        $this->addColumn('IS_INACTIVE', 'IsInactive', 'BOOLEAN', false, 1, false);
+        $this->addColumn('IS_PUBLISHED', 'IsPublished', 'BOOLEAN', false, 1, true);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
         $this->addForeignKey('CREATED_BY', 'CreatedBy', 'INTEGER', 'users', 'ID', false, null, null);

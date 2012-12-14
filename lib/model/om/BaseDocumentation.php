@@ -42,12 +42,6 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     protected $name;
 
     /**
-     * The value for the version field.
-     * @var        string
-     */
-    protected $version;
-
-    /**
      * The value for the title field.
      * @var        string
      */
@@ -66,10 +60,29 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     protected $youtube_url;
 
     /**
+     * The value for the key field.
+     * @var        string
+     */
+    protected $key;
+
+    /**
+     * The value for the version field.
+     * @var        string
+     */
+    protected $version;
+
+    /**
      * The value for the language_id field.
      * @var        string
      */
     protected $language_id;
+
+    /**
+     * The value for the is_published field.
+     * Note: this column has a database default value of: true
+     * @var        boolean
+     */
+    protected $is_published;
 
     /**
      * The value for the created_at field.
@@ -137,6 +150,27 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     protected $documentationPartsScheduledForDeletion = null;
 
     /**
+     * Applies default values to this object.
+     * This method should be called from the object's constructor (or
+     * equivalent initialization method).
+     * @see        __construct()
+     */
+    public function applyDefaultValues()
+    {
+        $this->is_published = true;
+    }
+
+    /**
+     * Initializes internal state of BaseDocumentation object.
+     * @see        applyDefaults()
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->applyDefaultValues();
+    }
+
+    /**
      * Get the [id] column value.
      *
      * @return int
@@ -154,16 +188,6 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Get the [version] column value.
-     *
-     * @return string
-     */
-    public function getVersion()
-    {
-        return $this->version;
     }
 
     /**
@@ -197,6 +221,26 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     }
 
     /**
+     * Get the [key] column value.
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Get the [version] column value.
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
      * Get the [language_id] column value.
      *
      * @return string
@@ -204,6 +248,16 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     public function getLanguageId()
     {
         return $this->language_id;
+    }
+
+    /**
+     * Get the [is_published] column value.
+     *
+     * @return boolean
+     */
+    public function getIsPublished()
+    {
+        return $this->is_published;
     }
 
     /**
@@ -343,27 +397,6 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     } // setName()
 
     /**
-     * Set the value of [version] column.
-     *
-     * @param string $v new value
-     * @return Documentation The current object (for fluent API support)
-     */
-    public function setVersion($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->version !== $v) {
-            $this->version = $v;
-            $this->modifiedColumns[] = DocumentationPeer::VERSION;
-        }
-
-
-        return $this;
-    } // setVersion()
-
-    /**
      * Set the value of [title] column.
      *
      * @param string $v new value
@@ -430,6 +463,48 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     } // setYoutubeUrl()
 
     /**
+     * Set the value of [key] column.
+     *
+     * @param string $v new value
+     * @return Documentation The current object (for fluent API support)
+     */
+    public function setKey($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->key !== $v) {
+            $this->key = $v;
+            $this->modifiedColumns[] = DocumentationPeer::KEY;
+        }
+
+
+        return $this;
+    } // setKey()
+
+    /**
+     * Set the value of [version] column.
+     *
+     * @param string $v new value
+     * @return Documentation The current object (for fluent API support)
+     */
+    public function setVersion($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->version !== $v) {
+            $this->version = $v;
+            $this->modifiedColumns[] = DocumentationPeer::VERSION;
+        }
+
+
+        return $this;
+    } // setVersion()
+
+    /**
      * Set the value of [language_id] column.
      *
      * @param string $v new value
@@ -453,6 +528,35 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
 
         return $this;
     } // setLanguageId()
+
+    /**
+     * Sets the value of the [is_published] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param boolean|integer|string $v The new value
+     * @return Documentation The current object (for fluent API support)
+     */
+    public function setIsPublished($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->is_published !== $v) {
+            $this->is_published = $v;
+            $this->modifiedColumns[] = DocumentationPeer::IS_PUBLISHED;
+        }
+
+
+        return $this;
+    } // setIsPublished()
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
@@ -560,6 +664,10 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->is_published !== true) {
+                return false;
+            }
+
         // otherwise, everything was equal, so return true
         return true;
     } // hasOnlyDefaultValues()
@@ -584,21 +692,23 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
 
             $this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
             $this->name = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
-            $this->version = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-            $this->title = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-            if ($row[$startcol + 4] !== null) {
+            $this->title = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+            if ($row[$startcol + 3] !== null) {
                 $this->description = fopen('php://memory', 'r+');
-                fwrite($this->description, $row[$startcol + 4]);
+                fwrite($this->description, $row[$startcol + 3]);
                 rewind($this->description);
             } else {
                 $this->description = null;
             }
-            $this->youtube_url = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-            $this->language_id = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-            $this->created_at = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
-            $this->updated_at = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-            $this->created_by = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
-            $this->updated_by = ($row[$startcol + 10] !== null) ? (int) $row[$startcol + 10] : null;
+            $this->youtube_url = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+            $this->key = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+            $this->version = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+            $this->language_id = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+            $this->is_published = ($row[$startcol + 8] !== null) ? (boolean) $row[$startcol + 8] : null;
+            $this->created_at = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+            $this->updated_at = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+            $this->created_by = ($row[$startcol + 11] !== null) ? (int) $row[$startcol + 11] : null;
+            $this->updated_by = ($row[$startcol + 12] !== null) ? (int) $row[$startcol + 12] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -607,7 +717,7 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
 
-            return $startcol + 11; // 11 = DocumentationPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 13; // 13 = DocumentationPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Documentation object", $e);
@@ -931,9 +1041,6 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
         if ($this->isColumnModified(DocumentationPeer::NAME)) {
             $modifiedColumns[':p' . $index++]  = '`NAME`';
         }
-        if ($this->isColumnModified(DocumentationPeer::VERSION)) {
-            $modifiedColumns[':p' . $index++]  = '`VERSION`';
-        }
         if ($this->isColumnModified(DocumentationPeer::TITLE)) {
             $modifiedColumns[':p' . $index++]  = '`TITLE`';
         }
@@ -943,8 +1050,17 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
         if ($this->isColumnModified(DocumentationPeer::YOUTUBE_URL)) {
             $modifiedColumns[':p' . $index++]  = '`YOUTUBE_URL`';
         }
+        if ($this->isColumnModified(DocumentationPeer::KEY)) {
+            $modifiedColumns[':p' . $index++]  = '`KEY`';
+        }
+        if ($this->isColumnModified(DocumentationPeer::VERSION)) {
+            $modifiedColumns[':p' . $index++]  = '`VERSION`';
+        }
         if ($this->isColumnModified(DocumentationPeer::LANGUAGE_ID)) {
             $modifiedColumns[':p' . $index++]  = '`LANGUAGE_ID`';
+        }
+        if ($this->isColumnModified(DocumentationPeer::IS_PUBLISHED)) {
+            $modifiedColumns[':p' . $index++]  = '`IS_PUBLISHED`';
         }
         if ($this->isColumnModified(DocumentationPeer::CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
@@ -975,9 +1091,6 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
                     case '`NAME`':
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
-                    case '`VERSION`':
-                        $stmt->bindValue($identifier, $this->version, PDO::PARAM_STR);
-                        break;
                     case '`TITLE`':
                         $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
                         break;
@@ -990,8 +1103,17 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
                     case '`YOUTUBE_URL`':
                         $stmt->bindValue($identifier, $this->youtube_url, PDO::PARAM_STR);
                         break;
+                    case '`KEY`':
+                        $stmt->bindValue($identifier, $this->key, PDO::PARAM_STR);
+                        break;
+                    case '`VERSION`':
+                        $stmt->bindValue($identifier, $this->version, PDO::PARAM_STR);
+                        break;
                     case '`LANGUAGE_ID`':
                         $stmt->bindValue($identifier, $this->language_id, PDO::PARAM_STR);
+                        break;
+                    case '`IS_PUBLISHED`':
+                        $stmt->bindValue($identifier, (int) $this->is_published, PDO::PARAM_INT);
                         break;
                     case '`CREATED_AT`':
                         $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
@@ -1178,30 +1300,36 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
                 return $this->getName();
                 break;
             case 2:
-                return $this->getVersion();
-                break;
-            case 3:
                 return $this->getTitle();
                 break;
-            case 4:
+            case 3:
                 return $this->getDescription();
                 break;
-            case 5:
+            case 4:
                 return $this->getYoutubeUrl();
                 break;
+            case 5:
+                return $this->getKey();
+                break;
             case 6:
-                return $this->getLanguageId();
+                return $this->getVersion();
                 break;
             case 7:
-                return $this->getCreatedAt();
+                return $this->getLanguageId();
                 break;
             case 8:
-                return $this->getUpdatedAt();
+                return $this->getIsPublished();
                 break;
             case 9:
-                return $this->getCreatedBy();
+                return $this->getCreatedAt();
                 break;
             case 10:
+                return $this->getUpdatedAt();
+                break;
+            case 11:
+                return $this->getCreatedBy();
+                break;
+            case 12:
                 return $this->getUpdatedBy();
                 break;
             default:
@@ -1227,23 +1355,25 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
-        if (isset($alreadyDumpedObjects['Documentation'][serialize($this->getPrimaryKey())])) {
+        if (isset($alreadyDumpedObjects['Documentation'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Documentation'][serialize($this->getPrimaryKey())] = true;
+        $alreadyDumpedObjects['Documentation'][$this->getPrimaryKey()] = true;
         $keys = DocumentationPeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
-            $keys[2] => $this->getVersion(),
-            $keys[3] => $this->getTitle(),
-            $keys[4] => $this->getDescription(),
-            $keys[5] => $this->getYoutubeUrl(),
-            $keys[6] => $this->getLanguageId(),
-            $keys[7] => $this->getCreatedAt(),
-            $keys[8] => $this->getUpdatedAt(),
-            $keys[9] => $this->getCreatedBy(),
-            $keys[10] => $this->getUpdatedBy(),
+            $keys[2] => $this->getTitle(),
+            $keys[3] => $this->getDescription(),
+            $keys[4] => $this->getYoutubeUrl(),
+            $keys[5] => $this->getKey(),
+            $keys[6] => $this->getVersion(),
+            $keys[7] => $this->getLanguageId(),
+            $keys[8] => $this->getIsPublished(),
+            $keys[9] => $this->getCreatedAt(),
+            $keys[10] => $this->getUpdatedAt(),
+            $keys[11] => $this->getCreatedBy(),
+            $keys[12] => $this->getUpdatedBy(),
         );
         if ($includeForeignObjects) {
             if (null !== $this->aLanguage) {
@@ -1299,30 +1429,36 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
                 $this->setName($value);
                 break;
             case 2:
-                $this->setVersion($value);
-                break;
-            case 3:
                 $this->setTitle($value);
                 break;
-            case 4:
+            case 3:
                 $this->setDescription($value);
                 break;
-            case 5:
+            case 4:
                 $this->setYoutubeUrl($value);
                 break;
+            case 5:
+                $this->setKey($value);
+                break;
             case 6:
-                $this->setLanguageId($value);
+                $this->setVersion($value);
                 break;
             case 7:
-                $this->setCreatedAt($value);
+                $this->setLanguageId($value);
                 break;
             case 8:
-                $this->setUpdatedAt($value);
+                $this->setIsPublished($value);
                 break;
             case 9:
-                $this->setCreatedBy($value);
+                $this->setCreatedAt($value);
                 break;
             case 10:
+                $this->setUpdatedAt($value);
+                break;
+            case 11:
+                $this->setCreatedBy($value);
+                break;
+            case 12:
                 $this->setUpdatedBy($value);
                 break;
         } // switch()
@@ -1351,15 +1487,17 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
 
         if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setName($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setVersion($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setTitle($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setDescription($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setYoutubeUrl($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setLanguageId($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setCreatedAt($arr[$keys[7]]);
-        if (array_key_exists($keys[8], $arr)) $this->setUpdatedAt($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setCreatedBy($arr[$keys[9]]);
-        if (array_key_exists($keys[10], $arr)) $this->setUpdatedBy($arr[$keys[10]]);
+        if (array_key_exists($keys[2], $arr)) $this->setTitle($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setDescription($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setYoutubeUrl($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setKey($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setVersion($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setLanguageId($arr[$keys[7]]);
+        if (array_key_exists($keys[8], $arr)) $this->setIsPublished($arr[$keys[8]]);
+        if (array_key_exists($keys[9], $arr)) $this->setCreatedAt($arr[$keys[9]]);
+        if (array_key_exists($keys[10], $arr)) $this->setUpdatedAt($arr[$keys[10]]);
+        if (array_key_exists($keys[11], $arr)) $this->setCreatedBy($arr[$keys[11]]);
+        if (array_key_exists($keys[12], $arr)) $this->setUpdatedBy($arr[$keys[12]]);
     }
 
     /**
@@ -1373,11 +1511,13 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
 
         if ($this->isColumnModified(DocumentationPeer::ID)) $criteria->add(DocumentationPeer::ID, $this->id);
         if ($this->isColumnModified(DocumentationPeer::NAME)) $criteria->add(DocumentationPeer::NAME, $this->name);
-        if ($this->isColumnModified(DocumentationPeer::VERSION)) $criteria->add(DocumentationPeer::VERSION, $this->version);
         if ($this->isColumnModified(DocumentationPeer::TITLE)) $criteria->add(DocumentationPeer::TITLE, $this->title);
         if ($this->isColumnModified(DocumentationPeer::DESCRIPTION)) $criteria->add(DocumentationPeer::DESCRIPTION, $this->description);
         if ($this->isColumnModified(DocumentationPeer::YOUTUBE_URL)) $criteria->add(DocumentationPeer::YOUTUBE_URL, $this->youtube_url);
+        if ($this->isColumnModified(DocumentationPeer::KEY)) $criteria->add(DocumentationPeer::KEY, $this->key);
+        if ($this->isColumnModified(DocumentationPeer::VERSION)) $criteria->add(DocumentationPeer::VERSION, $this->version);
         if ($this->isColumnModified(DocumentationPeer::LANGUAGE_ID)) $criteria->add(DocumentationPeer::LANGUAGE_ID, $this->language_id);
+        if ($this->isColumnModified(DocumentationPeer::IS_PUBLISHED)) $criteria->add(DocumentationPeer::IS_PUBLISHED, $this->is_published);
         if ($this->isColumnModified(DocumentationPeer::CREATED_AT)) $criteria->add(DocumentationPeer::CREATED_AT, $this->created_at);
         if ($this->isColumnModified(DocumentationPeer::UPDATED_AT)) $criteria->add(DocumentationPeer::UPDATED_AT, $this->updated_at);
         if ($this->isColumnModified(DocumentationPeer::CREATED_BY)) $criteria->add(DocumentationPeer::CREATED_BY, $this->created_by);
@@ -1398,35 +1538,28 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     {
         $criteria = new Criteria(DocumentationPeer::DATABASE_NAME);
         $criteria->add(DocumentationPeer::ID, $this->id);
-        $criteria->add(DocumentationPeer::LANGUAGE_ID, $this->language_id);
 
         return $criteria;
     }
 
     /**
-     * Returns the composite primary key for this object.
-     * The array elements will be in same order as specified in XML.
-     * @return array
+     * Returns the primary key for this object (row).
+     * @return int
      */
     public function getPrimaryKey()
     {
-        $pks = array();
-        $pks[0] = $this->getId();
-        $pks[1] = $this->getLanguageId();
-
-        return $pks;
+        return $this->getId();
     }
 
     /**
-     * Set the [composite] primary key.
+     * Generic method to set the primary key (id column).
      *
-     * @param array $keys The elements of the composite key (order must match the order in XML file).
+     * @param  int $key Primary key.
      * @return void
      */
-    public function setPrimaryKey($keys)
+    public function setPrimaryKey($key)
     {
-        $this->setId($keys[0]);
-        $this->setLanguageId($keys[1]);
+        $this->setId($key);
     }
 
     /**
@@ -1436,7 +1569,7 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     public function isPrimaryKeyNull()
     {
 
-        return (null === $this->getId()) && (null === $this->getLanguageId());
+        return null === $this->getId();
     }
 
     /**
@@ -1453,11 +1586,13 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setName($this->getName());
-        $copyObj->setVersion($this->getVersion());
         $copyObj->setTitle($this->getTitle());
         $copyObj->setDescription($this->getDescription());
         $copyObj->setYoutubeUrl($this->getYoutubeUrl());
+        $copyObj->setKey($this->getKey());
+        $copyObj->setVersion($this->getVersion());
         $copyObj->setLanguageId($this->getLanguageId());
+        $copyObj->setIsPublished($this->getIsPublished());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         $copyObj->setCreatedBy($this->getCreatedBy());
@@ -1984,11 +2119,13 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     {
         $this->id = null;
         $this->name = null;
-        $this->version = null;
         $this->title = null;
         $this->description = null;
         $this->youtube_url = null;
+        $this->key = null;
+        $this->version = null;
         $this->language_id = null;
+        $this->is_published = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->created_by = null;
@@ -1996,6 +2133,7 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->clearAllReferences();
+        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);

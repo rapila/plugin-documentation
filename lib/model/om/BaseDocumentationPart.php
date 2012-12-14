@@ -42,6 +42,12 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     protected $name;
 
     /**
+     * The value for the title field.
+     * @var        string
+     */
+    protected $title;
+
+    /**
      * The value for the name_normalized field.
      * @var        string
      */
@@ -79,11 +85,11 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     protected $is_overview;
 
     /**
-     * The value for the is_inactive field.
-     * Note: this column has a database default value of: false
+     * The value for the is_published field.
+     * Note: this column has a database default value of: true
      * @var        boolean
      */
-    protected $is_inactive;
+    protected $is_published;
 
     /**
      * The value for the created_at field.
@@ -152,7 +158,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     public function applyDefaultValues()
     {
         $this->is_overview = false;
-        $this->is_inactive = false;
+        $this->is_published = true;
     }
 
     /**
@@ -183,6 +189,16 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Get the [title] column value.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
     }
 
     /**
@@ -246,13 +262,13 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [is_inactive] column value.
+     * Get the [is_published] column value.
      *
      * @return boolean
      */
-    public function getIsInactive()
+    public function getIsPublished()
     {
-        return $this->is_inactive;
+        return $this->is_published;
     }
 
     /**
@@ -390,6 +406,27 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
 
         return $this;
     } // setName()
+
+    /**
+     * Set the value of [title] column.
+     *
+     * @param string $v new value
+     * @return DocumentationPart The current object (for fluent API support)
+     */
+    public function setTitle($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->title !== $v) {
+            $this->title = $v;
+            $this->modifiedColumns[] = DocumentationPartPeer::TITLE;
+        }
+
+
+        return $this;
+    } // setTitle()
 
     /**
      * Set the value of [name_normalized] column.
@@ -537,7 +574,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     } // setIsOverview()
 
     /**
-     * Sets the value of the [is_inactive] column.
+     * Sets the value of the [is_published] column.
      * Non-boolean arguments are converted using the following rules:
      *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
@@ -546,7 +583,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      * @param boolean|integer|string $v The new value
      * @return DocumentationPart The current object (for fluent API support)
      */
-    public function setIsInactive($v)
+    public function setIsPublished($v)
     {
         if ($v !== null) {
             if (is_string($v)) {
@@ -556,14 +593,14 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
             }
         }
 
-        if ($this->is_inactive !== $v) {
-            $this->is_inactive = $v;
-            $this->modifiedColumns[] = DocumentationPartPeer::IS_INACTIVE;
+        if ($this->is_published !== $v) {
+            $this->is_published = $v;
+            $this->modifiedColumns[] = DocumentationPartPeer::IS_PUBLISHED;
         }
 
 
         return $this;
-    } // setIsInactive()
+    } // setIsPublished()
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
@@ -675,7 +712,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
                 return false;
             }
 
-            if ($this->is_inactive !== false) {
+            if ($this->is_published !== true) {
                 return false;
             }
 
@@ -703,23 +740,24 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
 
             $this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
             $this->name = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
-            $this->name_normalized = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-            if ($row[$startcol + 3] !== null) {
+            $this->title = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+            $this->name_normalized = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+            if ($row[$startcol + 4] !== null) {
                 $this->body = fopen('php://memory', 'r+');
-                fwrite($this->body, $row[$startcol + 3]);
+                fwrite($this->body, $row[$startcol + 4]);
                 rewind($this->body);
             } else {
                 $this->body = null;
             }
-            $this->documentation_id = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
-            $this->image_id = ($row[$startcol + 5] !== null) ? (int) $row[$startcol + 5] : null;
-            $this->sort = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
-            $this->is_overview = ($row[$startcol + 7] !== null) ? (boolean) $row[$startcol + 7] : null;
-            $this->is_inactive = ($row[$startcol + 8] !== null) ? (boolean) $row[$startcol + 8] : null;
-            $this->created_at = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-            $this->updated_at = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
-            $this->created_by = ($row[$startcol + 11] !== null) ? (int) $row[$startcol + 11] : null;
-            $this->updated_by = ($row[$startcol + 12] !== null) ? (int) $row[$startcol + 12] : null;
+            $this->documentation_id = ($row[$startcol + 5] !== null) ? (int) $row[$startcol + 5] : null;
+            $this->image_id = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
+            $this->sort = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
+            $this->is_overview = ($row[$startcol + 8] !== null) ? (boolean) $row[$startcol + 8] : null;
+            $this->is_published = ($row[$startcol + 9] !== null) ? (boolean) $row[$startcol + 9] : null;
+            $this->created_at = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+            $this->updated_at = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+            $this->created_by = ($row[$startcol + 12] !== null) ? (int) $row[$startcol + 12] : null;
+            $this->updated_by = ($row[$startcol + 13] !== null) ? (int) $row[$startcol + 13] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -728,7 +766,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
 
-            return $startcol + 13; // 13 = DocumentationPartPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 14; // 14 = DocumentationPartPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating DocumentationPart object", $e);
@@ -1044,6 +1082,9 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
         if ($this->isColumnModified(DocumentationPartPeer::NAME)) {
             $modifiedColumns[':p' . $index++]  = '`NAME`';
         }
+        if ($this->isColumnModified(DocumentationPartPeer::TITLE)) {
+            $modifiedColumns[':p' . $index++]  = '`TITLE`';
+        }
         if ($this->isColumnModified(DocumentationPartPeer::NAME_NORMALIZED)) {
             $modifiedColumns[':p' . $index++]  = '`NAME_NORMALIZED`';
         }
@@ -1062,8 +1103,8 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
         if ($this->isColumnModified(DocumentationPartPeer::IS_OVERVIEW)) {
             $modifiedColumns[':p' . $index++]  = '`IS_OVERVIEW`';
         }
-        if ($this->isColumnModified(DocumentationPartPeer::IS_INACTIVE)) {
-            $modifiedColumns[':p' . $index++]  = '`IS_INACTIVE`';
+        if ($this->isColumnModified(DocumentationPartPeer::IS_PUBLISHED)) {
+            $modifiedColumns[':p' . $index++]  = '`IS_PUBLISHED`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
@@ -1094,6 +1135,9 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
                     case '`NAME`':
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
+                    case '`TITLE`':
+                        $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
+                        break;
                     case '`NAME_NORMALIZED`':
                         $stmt->bindValue($identifier, $this->name_normalized, PDO::PARAM_STR);
                         break;
@@ -1115,8 +1159,8 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
                     case '`IS_OVERVIEW`':
                         $stmt->bindValue($identifier, (int) $this->is_overview, PDO::PARAM_INT);
                         break;
-                    case '`IS_INACTIVE`':
-                        $stmt->bindValue($identifier, (int) $this->is_inactive, PDO::PARAM_INT);
+                    case '`IS_PUBLISHED`':
+                        $stmt->bindValue($identifier, (int) $this->is_published, PDO::PARAM_INT);
                         break;
                     case '`CREATED_AT`':
                         $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
@@ -1301,36 +1345,39 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
                 return $this->getName();
                 break;
             case 2:
-                return $this->getNameNormalized();
+                return $this->getTitle();
                 break;
             case 3:
-                return $this->getBody();
+                return $this->getNameNormalized();
                 break;
             case 4:
-                return $this->getDocumentationId();
+                return $this->getBody();
                 break;
             case 5:
-                return $this->getImageId();
+                return $this->getDocumentationId();
                 break;
             case 6:
-                return $this->getSort();
+                return $this->getImageId();
                 break;
             case 7:
-                return $this->getIsOverview();
+                return $this->getSort();
                 break;
             case 8:
-                return $this->getIsInactive();
+                return $this->getIsOverview();
                 break;
             case 9:
-                return $this->getCreatedAt();
+                return $this->getIsPublished();
                 break;
             case 10:
-                return $this->getUpdatedAt();
+                return $this->getCreatedAt();
                 break;
             case 11:
-                return $this->getCreatedBy();
+                return $this->getUpdatedAt();
                 break;
             case 12:
+                return $this->getCreatedBy();
+                break;
+            case 13:
                 return $this->getUpdatedBy();
                 break;
             default:
@@ -1364,17 +1411,18 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
-            $keys[2] => $this->getNameNormalized(),
-            $keys[3] => $this->getBody(),
-            $keys[4] => $this->getDocumentationId(),
-            $keys[5] => $this->getImageId(),
-            $keys[6] => $this->getSort(),
-            $keys[7] => $this->getIsOverview(),
-            $keys[8] => $this->getIsInactive(),
-            $keys[9] => $this->getCreatedAt(),
-            $keys[10] => $this->getUpdatedAt(),
-            $keys[11] => $this->getCreatedBy(),
-            $keys[12] => $this->getUpdatedBy(),
+            $keys[2] => $this->getTitle(),
+            $keys[3] => $this->getNameNormalized(),
+            $keys[4] => $this->getBody(),
+            $keys[5] => $this->getDocumentationId(),
+            $keys[6] => $this->getImageId(),
+            $keys[7] => $this->getSort(),
+            $keys[8] => $this->getIsOverview(),
+            $keys[9] => $this->getIsPublished(),
+            $keys[10] => $this->getCreatedAt(),
+            $keys[11] => $this->getUpdatedAt(),
+            $keys[12] => $this->getCreatedBy(),
+            $keys[13] => $this->getUpdatedBy(),
         );
         if ($includeForeignObjects) {
             if (null !== $this->aDocumentation) {
@@ -1430,36 +1478,39 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
                 $this->setName($value);
                 break;
             case 2:
-                $this->setNameNormalized($value);
+                $this->setTitle($value);
                 break;
             case 3:
-                $this->setBody($value);
+                $this->setNameNormalized($value);
                 break;
             case 4:
-                $this->setDocumentationId($value);
+                $this->setBody($value);
                 break;
             case 5:
-                $this->setImageId($value);
+                $this->setDocumentationId($value);
                 break;
             case 6:
-                $this->setSort($value);
+                $this->setImageId($value);
                 break;
             case 7:
-                $this->setIsOverview($value);
+                $this->setSort($value);
                 break;
             case 8:
-                $this->setIsInactive($value);
+                $this->setIsOverview($value);
                 break;
             case 9:
-                $this->setCreatedAt($value);
+                $this->setIsPublished($value);
                 break;
             case 10:
-                $this->setUpdatedAt($value);
+                $this->setCreatedAt($value);
                 break;
             case 11:
-                $this->setCreatedBy($value);
+                $this->setUpdatedAt($value);
                 break;
             case 12:
+                $this->setCreatedBy($value);
+                break;
+            case 13:
                 $this->setUpdatedBy($value);
                 break;
         } // switch()
@@ -1488,17 +1539,18 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
 
         if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setName($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setNameNormalized($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setBody($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setDocumentationId($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setImageId($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setSort($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setIsOverview($arr[$keys[7]]);
-        if (array_key_exists($keys[8], $arr)) $this->setIsInactive($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setCreatedAt($arr[$keys[9]]);
-        if (array_key_exists($keys[10], $arr)) $this->setUpdatedAt($arr[$keys[10]]);
-        if (array_key_exists($keys[11], $arr)) $this->setCreatedBy($arr[$keys[11]]);
-        if (array_key_exists($keys[12], $arr)) $this->setUpdatedBy($arr[$keys[12]]);
+        if (array_key_exists($keys[2], $arr)) $this->setTitle($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setNameNormalized($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setBody($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setDocumentationId($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setImageId($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setSort($arr[$keys[7]]);
+        if (array_key_exists($keys[8], $arr)) $this->setIsOverview($arr[$keys[8]]);
+        if (array_key_exists($keys[9], $arr)) $this->setIsPublished($arr[$keys[9]]);
+        if (array_key_exists($keys[10], $arr)) $this->setCreatedAt($arr[$keys[10]]);
+        if (array_key_exists($keys[11], $arr)) $this->setUpdatedAt($arr[$keys[11]]);
+        if (array_key_exists($keys[12], $arr)) $this->setCreatedBy($arr[$keys[12]]);
+        if (array_key_exists($keys[13], $arr)) $this->setUpdatedBy($arr[$keys[13]]);
     }
 
     /**
@@ -1512,13 +1564,14 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
 
         if ($this->isColumnModified(DocumentationPartPeer::ID)) $criteria->add(DocumentationPartPeer::ID, $this->id);
         if ($this->isColumnModified(DocumentationPartPeer::NAME)) $criteria->add(DocumentationPartPeer::NAME, $this->name);
+        if ($this->isColumnModified(DocumentationPartPeer::TITLE)) $criteria->add(DocumentationPartPeer::TITLE, $this->title);
         if ($this->isColumnModified(DocumentationPartPeer::NAME_NORMALIZED)) $criteria->add(DocumentationPartPeer::NAME_NORMALIZED, $this->name_normalized);
         if ($this->isColumnModified(DocumentationPartPeer::BODY)) $criteria->add(DocumentationPartPeer::BODY, $this->body);
         if ($this->isColumnModified(DocumentationPartPeer::DOCUMENTATION_ID)) $criteria->add(DocumentationPartPeer::DOCUMENTATION_ID, $this->documentation_id);
         if ($this->isColumnModified(DocumentationPartPeer::IMAGE_ID)) $criteria->add(DocumentationPartPeer::IMAGE_ID, $this->image_id);
         if ($this->isColumnModified(DocumentationPartPeer::SORT)) $criteria->add(DocumentationPartPeer::SORT, $this->sort);
         if ($this->isColumnModified(DocumentationPartPeer::IS_OVERVIEW)) $criteria->add(DocumentationPartPeer::IS_OVERVIEW, $this->is_overview);
-        if ($this->isColumnModified(DocumentationPartPeer::IS_INACTIVE)) $criteria->add(DocumentationPartPeer::IS_INACTIVE, $this->is_inactive);
+        if ($this->isColumnModified(DocumentationPartPeer::IS_PUBLISHED)) $criteria->add(DocumentationPartPeer::IS_PUBLISHED, $this->is_published);
         if ($this->isColumnModified(DocumentationPartPeer::CREATED_AT)) $criteria->add(DocumentationPartPeer::CREATED_AT, $this->created_at);
         if ($this->isColumnModified(DocumentationPartPeer::UPDATED_AT)) $criteria->add(DocumentationPartPeer::UPDATED_AT, $this->updated_at);
         if ($this->isColumnModified(DocumentationPartPeer::CREATED_BY)) $criteria->add(DocumentationPartPeer::CREATED_BY, $this->created_by);
@@ -1587,13 +1640,14 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setName($this->getName());
+        $copyObj->setTitle($this->getTitle());
         $copyObj->setNameNormalized($this->getNameNormalized());
         $copyObj->setBody($this->getBody());
         $copyObj->setDocumentationId($this->getDocumentationId());
         $copyObj->setImageId($this->getImageId());
         $copyObj->setSort($this->getSort());
         $copyObj->setIsOverview($this->getIsOverview());
-        $copyObj->setIsInactive($this->getIsInactive());
+        $copyObj->setIsPublished($this->getIsPublished());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         $copyObj->setCreatedBy($this->getCreatedBy());
@@ -1694,9 +1748,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     public function getDocumentation(PropelPDO $con = null)
     {
         if ($this->aDocumentation === null && ($this->documentation_id !== null)) {
-            $this->aDocumentation = DocumentationQuery::create()
-                ->filterByDocumentationPart($this) // here
-                ->findOne($con);
+            $this->aDocumentation = DocumentationQuery::create()->findPk($this->documentation_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
@@ -1869,13 +1921,14 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     {
         $this->id = null;
         $this->name = null;
+        $this->title = null;
         $this->name_normalized = null;
         $this->body = null;
         $this->documentation_id = null;
         $this->image_id = null;
         $this->sort = null;
         $this->is_overview = null;
-        $this->is_inactive = null;
+        $this->is_published = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->created_by = null;

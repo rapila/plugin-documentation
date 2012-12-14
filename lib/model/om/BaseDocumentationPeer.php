@@ -24,22 +24,19 @@ abstract class BaseDocumentationPeer
     const TM_CLASS = 'DocumentationTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 11;
+    const NUM_COLUMNS = 13;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 11;
+    const NUM_HYDRATE_COLUMNS = 13;
 
     /** the column name for the ID field */
     const ID = 'documentations.ID';
 
     /** the column name for the NAME field */
     const NAME = 'documentations.NAME';
-
-    /** the column name for the VERSION field */
-    const VERSION = 'documentations.VERSION';
 
     /** the column name for the TITLE field */
     const TITLE = 'documentations.TITLE';
@@ -50,8 +47,17 @@ abstract class BaseDocumentationPeer
     /** the column name for the YOUTUBE_URL field */
     const YOUTUBE_URL = 'documentations.YOUTUBE_URL';
 
+    /** the column name for the KEY field */
+    const KEY = 'documentations.KEY';
+
+    /** the column name for the VERSION field */
+    const VERSION = 'documentations.VERSION';
+
     /** the column name for the LANGUAGE_ID field */
     const LANGUAGE_ID = 'documentations.LANGUAGE_ID';
+
+    /** the column name for the IS_PUBLISHED field */
+    const IS_PUBLISHED = 'documentations.IS_PUBLISHED';
 
     /** the column name for the CREATED_AT field */
     const CREATED_AT = 'documentations.CREATED_AT';
@@ -86,12 +92,12 @@ abstract class BaseDocumentationPeer
      * e.g. DocumentationPeer::$fieldNames[DocumentationPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'Name', 'Version', 'Title', 'Description', 'YoutubeUrl', 'LanguageId', 'CreatedAt', 'UpdatedAt', 'CreatedBy', 'UpdatedBy', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'name', 'version', 'title', 'description', 'youtubeUrl', 'languageId', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy', ),
-        BasePeer::TYPE_COLNAME => array (DocumentationPeer::ID, DocumentationPeer::NAME, DocumentationPeer::VERSION, DocumentationPeer::TITLE, DocumentationPeer::DESCRIPTION, DocumentationPeer::YOUTUBE_URL, DocumentationPeer::LANGUAGE_ID, DocumentationPeer::CREATED_AT, DocumentationPeer::UPDATED_AT, DocumentationPeer::CREATED_BY, DocumentationPeer::UPDATED_BY, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'NAME', 'VERSION', 'TITLE', 'DESCRIPTION', 'YOUTUBE_URL', 'LANGUAGE_ID', 'CREATED_AT', 'UPDATED_AT', 'CREATED_BY', 'UPDATED_BY', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'name', 'version', 'title', 'description', 'youtube_url', 'language_id', 'created_at', 'updated_at', 'created_by', 'updated_by', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'Name', 'Title', 'Description', 'YoutubeUrl', 'Key', 'Version', 'LanguageId', 'IsPublished', 'CreatedAt', 'UpdatedAt', 'CreatedBy', 'UpdatedBy', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'name', 'title', 'description', 'youtubeUrl', 'key', 'version', 'languageId', 'isPublished', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy', ),
+        BasePeer::TYPE_COLNAME => array (DocumentationPeer::ID, DocumentationPeer::NAME, DocumentationPeer::TITLE, DocumentationPeer::DESCRIPTION, DocumentationPeer::YOUTUBE_URL, DocumentationPeer::KEY, DocumentationPeer::VERSION, DocumentationPeer::LANGUAGE_ID, DocumentationPeer::IS_PUBLISHED, DocumentationPeer::CREATED_AT, DocumentationPeer::UPDATED_AT, DocumentationPeer::CREATED_BY, DocumentationPeer::UPDATED_BY, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'NAME', 'TITLE', 'DESCRIPTION', 'YOUTUBE_URL', 'KEY', 'VERSION', 'LANGUAGE_ID', 'IS_PUBLISHED', 'CREATED_AT', 'UPDATED_AT', 'CREATED_BY', 'UPDATED_BY', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'name', 'title', 'description', 'youtube_url', 'key', 'version', 'language_id', 'is_published', 'created_at', 'updated_at', 'created_by', 'updated_by', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
     );
 
     /**
@@ -101,12 +107,12 @@ abstract class BaseDocumentationPeer
      * e.g. DocumentationPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Name' => 1, 'Version' => 2, 'Title' => 3, 'Description' => 4, 'YoutubeUrl' => 5, 'LanguageId' => 6, 'CreatedAt' => 7, 'UpdatedAt' => 8, 'CreatedBy' => 9, 'UpdatedBy' => 10, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'name' => 1, 'version' => 2, 'title' => 3, 'description' => 4, 'youtubeUrl' => 5, 'languageId' => 6, 'createdAt' => 7, 'updatedAt' => 8, 'createdBy' => 9, 'updatedBy' => 10, ),
-        BasePeer::TYPE_COLNAME => array (DocumentationPeer::ID => 0, DocumentationPeer::NAME => 1, DocumentationPeer::VERSION => 2, DocumentationPeer::TITLE => 3, DocumentationPeer::DESCRIPTION => 4, DocumentationPeer::YOUTUBE_URL => 5, DocumentationPeer::LANGUAGE_ID => 6, DocumentationPeer::CREATED_AT => 7, DocumentationPeer::UPDATED_AT => 8, DocumentationPeer::CREATED_BY => 9, DocumentationPeer::UPDATED_BY => 10, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'NAME' => 1, 'VERSION' => 2, 'TITLE' => 3, 'DESCRIPTION' => 4, 'YOUTUBE_URL' => 5, 'LANGUAGE_ID' => 6, 'CREATED_AT' => 7, 'UPDATED_AT' => 8, 'CREATED_BY' => 9, 'UPDATED_BY' => 10, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'name' => 1, 'version' => 2, 'title' => 3, 'description' => 4, 'youtube_url' => 5, 'language_id' => 6, 'created_at' => 7, 'updated_at' => 8, 'created_by' => 9, 'updated_by' => 10, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Name' => 1, 'Title' => 2, 'Description' => 3, 'YoutubeUrl' => 4, 'Key' => 5, 'Version' => 6, 'LanguageId' => 7, 'IsPublished' => 8, 'CreatedAt' => 9, 'UpdatedAt' => 10, 'CreatedBy' => 11, 'UpdatedBy' => 12, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'name' => 1, 'title' => 2, 'description' => 3, 'youtubeUrl' => 4, 'key' => 5, 'version' => 6, 'languageId' => 7, 'isPublished' => 8, 'createdAt' => 9, 'updatedAt' => 10, 'createdBy' => 11, 'updatedBy' => 12, ),
+        BasePeer::TYPE_COLNAME => array (DocumentationPeer::ID => 0, DocumentationPeer::NAME => 1, DocumentationPeer::TITLE => 2, DocumentationPeer::DESCRIPTION => 3, DocumentationPeer::YOUTUBE_URL => 4, DocumentationPeer::KEY => 5, DocumentationPeer::VERSION => 6, DocumentationPeer::LANGUAGE_ID => 7, DocumentationPeer::IS_PUBLISHED => 8, DocumentationPeer::CREATED_AT => 9, DocumentationPeer::UPDATED_AT => 10, DocumentationPeer::CREATED_BY => 11, DocumentationPeer::UPDATED_BY => 12, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'NAME' => 1, 'TITLE' => 2, 'DESCRIPTION' => 3, 'YOUTUBE_URL' => 4, 'KEY' => 5, 'VERSION' => 6, 'LANGUAGE_ID' => 7, 'IS_PUBLISHED' => 8, 'CREATED_AT' => 9, 'UPDATED_AT' => 10, 'CREATED_BY' => 11, 'UPDATED_BY' => 12, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'name' => 1, 'title' => 2, 'description' => 3, 'youtube_url' => 4, 'key' => 5, 'version' => 6, 'language_id' => 7, 'is_published' => 8, 'created_at' => 9, 'updated_at' => 10, 'created_by' => 11, 'updated_by' => 12, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
     );
 
     /**
@@ -182,11 +188,13 @@ abstract class BaseDocumentationPeer
         if (null === $alias) {
             $criteria->addSelectColumn(DocumentationPeer::ID);
             $criteria->addSelectColumn(DocumentationPeer::NAME);
-            $criteria->addSelectColumn(DocumentationPeer::VERSION);
             $criteria->addSelectColumn(DocumentationPeer::TITLE);
             $criteria->addSelectColumn(DocumentationPeer::DESCRIPTION);
             $criteria->addSelectColumn(DocumentationPeer::YOUTUBE_URL);
+            $criteria->addSelectColumn(DocumentationPeer::KEY);
+            $criteria->addSelectColumn(DocumentationPeer::VERSION);
             $criteria->addSelectColumn(DocumentationPeer::LANGUAGE_ID);
+            $criteria->addSelectColumn(DocumentationPeer::IS_PUBLISHED);
             $criteria->addSelectColumn(DocumentationPeer::CREATED_AT);
             $criteria->addSelectColumn(DocumentationPeer::UPDATED_AT);
             $criteria->addSelectColumn(DocumentationPeer::CREATED_BY);
@@ -194,11 +202,13 @@ abstract class BaseDocumentationPeer
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.NAME');
-            $criteria->addSelectColumn($alias . '.VERSION');
             $criteria->addSelectColumn($alias . '.TITLE');
             $criteria->addSelectColumn($alias . '.DESCRIPTION');
             $criteria->addSelectColumn($alias . '.YOUTUBE_URL');
+            $criteria->addSelectColumn($alias . '.KEY');
+            $criteria->addSelectColumn($alias . '.VERSION');
             $criteria->addSelectColumn($alias . '.LANGUAGE_ID');
+            $criteria->addSelectColumn($alias . '.IS_PUBLISHED');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
             $criteria->addSelectColumn($alias . '.UPDATED_AT');
             $criteria->addSelectColumn($alias . '.CREATED_BY');
@@ -329,7 +339,7 @@ abstract class BaseDocumentationPeer
     {
         if (Propel::isInstancePoolingEnabled()) {
             if ($key === null) {
-                $key = serialize(array((string) $obj->getId(), (string) $obj->getLanguageId()));
+                $key = (string) $obj->getId();
             } // if key === null
             DocumentationPeer::$instances[$key] = $obj;
         }
@@ -352,10 +362,10 @@ abstract class BaseDocumentationPeer
     {
         if (Propel::isInstancePoolingEnabled() && $value !== null) {
             if (is_object($value) && $value instanceof Documentation) {
-                $key = serialize(array((string) $value->getId(), (string) $value->getLanguageId()));
-            } elseif (is_array($value) && count($value) === 2) {
+                $key = (string) $value->getId();
+            } elseif (is_scalar($value)) {
                 // assume we've been passed a primary key
-                $key = serialize(array((string) $value[0], (string) $value[1]));
+                $key = (string) $value;
             } else {
                 $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or Documentation object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
                 throw $e;
@@ -420,11 +430,11 @@ abstract class BaseDocumentationPeer
     public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
     {
         // If the PK cannot be derived from the row, return null.
-        if ($row[$startcol] === null && $row[$startcol + 6] === null) {
+        if ($row[$startcol] === null) {
             return null;
         }
 
-        return serialize(array((string) $row[$startcol], (string) $row[$startcol + 6]));
+        return (string) $row[$startcol];
     }
 
     /**
@@ -439,7 +449,7 @@ abstract class BaseDocumentationPeer
     public static function getPrimaryKeyFromRow($row, $startcol = 0)
     {
 
-        return array((int) $row[$startcol], (string) $row[$startcol + 6]);
+        return (int) $row[$startcol];
     }
 
     /**
@@ -1531,14 +1541,6 @@ abstract class BaseDocumentationPeer
                 $selectCriteria->setPrimaryTableName(DocumentationPeer::TABLE_NAME);
             }
 
-            $comparison = $criteria->getComparison(DocumentationPeer::LANGUAGE_ID);
-            $value = $criteria->remove(DocumentationPeer::LANGUAGE_ID);
-            if ($value) {
-                $selectCriteria->add(DocumentationPeer::LANGUAGE_ID, $value, $comparison);
-            } else {
-                $selectCriteria->setPrimaryTableName(DocumentationPeer::TABLE_NAME);
-            }
-
         } else { // $values is Documentation object
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
@@ -1608,17 +1610,7 @@ abstract class BaseDocumentationPeer
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
             $criteria = new Criteria(DocumentationPeer::DATABASE_NAME);
-            // primary key is composite; we therefore, expect
-            // the primary key passed to be an array of pkey values
-            if (count($values) == count($values, COUNT_RECURSIVE)) {
-                // array is not multi-dimensional
-                $values = array($values);
-            }
-            foreach ($values as $value) {
-                $criterion = $criteria->getNewCriterion(DocumentationPeer::ID, $value[0]);
-                $criterion->addAnd($criteria->getNewCriterion(DocumentationPeer::LANGUAGE_ID, $value[1]));
-                $criteria->addOr($criterion);
-            }
+            $criteria->add(DocumentationPeer::ID, (array) $values, Criteria::IN);
         }
 
         // Set the correct dbName
@@ -1730,28 +1722,58 @@ abstract class BaseDocumentationPeer
     }
 
     /**
-     * Retrieve object using using composite pkey values.
-     * @param   int $id
-     * @param   string $language_id
-     * @param      PropelPDO $con
-     * @return   Documentation
+     * Retrieve a single object by pkey.
+     *
+     * @param      int $pk the primary key.
+     * @param      PropelPDO $con the connection to use
+     * @return Documentation
      */
-    public static function retrieveByPK($id, $language_id, PropelPDO $con = null) {
-        $_instancePoolKey = serialize(array((string) $id, (string) $language_id));
-         if (null !== ($obj = DocumentationPeer::getInstanceFromPool($_instancePoolKey))) {
-             return $obj;
+    public static function retrieveByPK($pk, PropelPDO $con = null)
+    {
+
+        if (null !== ($obj = DocumentationPeer::getInstanceFromPool((string) $pk))) {
+            return $obj;
         }
 
         if ($con === null) {
             $con = Propel::getConnection(DocumentationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
+
         $criteria = new Criteria(DocumentationPeer::DATABASE_NAME);
-        $criteria->add(DocumentationPeer::ID, $id);
-        $criteria->add(DocumentationPeer::LANGUAGE_ID, $language_id);
+        $criteria->add(DocumentationPeer::ID, $pk);
+
         $v = DocumentationPeer::doSelect($criteria, $con);
 
-        return !empty($v) ? $v[0] : null;
+        return !empty($v) > 0 ? $v[0] : null;
     }
+
+    /**
+     * Retrieve multiple objects by pkey.
+     *
+     * @param      array $pks List of primary keys
+     * @param      PropelPDO $con the connection to use
+     * @return Documentation[]
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function retrieveByPKs($pks, PropelPDO $con = null)
+    {
+        if ($con === null) {
+            $con = Propel::getConnection(DocumentationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $objs = null;
+        if (empty($pks)) {
+            $objs = array();
+        } else {
+            $criteria = new Criteria(DocumentationPeer::DATABASE_NAME);
+            $criteria->add(DocumentationPeer::ID, $pks, Criteria::IN);
+            $objs = DocumentationPeer::doSelect($criteria, $con);
+        }
+
+        return $objs;
+    }
+
     // denyable behavior
     public static function ignoreRights($bIgnore = true) {
         self::$IGNORE_RIGHTS = $bIgnore;

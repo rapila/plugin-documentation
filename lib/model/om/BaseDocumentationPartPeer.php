@@ -24,19 +24,22 @@ abstract class BaseDocumentationPartPeer
     const TM_CLASS = 'DocumentationPartTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 13;
+    const NUM_COLUMNS = 14;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 13;
+    const NUM_HYDRATE_COLUMNS = 14;
 
     /** the column name for the ID field */
     const ID = 'documentation_parts.ID';
 
     /** the column name for the NAME field */
     const NAME = 'documentation_parts.NAME';
+
+    /** the column name for the TITLE field */
+    const TITLE = 'documentation_parts.TITLE';
 
     /** the column name for the NAME_NORMALIZED field */
     const NAME_NORMALIZED = 'documentation_parts.NAME_NORMALIZED';
@@ -56,8 +59,8 @@ abstract class BaseDocumentationPartPeer
     /** the column name for the IS_OVERVIEW field */
     const IS_OVERVIEW = 'documentation_parts.IS_OVERVIEW';
 
-    /** the column name for the IS_INACTIVE field */
-    const IS_INACTIVE = 'documentation_parts.IS_INACTIVE';
+    /** the column name for the IS_PUBLISHED field */
+    const IS_PUBLISHED = 'documentation_parts.IS_PUBLISHED';
 
     /** the column name for the CREATED_AT field */
     const CREATED_AT = 'documentation_parts.CREATED_AT';
@@ -92,12 +95,12 @@ abstract class BaseDocumentationPartPeer
      * e.g. DocumentationPartPeer::$fieldNames[DocumentationPartPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'Name', 'NameNormalized', 'Body', 'DocumentationId', 'ImageId', 'Sort', 'IsOverview', 'IsInactive', 'CreatedAt', 'UpdatedAt', 'CreatedBy', 'UpdatedBy', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'name', 'nameNormalized', 'body', 'documentationId', 'imageId', 'sort', 'isOverview', 'isInactive', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy', ),
-        BasePeer::TYPE_COLNAME => array (DocumentationPartPeer::ID, DocumentationPartPeer::NAME, DocumentationPartPeer::NAME_NORMALIZED, DocumentationPartPeer::BODY, DocumentationPartPeer::DOCUMENTATION_ID, DocumentationPartPeer::IMAGE_ID, DocumentationPartPeer::SORT, DocumentationPartPeer::IS_OVERVIEW, DocumentationPartPeer::IS_INACTIVE, DocumentationPartPeer::CREATED_AT, DocumentationPartPeer::UPDATED_AT, DocumentationPartPeer::CREATED_BY, DocumentationPartPeer::UPDATED_BY, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'NAME', 'NAME_NORMALIZED', 'BODY', 'DOCUMENTATION_ID', 'IMAGE_ID', 'SORT', 'IS_OVERVIEW', 'IS_INACTIVE', 'CREATED_AT', 'UPDATED_AT', 'CREATED_BY', 'UPDATED_BY', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'name', 'name_normalized', 'body', 'documentation_id', 'image_id', 'sort', 'is_overview', 'is_inactive', 'created_at', 'updated_at', 'created_by', 'updated_by', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'Name', 'Title', 'NameNormalized', 'Body', 'DocumentationId', 'ImageId', 'Sort', 'IsOverview', 'IsPublished', 'CreatedAt', 'UpdatedAt', 'CreatedBy', 'UpdatedBy', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'name', 'title', 'nameNormalized', 'body', 'documentationId', 'imageId', 'sort', 'isOverview', 'isPublished', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy', ),
+        BasePeer::TYPE_COLNAME => array (DocumentationPartPeer::ID, DocumentationPartPeer::NAME, DocumentationPartPeer::TITLE, DocumentationPartPeer::NAME_NORMALIZED, DocumentationPartPeer::BODY, DocumentationPartPeer::DOCUMENTATION_ID, DocumentationPartPeer::IMAGE_ID, DocumentationPartPeer::SORT, DocumentationPartPeer::IS_OVERVIEW, DocumentationPartPeer::IS_PUBLISHED, DocumentationPartPeer::CREATED_AT, DocumentationPartPeer::UPDATED_AT, DocumentationPartPeer::CREATED_BY, DocumentationPartPeer::UPDATED_BY, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'NAME', 'TITLE', 'NAME_NORMALIZED', 'BODY', 'DOCUMENTATION_ID', 'IMAGE_ID', 'SORT', 'IS_OVERVIEW', 'IS_PUBLISHED', 'CREATED_AT', 'UPDATED_AT', 'CREATED_BY', 'UPDATED_BY', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'name', 'title', 'name_normalized', 'body', 'documentation_id', 'image_id', 'sort', 'is_overview', 'is_published', 'created_at', 'updated_at', 'created_by', 'updated_by', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
     );
 
     /**
@@ -107,12 +110,12 @@ abstract class BaseDocumentationPartPeer
      * e.g. DocumentationPartPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Name' => 1, 'NameNormalized' => 2, 'Body' => 3, 'DocumentationId' => 4, 'ImageId' => 5, 'Sort' => 6, 'IsOverview' => 7, 'IsInactive' => 8, 'CreatedAt' => 9, 'UpdatedAt' => 10, 'CreatedBy' => 11, 'UpdatedBy' => 12, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'name' => 1, 'nameNormalized' => 2, 'body' => 3, 'documentationId' => 4, 'imageId' => 5, 'sort' => 6, 'isOverview' => 7, 'isInactive' => 8, 'createdAt' => 9, 'updatedAt' => 10, 'createdBy' => 11, 'updatedBy' => 12, ),
-        BasePeer::TYPE_COLNAME => array (DocumentationPartPeer::ID => 0, DocumentationPartPeer::NAME => 1, DocumentationPartPeer::NAME_NORMALIZED => 2, DocumentationPartPeer::BODY => 3, DocumentationPartPeer::DOCUMENTATION_ID => 4, DocumentationPartPeer::IMAGE_ID => 5, DocumentationPartPeer::SORT => 6, DocumentationPartPeer::IS_OVERVIEW => 7, DocumentationPartPeer::IS_INACTIVE => 8, DocumentationPartPeer::CREATED_AT => 9, DocumentationPartPeer::UPDATED_AT => 10, DocumentationPartPeer::CREATED_BY => 11, DocumentationPartPeer::UPDATED_BY => 12, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'NAME' => 1, 'NAME_NORMALIZED' => 2, 'BODY' => 3, 'DOCUMENTATION_ID' => 4, 'IMAGE_ID' => 5, 'SORT' => 6, 'IS_OVERVIEW' => 7, 'IS_INACTIVE' => 8, 'CREATED_AT' => 9, 'UPDATED_AT' => 10, 'CREATED_BY' => 11, 'UPDATED_BY' => 12, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'name' => 1, 'name_normalized' => 2, 'body' => 3, 'documentation_id' => 4, 'image_id' => 5, 'sort' => 6, 'is_overview' => 7, 'is_inactive' => 8, 'created_at' => 9, 'updated_at' => 10, 'created_by' => 11, 'updated_by' => 12, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Name' => 1, 'Title' => 2, 'NameNormalized' => 3, 'Body' => 4, 'DocumentationId' => 5, 'ImageId' => 6, 'Sort' => 7, 'IsOverview' => 8, 'IsPublished' => 9, 'CreatedAt' => 10, 'UpdatedAt' => 11, 'CreatedBy' => 12, 'UpdatedBy' => 13, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'name' => 1, 'title' => 2, 'nameNormalized' => 3, 'body' => 4, 'documentationId' => 5, 'imageId' => 6, 'sort' => 7, 'isOverview' => 8, 'isPublished' => 9, 'createdAt' => 10, 'updatedAt' => 11, 'createdBy' => 12, 'updatedBy' => 13, ),
+        BasePeer::TYPE_COLNAME => array (DocumentationPartPeer::ID => 0, DocumentationPartPeer::NAME => 1, DocumentationPartPeer::TITLE => 2, DocumentationPartPeer::NAME_NORMALIZED => 3, DocumentationPartPeer::BODY => 4, DocumentationPartPeer::DOCUMENTATION_ID => 5, DocumentationPartPeer::IMAGE_ID => 6, DocumentationPartPeer::SORT => 7, DocumentationPartPeer::IS_OVERVIEW => 8, DocumentationPartPeer::IS_PUBLISHED => 9, DocumentationPartPeer::CREATED_AT => 10, DocumentationPartPeer::UPDATED_AT => 11, DocumentationPartPeer::CREATED_BY => 12, DocumentationPartPeer::UPDATED_BY => 13, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'NAME' => 1, 'TITLE' => 2, 'NAME_NORMALIZED' => 3, 'BODY' => 4, 'DOCUMENTATION_ID' => 5, 'IMAGE_ID' => 6, 'SORT' => 7, 'IS_OVERVIEW' => 8, 'IS_PUBLISHED' => 9, 'CREATED_AT' => 10, 'UPDATED_AT' => 11, 'CREATED_BY' => 12, 'UPDATED_BY' => 13, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'name' => 1, 'title' => 2, 'name_normalized' => 3, 'body' => 4, 'documentation_id' => 5, 'image_id' => 6, 'sort' => 7, 'is_overview' => 8, 'is_published' => 9, 'created_at' => 10, 'updated_at' => 11, 'created_by' => 12, 'updated_by' => 13, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
     );
 
     /**
@@ -188,13 +191,14 @@ abstract class BaseDocumentationPartPeer
         if (null === $alias) {
             $criteria->addSelectColumn(DocumentationPartPeer::ID);
             $criteria->addSelectColumn(DocumentationPartPeer::NAME);
+            $criteria->addSelectColumn(DocumentationPartPeer::TITLE);
             $criteria->addSelectColumn(DocumentationPartPeer::NAME_NORMALIZED);
             $criteria->addSelectColumn(DocumentationPartPeer::BODY);
             $criteria->addSelectColumn(DocumentationPartPeer::DOCUMENTATION_ID);
             $criteria->addSelectColumn(DocumentationPartPeer::IMAGE_ID);
             $criteria->addSelectColumn(DocumentationPartPeer::SORT);
             $criteria->addSelectColumn(DocumentationPartPeer::IS_OVERVIEW);
-            $criteria->addSelectColumn(DocumentationPartPeer::IS_INACTIVE);
+            $criteria->addSelectColumn(DocumentationPartPeer::IS_PUBLISHED);
             $criteria->addSelectColumn(DocumentationPartPeer::CREATED_AT);
             $criteria->addSelectColumn(DocumentationPartPeer::UPDATED_AT);
             $criteria->addSelectColumn(DocumentationPartPeer::CREATED_BY);
@@ -202,13 +206,14 @@ abstract class BaseDocumentationPartPeer
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.NAME');
+            $criteria->addSelectColumn($alias . '.TITLE');
             $criteria->addSelectColumn($alias . '.NAME_NORMALIZED');
             $criteria->addSelectColumn($alias . '.BODY');
             $criteria->addSelectColumn($alias . '.DOCUMENTATION_ID');
             $criteria->addSelectColumn($alias . '.IMAGE_ID');
             $criteria->addSelectColumn($alias . '.SORT');
             $criteria->addSelectColumn($alias . '.IS_OVERVIEW');
-            $criteria->addSelectColumn($alias . '.IS_INACTIVE');
+            $criteria->addSelectColumn($alias . '.IS_PUBLISHED');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
             $criteria->addSelectColumn($alias . '.UPDATED_AT');
             $criteria->addSelectColumn($alias . '.CREATED_BY');

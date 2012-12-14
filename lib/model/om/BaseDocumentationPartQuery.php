@@ -8,13 +8,14 @@
  *
  * @method DocumentationPartQuery orderById($order = Criteria::ASC) Order by the id column
  * @method DocumentationPartQuery orderByName($order = Criteria::ASC) Order by the name column
+ * @method DocumentationPartQuery orderByTitle($order = Criteria::ASC) Order by the title column
  * @method DocumentationPartQuery orderByNameNormalized($order = Criteria::ASC) Order by the name_normalized column
  * @method DocumentationPartQuery orderByBody($order = Criteria::ASC) Order by the body column
  * @method DocumentationPartQuery orderByDocumentationId($order = Criteria::ASC) Order by the documentation_id column
  * @method DocumentationPartQuery orderByImageId($order = Criteria::ASC) Order by the image_id column
  * @method DocumentationPartQuery orderBySort($order = Criteria::ASC) Order by the sort column
  * @method DocumentationPartQuery orderByIsOverview($order = Criteria::ASC) Order by the is_overview column
- * @method DocumentationPartQuery orderByIsInactive($order = Criteria::ASC) Order by the is_inactive column
+ * @method DocumentationPartQuery orderByIsPublished($order = Criteria::ASC) Order by the is_published column
  * @method DocumentationPartQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method DocumentationPartQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  * @method DocumentationPartQuery orderByCreatedBy($order = Criteria::ASC) Order by the created_by column
@@ -22,13 +23,14 @@
  *
  * @method DocumentationPartQuery groupById() Group by the id column
  * @method DocumentationPartQuery groupByName() Group by the name column
+ * @method DocumentationPartQuery groupByTitle() Group by the title column
  * @method DocumentationPartQuery groupByNameNormalized() Group by the name_normalized column
  * @method DocumentationPartQuery groupByBody() Group by the body column
  * @method DocumentationPartQuery groupByDocumentationId() Group by the documentation_id column
  * @method DocumentationPartQuery groupByImageId() Group by the image_id column
  * @method DocumentationPartQuery groupBySort() Group by the sort column
  * @method DocumentationPartQuery groupByIsOverview() Group by the is_overview column
- * @method DocumentationPartQuery groupByIsInactive() Group by the is_inactive column
+ * @method DocumentationPartQuery groupByIsPublished() Group by the is_published column
  * @method DocumentationPartQuery groupByCreatedAt() Group by the created_at column
  * @method DocumentationPartQuery groupByUpdatedAt() Group by the updated_at column
  * @method DocumentationPartQuery groupByCreatedBy() Group by the created_by column
@@ -59,13 +61,14 @@
  *
  * @method DocumentationPart findOneById(int $id) Return the first DocumentationPart filtered by the id column
  * @method DocumentationPart findOneByName(string $name) Return the first DocumentationPart filtered by the name column
+ * @method DocumentationPart findOneByTitle(string $title) Return the first DocumentationPart filtered by the title column
  * @method DocumentationPart findOneByNameNormalized(string $name_normalized) Return the first DocumentationPart filtered by the name_normalized column
  * @method DocumentationPart findOneByBody(resource $body) Return the first DocumentationPart filtered by the body column
  * @method DocumentationPart findOneByDocumentationId(int $documentation_id) Return the first DocumentationPart filtered by the documentation_id column
  * @method DocumentationPart findOneByImageId(int $image_id) Return the first DocumentationPart filtered by the image_id column
  * @method DocumentationPart findOneBySort(int $sort) Return the first DocumentationPart filtered by the sort column
  * @method DocumentationPart findOneByIsOverview(boolean $is_overview) Return the first DocumentationPart filtered by the is_overview column
- * @method DocumentationPart findOneByIsInactive(boolean $is_inactive) Return the first DocumentationPart filtered by the is_inactive column
+ * @method DocumentationPart findOneByIsPublished(boolean $is_published) Return the first DocumentationPart filtered by the is_published column
  * @method DocumentationPart findOneByCreatedAt(string $created_at) Return the first DocumentationPart filtered by the created_at column
  * @method DocumentationPart findOneByUpdatedAt(string $updated_at) Return the first DocumentationPart filtered by the updated_at column
  * @method DocumentationPart findOneByCreatedBy(int $created_by) Return the first DocumentationPart filtered by the created_by column
@@ -73,13 +76,14 @@
  *
  * @method array findById(int $id) Return DocumentationPart objects filtered by the id column
  * @method array findByName(string $name) Return DocumentationPart objects filtered by the name column
+ * @method array findByTitle(string $title) Return DocumentationPart objects filtered by the title column
  * @method array findByNameNormalized(string $name_normalized) Return DocumentationPart objects filtered by the name_normalized column
  * @method array findByBody(resource $body) Return DocumentationPart objects filtered by the body column
  * @method array findByDocumentationId(int $documentation_id) Return DocumentationPart objects filtered by the documentation_id column
  * @method array findByImageId(int $image_id) Return DocumentationPart objects filtered by the image_id column
  * @method array findBySort(int $sort) Return DocumentationPart objects filtered by the sort column
  * @method array findByIsOverview(boolean $is_overview) Return DocumentationPart objects filtered by the is_overview column
- * @method array findByIsInactive(boolean $is_inactive) Return DocumentationPart objects filtered by the is_inactive column
+ * @method array findByIsPublished(boolean $is_published) Return DocumentationPart objects filtered by the is_published column
  * @method array findByCreatedAt(string $created_at) Return DocumentationPart objects filtered by the created_at column
  * @method array findByUpdatedAt(string $updated_at) Return DocumentationPart objects filtered by the updated_at column
  * @method array findByCreatedBy(int $created_by) Return DocumentationPart objects filtered by the created_by column
@@ -173,7 +177,7 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `ID`, `NAME`, `NAME_NORMALIZED`, `BODY`, `DOCUMENTATION_ID`, `IMAGE_ID`, `SORT`, `IS_OVERVIEW`, `IS_INACTIVE`, `CREATED_AT`, `UPDATED_AT`, `CREATED_BY`, `UPDATED_BY` FROM `documentation_parts` WHERE `ID` = :p0';
+        $sql = 'SELECT `ID`, `NAME`, `TITLE`, `NAME_NORMALIZED`, `BODY`, `DOCUMENTATION_ID`, `IMAGE_ID`, `SORT`, `IS_OVERVIEW`, `IS_PUBLISHED`, `CREATED_AT`, `UPDATED_AT`, `CREATED_BY`, `UPDATED_BY` FROM `documentation_parts` WHERE `ID` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -316,6 +320,35 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DocumentationPartPeer::NAME, $name, $comparison);
+    }
+
+    /**
+     * Filter the query on the title column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByTitle('fooValue');   // WHERE title = 'fooValue'
+     * $query->filterByTitle('%fooValue%'); // WHERE title LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $title The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return DocumentationPartQuery The current query, for fluid interface
+     */
+    public function filterByTitle($title = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($title)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $title)) {
+                $title = str_replace('*', '%', $title);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(DocumentationPartPeer::TITLE, $title, $comparison);
     }
 
     /**
@@ -516,15 +549,15 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the is_inactive column
+     * Filter the query on the is_published column
      *
      * Example usage:
      * <code>
-     * $query->filterByIsInactive(true); // WHERE is_inactive = true
-     * $query->filterByIsInactive('yes'); // WHERE is_inactive = true
+     * $query->filterByIsPublished(true); // WHERE is_published = true
+     * $query->filterByIsPublished('yes'); // WHERE is_published = true
      * </code>
      *
-     * @param     boolean|string $isInactive The value to use as filter.
+     * @param     boolean|string $isPublished The value to use as filter.
      *              Non-boolean arguments are converted using the following rules:
      *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
@@ -533,13 +566,13 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      *
      * @return DocumentationPartQuery The current query, for fluid interface
      */
-    public function filterByIsInactive($isInactive = null, $comparison = null)
+    public function filterByIsPublished($isPublished = null, $comparison = null)
     {
-        if (is_string($isInactive)) {
-            $is_inactive = in_array(strtolower($isInactive), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        if (is_string($isPublished)) {
+            $is_published = in_array(strtolower($isPublished), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
 
-        return $this->addUsingAlias(DocumentationPartPeer::IS_INACTIVE, $isInactive, $comparison);
+        return $this->addUsingAlias(DocumentationPartPeer::IS_PUBLISHED, $isPublished, $comparison);
     }
 
     /**
@@ -734,7 +767,7 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
             }
 
             return $this
-                ->addUsingAlias(DocumentationPartPeer::DOCUMENTATION_ID, $documentation->toKeyValue('Id', 'Id'), $comparison);
+                ->addUsingAlias(DocumentationPartPeer::DOCUMENTATION_ID, $documentation->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
             throw new PropelException('filterByDocumentation() only accepts arguments of type Documentation or PropelCollection');
         }

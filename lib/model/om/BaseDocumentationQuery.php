@@ -8,11 +8,13 @@
  *
  * @method DocumentationQuery orderById($order = Criteria::ASC) Order by the id column
  * @method DocumentationQuery orderByName($order = Criteria::ASC) Order by the name column
- * @method DocumentationQuery orderByVersion($order = Criteria::ASC) Order by the version column
  * @method DocumentationQuery orderByTitle($order = Criteria::ASC) Order by the title column
  * @method DocumentationQuery orderByDescription($order = Criteria::ASC) Order by the description column
  * @method DocumentationQuery orderByYoutubeUrl($order = Criteria::ASC) Order by the youtube_url column
+ * @method DocumentationQuery orderByKey($order = Criteria::ASC) Order by the key column
+ * @method DocumentationQuery orderByVersion($order = Criteria::ASC) Order by the version column
  * @method DocumentationQuery orderByLanguageId($order = Criteria::ASC) Order by the language_id column
+ * @method DocumentationQuery orderByIsPublished($order = Criteria::ASC) Order by the is_published column
  * @method DocumentationQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method DocumentationQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  * @method DocumentationQuery orderByCreatedBy($order = Criteria::ASC) Order by the created_by column
@@ -20,11 +22,13 @@
  *
  * @method DocumentationQuery groupById() Group by the id column
  * @method DocumentationQuery groupByName() Group by the name column
- * @method DocumentationQuery groupByVersion() Group by the version column
  * @method DocumentationQuery groupByTitle() Group by the title column
  * @method DocumentationQuery groupByDescription() Group by the description column
  * @method DocumentationQuery groupByYoutubeUrl() Group by the youtube_url column
+ * @method DocumentationQuery groupByKey() Group by the key column
+ * @method DocumentationQuery groupByVersion() Group by the version column
  * @method DocumentationQuery groupByLanguageId() Group by the language_id column
+ * @method DocumentationQuery groupByIsPublished() Group by the is_published column
  * @method DocumentationQuery groupByCreatedAt() Group by the created_at column
  * @method DocumentationQuery groupByUpdatedAt() Group by the updated_at column
  * @method DocumentationQuery groupByCreatedBy() Group by the created_by column
@@ -55,11 +59,13 @@
  *
  * @method Documentation findOneById(int $id) Return the first Documentation filtered by the id column
  * @method Documentation findOneByName(string $name) Return the first Documentation filtered by the name column
- * @method Documentation findOneByVersion(string $version) Return the first Documentation filtered by the version column
  * @method Documentation findOneByTitle(string $title) Return the first Documentation filtered by the title column
  * @method Documentation findOneByDescription(resource $description) Return the first Documentation filtered by the description column
  * @method Documentation findOneByYoutubeUrl(string $youtube_url) Return the first Documentation filtered by the youtube_url column
+ * @method Documentation findOneByKey(string $key) Return the first Documentation filtered by the key column
+ * @method Documentation findOneByVersion(string $version) Return the first Documentation filtered by the version column
  * @method Documentation findOneByLanguageId(string $language_id) Return the first Documentation filtered by the language_id column
+ * @method Documentation findOneByIsPublished(boolean $is_published) Return the first Documentation filtered by the is_published column
  * @method Documentation findOneByCreatedAt(string $created_at) Return the first Documentation filtered by the created_at column
  * @method Documentation findOneByUpdatedAt(string $updated_at) Return the first Documentation filtered by the updated_at column
  * @method Documentation findOneByCreatedBy(int $created_by) Return the first Documentation filtered by the created_by column
@@ -67,11 +73,13 @@
  *
  * @method array findById(int $id) Return Documentation objects filtered by the id column
  * @method array findByName(string $name) Return Documentation objects filtered by the name column
- * @method array findByVersion(string $version) Return Documentation objects filtered by the version column
  * @method array findByTitle(string $title) Return Documentation objects filtered by the title column
  * @method array findByDescription(resource $description) Return Documentation objects filtered by the description column
  * @method array findByYoutubeUrl(string $youtube_url) Return Documentation objects filtered by the youtube_url column
+ * @method array findByKey(string $key) Return Documentation objects filtered by the key column
+ * @method array findByVersion(string $version) Return Documentation objects filtered by the version column
  * @method array findByLanguageId(string $language_id) Return Documentation objects filtered by the language_id column
+ * @method array findByIsPublished(boolean $is_published) Return Documentation objects filtered by the is_published column
  * @method array findByCreatedAt(string $created_at) Return Documentation objects filtered by the created_at column
  * @method array findByUpdatedAt(string $updated_at) Return Documentation objects filtered by the updated_at column
  * @method array findByCreatedBy(int $created_by) Return Documentation objects filtered by the created_by column
@@ -123,11 +131,10 @@ abstract class BaseDocumentationQuery extends ModelCriteria
      * Go fast if the query is untouched.
      *
      * <code>
-     * $obj = $c->findPk(array(12, 34), $con);
+     * $obj  = $c->findPk(12, $con);
      * </code>
      *
-     * @param array $key Primary key to use for the query
-     *                  A Primary key composition: [$id, $language_id]
+     * @param mixed $key Primary key to use for the query
      * @param     PropelPDO $con an optional connection object
      *
      * @return   Documentation|Documentation[]|mixed the result, formatted by the current formatter
@@ -137,7 +144,7 @@ abstract class BaseDocumentationQuery extends ModelCriteria
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = DocumentationPeer::getInstanceFromPool(serialize(array((string) $key[0], (string) $key[1]))))) && !$this->formatter) {
+        if ((null !== ($obj = DocumentationPeer::getInstanceFromPool((string) $key))) && !$this->formatter) {
             // the object is alredy in the instance pool
             return $obj;
         }
@@ -166,11 +173,10 @@ abstract class BaseDocumentationQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `ID`, `NAME`, `VERSION`, `TITLE`, `DESCRIPTION`, `YOUTUBE_URL`, `LANGUAGE_ID`, `CREATED_AT`, `UPDATED_AT`, `CREATED_BY`, `UPDATED_BY` FROM `documentations` WHERE `ID` = :p0 AND `LANGUAGE_ID` = :p1';
+        $sql = 'SELECT `ID`, `NAME`, `TITLE`, `DESCRIPTION`, `YOUTUBE_URL`, `KEY`, `VERSION`, `LANGUAGE_ID`, `IS_PUBLISHED`, `CREATED_AT`, `UPDATED_AT`, `CREATED_BY`, `UPDATED_BY` FROM `documentations` WHERE `ID` = :p0';
         try {
             $stmt = $con->prepare($sql);
-            $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
-            $stmt->bindValue(':p1', $key[1], PDO::PARAM_STR);
+            $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
             $stmt->execute();
         } catch (Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
@@ -180,7 +186,7 @@ abstract class BaseDocumentationQuery extends ModelCriteria
         if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
             $obj = new Documentation();
             $obj->hydrate($row);
-            DocumentationPeer::addInstanceToPool($obj, serialize(array((string) $key[0], (string) $key[1])));
+            DocumentationPeer::addInstanceToPool($obj, (string) $key);
         }
         $stmt->closeCursor();
 
@@ -209,7 +215,7 @@ abstract class BaseDocumentationQuery extends ModelCriteria
     /**
      * Find objects by primary key
      * <code>
-     * $objs = $c->findPks(array(array(12, 56), array(832, 123), array(123, 456)), $con);
+     * $objs = $c->findPks(array(12, 56, 832), $con);
      * </code>
      * @param     array $keys Primary keys to use for the query
      * @param     PropelPDO $con an optional connection object
@@ -239,10 +245,8 @@ abstract class BaseDocumentationQuery extends ModelCriteria
      */
     public function filterByPrimaryKey($key)
     {
-        $this->addUsingAlias(DocumentationPeer::ID, $key[0], Criteria::EQUAL);
-        $this->addUsingAlias(DocumentationPeer::LANGUAGE_ID, $key[1], Criteria::EQUAL);
 
-        return $this;
+        return $this->addUsingAlias(DocumentationPeer::ID, $key, Criteria::EQUAL);
     }
 
     /**
@@ -254,17 +258,8 @@ abstract class BaseDocumentationQuery extends ModelCriteria
      */
     public function filterByPrimaryKeys($keys)
     {
-        if (empty($keys)) {
-            return $this->add(null, '1<>1', Criteria::CUSTOM);
-        }
-        foreach ($keys as $key) {
-            $cton0 = $this->getNewCriterion(DocumentationPeer::ID, $key[0], Criteria::EQUAL);
-            $cton1 = $this->getNewCriterion(DocumentationPeer::LANGUAGE_ID, $key[1], Criteria::EQUAL);
-            $cton0->addAnd($cton1);
-            $this->addOr($cton0);
-        }
 
-        return $this;
+        return $this->addUsingAlias(DocumentationPeer::ID, $keys, Criteria::IN);
     }
 
     /**
@@ -321,35 +316,6 @@ abstract class BaseDocumentationQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DocumentationPeer::NAME, $name, $comparison);
-    }
-
-    /**
-     * Filter the query on the version column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByVersion('fooValue');   // WHERE version = 'fooValue'
-     * $query->filterByVersion('%fooValue%'); // WHERE version LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $version The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return DocumentationQuery The current query, for fluid interface
-     */
-    public function filterByVersion($version = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($version)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $version)) {
-                $version = str_replace('*', '%', $version);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(DocumentationPeer::VERSION, $version, $comparison);
     }
 
     /**
@@ -425,6 +391,64 @@ abstract class BaseDocumentationQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the key column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByKey('fooValue');   // WHERE key = 'fooValue'
+     * $query->filterByKey('%fooValue%'); // WHERE key LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $key The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return DocumentationQuery The current query, for fluid interface
+     */
+    public function filterByKey($key = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($key)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $key)) {
+                $key = str_replace('*', '%', $key);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(DocumentationPeer::KEY, $key, $comparison);
+    }
+
+    /**
+     * Filter the query on the version column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByVersion('fooValue');   // WHERE version = 'fooValue'
+     * $query->filterByVersion('%fooValue%'); // WHERE version LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $version The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return DocumentationQuery The current query, for fluid interface
+     */
+    public function filterByVersion($version = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($version)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $version)) {
+                $version = str_replace('*', '%', $version);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(DocumentationPeer::VERSION, $version, $comparison);
+    }
+
+    /**
      * Filter the query on the language_id column
      *
      * Example usage:
@@ -451,6 +475,33 @@ abstract class BaseDocumentationQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DocumentationPeer::LANGUAGE_ID, $languageId, $comparison);
+    }
+
+    /**
+     * Filter the query on the is_published column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByIsPublished(true); // WHERE is_published = true
+     * $query->filterByIsPublished('yes'); // WHERE is_published = true
+     * </code>
+     *
+     * @param     boolean|string $isPublished The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return DocumentationQuery The current query, for fluid interface
+     */
+    public function filterByIsPublished($isPublished = null, $comparison = null)
+    {
+        if (is_string($isPublished)) {
+            $is_published = in_array(strtolower($isPublished), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(DocumentationPeer::IS_PUBLISHED, $isPublished, $comparison);
     }
 
     /**
@@ -937,9 +988,7 @@ abstract class BaseDocumentationQuery extends ModelCriteria
     public function prune($documentation = null)
     {
         if ($documentation) {
-            $this->addCond('pruneCond0', $this->getAliasedColName(DocumentationPeer::ID), $documentation->getId(), Criteria::NOT_EQUAL);
-            $this->addCond('pruneCond1', $this->getAliasedColName(DocumentationPeer::LANGUAGE_ID), $documentation->getLanguageId(), Criteria::NOT_EQUAL);
-            $this->combine(array('pruneCond0', 'pruneCond1'), Criteria::LOGICAL_OR);
+            $this->addUsingAlias(DocumentationPeer::ID, $documentation->getId(), Criteria::NOT_EQUAL);
         }
 
         return $this;

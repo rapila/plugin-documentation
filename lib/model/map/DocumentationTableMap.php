@@ -40,11 +40,13 @@ class DocumentationTableMap extends TableMap
         // columns
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('NAME', 'Name', 'VARCHAR', true, 100, null);
-        $this->addColumn('VERSION', 'Version', 'VARCHAR', true, 20, null);
         $this->addColumn('TITLE', 'Title', 'VARCHAR', true, 255, null);
-        $this->addColumn('DESCRIPTION', 'Description', 'BLOB', true, 255, null);
+        $this->addColumn('DESCRIPTION', 'Description', 'BLOB', true, null, null);
         $this->addColumn('YOUTUBE_URL', 'YoutubeUrl', 'VARCHAR', false, 200, null);
-        $this->addForeignPrimaryKey('LANGUAGE_ID', 'LanguageId', 'VARCHAR' , 'languages', 'ID', true, 3, null);
+        $this->addColumn('KEY', 'Key', 'VARCHAR', false, 100, null);
+        $this->addColumn('VERSION', 'Version', 'VARCHAR', false, 20, null);
+        $this->addForeignKey('LANGUAGE_ID', 'LanguageId', 'VARCHAR', 'languages', 'ID', true, 3, null);
+        $this->addColumn('IS_PUBLISHED', 'IsPublished', 'BOOLEAN', false, 1, true);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
         $this->addForeignKey('CREATED_BY', 'CreatedBy', 'INTEGER', 'users', 'ID', false, null, null);
