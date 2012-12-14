@@ -104,7 +104,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 			$this->embedVideo($oTemplate, $oDocumentation);
 		}
 		$oTemplate->replaceIdentifier('documentation_name', $oDocumentation->getName());
-		$oTemplate->replaceIdentifier('documentation_title', $oDocumentation->getTitle());
+		$oTemplate->replaceIdentifier('title_or_name', $oDocumentation->getTitle());
 		$sDescription = RichtextUtil::parseStorageForFrontendOutput(stream_get_contents($oDocumentation->getDescription()));
 		$oTemplate->replaceIdentifier('description', $sDescription);
 		if($bToPdf === false) {
