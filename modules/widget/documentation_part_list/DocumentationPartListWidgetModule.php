@@ -52,7 +52,7 @@ class DocumentationPartListWidgetModule extends PersistentWidgetModule {
 				$aResult['heading'] = StringPeer::getString('wns.documentation_part.name');
 				break;			
 			case 'documentation_name':
-				$aResult['heading'] = StringPeer::getString('wns.documentation_part.documentation');
+				$aResult['heading'] = StringPeer::getString('wns.documentation');
 				break;
 			case 'body_truncated':
 				$aResult['heading'] = StringPeer::getString('wns.documentation_part.body');
