@@ -5,7 +5,7 @@
 
 class DocumentationsFrontendModule extends FrontendModule {
 	
-	public static $DISPLAY_MODES = array('detail', 'list', 'most_recent_teaser');
+	public static $DISPLAY_MODES = array('detail', 'list', 'extended_list', 'most_recent_teaser');
 	
 	public $sVersion = null;
 	
@@ -29,6 +29,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 		switch($aOptions[self::MODE_SELECT_KEY]) {
 			case 'most_recent_teaser' : return $this->renderMostRecentTeaser();
 			case 'list' : return $this->renderList();
+			case 'extended_list' : return $this->renderList(true);
 		}
 		// Detail is configured but no documentation_id
 		if($aOptions[self::MODE_SELECT_KEY] === 'detail' && !isset($aOptions['documentation_id'])) {
@@ -42,30 +43,46 @@ class DocumentationsFrontendModule extends FrontendModule {
 		$this->oPage = FrontendManager::$CURRENT_PAGE;
 		if($this->oPage->getIdentifier() !== 'documentation-page') {
 			$this->oPage = PageQuery::create()->filterByIdentifier('documentation-page')->active()->findOne();
+			if($this->oPage === null) {
+				throw new Exception('Error in '.__METHOD__.': page with page-identifier «documentation-page» required');
+			}
 		}
 	}
 	
-	public function renderList() {
+	public function renderList($bExtendedList = false) {
 		$aDocumentations = self::listQuery()->find();
 		if(count($aDocumentations) === 0) {
 			return;
 		}
 		$this->setLinkPage();
 		$oTemplate = $this->constructTemplate('list');
-		$oItemPrototype = $this->constructTemplate('list_item');
+		$oItemPrototype = $this->constructTemplate($bExtendedList ? 'list_extended_item' : 'list_item');
+		$oPage = FrontendManager::$CURRENT_PAGE;
 		foreach($aDocumentations as $oDocumentation) {
 			$oItemTemplate = clone $oItemPrototype;
 			$oItemTemplate->replaceIdentifier('detail_link', LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))));
-			$oItemTemplate->replaceIdentifier('title', $oDocumentation->getTitle());
+			$oItemTemplate->replaceIdentifier('has_video_tutorial', $oDocumentation->getYoutubeUrl() != null);
 			$oItemTemplate->replaceIdentifier('title_or_name', $oDocumentation->getTitle() != null ? $oDocumentation->getTitle() : $oDocumentation->getName());
-			$oItemTemplate->replaceIdentifier('name', $oDocumentation->getName());
+			if($bExtendedList) {
+				$aDocumentationParts = $oDocumentation->getDocumentationPartsOrdered();
+				if(count($aDocumentationParts) < 1) {
+					continue;
+				}
+				foreach($aDocumentationParts as $oPart) {
+					$aParams = array('href' => LinkUtil::link($oPage->getFullPathArray(array($oDocumentation->getKey()))).'#'.$oPart->getNameNormalized());
+					if($oPart->getTitle()) {
+						$aParams = array_merge($aParams, array('title' => $oPart->getTitle()));
+					}
+			  	$oItemTemplate->replaceIdentifierMultiple('part_links', TagWriter::quickTag('a', $aParams, '«'.$oPart->getName().'»'), null, Template::NO_NEW_CONTEXT);
+				}
+			}
 			$oTemplate->replaceIdentifierMultiple('list_item', $oItemTemplate);
 		}
 		return $oTemplate;
 	}
 	
 	public static function listQuery() {
-		return DocumentationQuery::create()->active()->filterByLanguageId(Session::language())->orderByName();
+		return DocumentationQuery::create()->active()->filterByLanguageId(Session::language())->orderBySort();
 	}
 	
 	public function renderMostRecentTeaser() {
@@ -132,11 +149,8 @@ class DocumentationsFrontendModule extends FrontendModule {
 			$oPartTemplate = clone $oPartTmpl;
 			$oPartTemplate->replaceIdentifier('name', '«'.$oPart->getName().'»');
 			$oPartTemplate->replaceIdentifier('anchor', $oPart->getNameNormalized());
-			if($oPart->getId() == 5) {
-				// Util::dumpAll($oPartTemplate);
-			}
 			if($oPart->getDocument()) {
-				$sSrc = !$oPart->getIsOverview() ? $oPart->getDocument()->getDisplayUrl(array('max_width' => 200)) : $oPart->getDocument()->getDisplayUrl(array('max_width' => 656));
+				$sSrc = !$oPart->getIsOverview() ? $oPart->getDocument()->getDisplayUrl(array('max_width' => 200)) : $oPart->getDocument()->getDisplayUrl(array('max_width' => 653));
 				if(RichtextUtil::$USE_ABSOLUTE_LINKS) {
 					$sSrc = LinkUtil::absoluteLink($sSrc);
 				}
