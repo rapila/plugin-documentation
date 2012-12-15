@@ -85,6 +85,12 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     protected $is_published;
 
     /**
+     * The value for the sort field.
+     * @var        int
+     */
+    protected $sort;
+
+    /**
      * The value for the created_at field.
      * @var        string
      */
@@ -258,6 +264,16 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     public function getIsPublished()
     {
         return $this->is_published;
+    }
+
+    /**
+     * Get the [sort] column value.
+     *
+     * @return int
+     */
+    public function getSort()
+    {
+        return $this->sort;
     }
 
     /**
@@ -559,6 +575,27 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
     } // setIsPublished()
 
     /**
+     * Set the value of [sort] column.
+     *
+     * @param int $v new value
+     * @return Documentation The current object (for fluent API support)
+     */
+    public function setSort($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->sort !== $v) {
+            $this->sort = $v;
+            $this->modifiedColumns[] = DocumentationPeer::SORT;
+        }
+
+
+        return $this;
+    } // setSort()
+
+    /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param mixed $v string, integer (timestamp), or DateTime value.
@@ -705,10 +742,11 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
             $this->version = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
             $this->language_id = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
             $this->is_published = ($row[$startcol + 8] !== null) ? (boolean) $row[$startcol + 8] : null;
-            $this->created_at = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-            $this->updated_at = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
-            $this->created_by = ($row[$startcol + 11] !== null) ? (int) $row[$startcol + 11] : null;
-            $this->updated_by = ($row[$startcol + 12] !== null) ? (int) $row[$startcol + 12] : null;
+            $this->sort = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
+            $this->created_at = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+            $this->updated_at = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+            $this->created_by = ($row[$startcol + 12] !== null) ? (int) $row[$startcol + 12] : null;
+            $this->updated_by = ($row[$startcol + 13] !== null) ? (int) $row[$startcol + 13] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -717,7 +755,7 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
 
-            return $startcol + 13; // 13 = DocumentationPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 14; // 14 = DocumentationPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Documentation object", $e);
@@ -1062,6 +1100,9 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
         if ($this->isColumnModified(DocumentationPeer::IS_PUBLISHED)) {
             $modifiedColumns[':p' . $index++]  = '`IS_PUBLISHED`';
         }
+        if ($this->isColumnModified(DocumentationPeer::SORT)) {
+            $modifiedColumns[':p' . $index++]  = '`SORT`';
+        }
         if ($this->isColumnModified(DocumentationPeer::CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
         }
@@ -1114,6 +1155,9 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
                         break;
                     case '`IS_PUBLISHED`':
                         $stmt->bindValue($identifier, (int) $this->is_published, PDO::PARAM_INT);
+                        break;
+                    case '`SORT`':
+                        $stmt->bindValue($identifier, $this->sort, PDO::PARAM_INT);
                         break;
                     case '`CREATED_AT`':
                         $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
@@ -1321,15 +1365,18 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
                 return $this->getIsPublished();
                 break;
             case 9:
-                return $this->getCreatedAt();
+                return $this->getSort();
                 break;
             case 10:
-                return $this->getUpdatedAt();
+                return $this->getCreatedAt();
                 break;
             case 11:
-                return $this->getCreatedBy();
+                return $this->getUpdatedAt();
                 break;
             case 12:
+                return $this->getCreatedBy();
+                break;
+            case 13:
                 return $this->getUpdatedBy();
                 break;
             default:
@@ -1370,10 +1417,11 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
             $keys[6] => $this->getVersion(),
             $keys[7] => $this->getLanguageId(),
             $keys[8] => $this->getIsPublished(),
-            $keys[9] => $this->getCreatedAt(),
-            $keys[10] => $this->getUpdatedAt(),
-            $keys[11] => $this->getCreatedBy(),
-            $keys[12] => $this->getUpdatedBy(),
+            $keys[9] => $this->getSort(),
+            $keys[10] => $this->getCreatedAt(),
+            $keys[11] => $this->getUpdatedAt(),
+            $keys[12] => $this->getCreatedBy(),
+            $keys[13] => $this->getUpdatedBy(),
         );
         if ($includeForeignObjects) {
             if (null !== $this->aLanguage) {
@@ -1450,15 +1498,18 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
                 $this->setIsPublished($value);
                 break;
             case 9:
-                $this->setCreatedAt($value);
+                $this->setSort($value);
                 break;
             case 10:
-                $this->setUpdatedAt($value);
+                $this->setCreatedAt($value);
                 break;
             case 11:
-                $this->setCreatedBy($value);
+                $this->setUpdatedAt($value);
                 break;
             case 12:
+                $this->setCreatedBy($value);
+                break;
+            case 13:
                 $this->setUpdatedBy($value);
                 break;
         } // switch()
@@ -1494,10 +1545,11 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
         if (array_key_exists($keys[6], $arr)) $this->setVersion($arr[$keys[6]]);
         if (array_key_exists($keys[7], $arr)) $this->setLanguageId($arr[$keys[7]]);
         if (array_key_exists($keys[8], $arr)) $this->setIsPublished($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setCreatedAt($arr[$keys[9]]);
-        if (array_key_exists($keys[10], $arr)) $this->setUpdatedAt($arr[$keys[10]]);
-        if (array_key_exists($keys[11], $arr)) $this->setCreatedBy($arr[$keys[11]]);
-        if (array_key_exists($keys[12], $arr)) $this->setUpdatedBy($arr[$keys[12]]);
+        if (array_key_exists($keys[9], $arr)) $this->setSort($arr[$keys[9]]);
+        if (array_key_exists($keys[10], $arr)) $this->setCreatedAt($arr[$keys[10]]);
+        if (array_key_exists($keys[11], $arr)) $this->setUpdatedAt($arr[$keys[11]]);
+        if (array_key_exists($keys[12], $arr)) $this->setCreatedBy($arr[$keys[12]]);
+        if (array_key_exists($keys[13], $arr)) $this->setUpdatedBy($arr[$keys[13]]);
     }
 
     /**
@@ -1518,6 +1570,7 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
         if ($this->isColumnModified(DocumentationPeer::VERSION)) $criteria->add(DocumentationPeer::VERSION, $this->version);
         if ($this->isColumnModified(DocumentationPeer::LANGUAGE_ID)) $criteria->add(DocumentationPeer::LANGUAGE_ID, $this->language_id);
         if ($this->isColumnModified(DocumentationPeer::IS_PUBLISHED)) $criteria->add(DocumentationPeer::IS_PUBLISHED, $this->is_published);
+        if ($this->isColumnModified(DocumentationPeer::SORT)) $criteria->add(DocumentationPeer::SORT, $this->sort);
         if ($this->isColumnModified(DocumentationPeer::CREATED_AT)) $criteria->add(DocumentationPeer::CREATED_AT, $this->created_at);
         if ($this->isColumnModified(DocumentationPeer::UPDATED_AT)) $criteria->add(DocumentationPeer::UPDATED_AT, $this->updated_at);
         if ($this->isColumnModified(DocumentationPeer::CREATED_BY)) $criteria->add(DocumentationPeer::CREATED_BY, $this->created_by);
@@ -1593,6 +1646,7 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
         $copyObj->setVersion($this->getVersion());
         $copyObj->setLanguageId($this->getLanguageId());
         $copyObj->setIsPublished($this->getIsPublished());
+        $copyObj->setSort($this->getSort());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         $copyObj->setCreatedBy($this->getCreatedBy());
@@ -2126,6 +2180,7 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
         $this->version = null;
         $this->language_id = null;
         $this->is_published = null;
+        $this->sort = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->created_by = null;

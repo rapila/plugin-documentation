@@ -15,6 +15,7 @@
  * @method DocumentationQuery orderByVersion($order = Criteria::ASC) Order by the version column
  * @method DocumentationQuery orderByLanguageId($order = Criteria::ASC) Order by the language_id column
  * @method DocumentationQuery orderByIsPublished($order = Criteria::ASC) Order by the is_published column
+ * @method DocumentationQuery orderBySort($order = Criteria::ASC) Order by the sort column
  * @method DocumentationQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method DocumentationQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  * @method DocumentationQuery orderByCreatedBy($order = Criteria::ASC) Order by the created_by column
@@ -29,6 +30,7 @@
  * @method DocumentationQuery groupByVersion() Group by the version column
  * @method DocumentationQuery groupByLanguageId() Group by the language_id column
  * @method DocumentationQuery groupByIsPublished() Group by the is_published column
+ * @method DocumentationQuery groupBySort() Group by the sort column
  * @method DocumentationQuery groupByCreatedAt() Group by the created_at column
  * @method DocumentationQuery groupByUpdatedAt() Group by the updated_at column
  * @method DocumentationQuery groupByCreatedBy() Group by the created_by column
@@ -66,6 +68,7 @@
  * @method Documentation findOneByVersion(string $version) Return the first Documentation filtered by the version column
  * @method Documentation findOneByLanguageId(string $language_id) Return the first Documentation filtered by the language_id column
  * @method Documentation findOneByIsPublished(boolean $is_published) Return the first Documentation filtered by the is_published column
+ * @method Documentation findOneBySort(int $sort) Return the first Documentation filtered by the sort column
  * @method Documentation findOneByCreatedAt(string $created_at) Return the first Documentation filtered by the created_at column
  * @method Documentation findOneByUpdatedAt(string $updated_at) Return the first Documentation filtered by the updated_at column
  * @method Documentation findOneByCreatedBy(int $created_by) Return the first Documentation filtered by the created_by column
@@ -80,6 +83,7 @@
  * @method array findByVersion(string $version) Return Documentation objects filtered by the version column
  * @method array findByLanguageId(string $language_id) Return Documentation objects filtered by the language_id column
  * @method array findByIsPublished(boolean $is_published) Return Documentation objects filtered by the is_published column
+ * @method array findBySort(int $sort) Return Documentation objects filtered by the sort column
  * @method array findByCreatedAt(string $created_at) Return Documentation objects filtered by the created_at column
  * @method array findByUpdatedAt(string $updated_at) Return Documentation objects filtered by the updated_at column
  * @method array findByCreatedBy(int $created_by) Return Documentation objects filtered by the created_by column
@@ -173,7 +177,7 @@ abstract class BaseDocumentationQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `ID`, `NAME`, `TITLE`, `DESCRIPTION`, `YOUTUBE_URL`, `KEY`, `VERSION`, `LANGUAGE_ID`, `IS_PUBLISHED`, `CREATED_AT`, `UPDATED_AT`, `CREATED_BY`, `UPDATED_BY` FROM `documentations` WHERE `ID` = :p0';
+        $sql = 'SELECT `ID`, `NAME`, `TITLE`, `DESCRIPTION`, `YOUTUBE_URL`, `KEY`, `VERSION`, `LANGUAGE_ID`, `IS_PUBLISHED`, `SORT`, `CREATED_AT`, `UPDATED_AT`, `CREATED_BY`, `UPDATED_BY` FROM `documentations` WHERE `ID` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -502,6 +506,47 @@ abstract class BaseDocumentationQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DocumentationPeer::IS_PUBLISHED, $isPublished, $comparison);
+    }
+
+    /**
+     * Filter the query on the sort column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterBySort(1234); // WHERE sort = 1234
+     * $query->filterBySort(array(12, 34)); // WHERE sort IN (12, 34)
+     * $query->filterBySort(array('min' => 12)); // WHERE sort > 12
+     * </code>
+     *
+     * @param     mixed $sort The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return DocumentationQuery The current query, for fluid interface
+     */
+    public function filterBySort($sort = null, $comparison = null)
+    {
+        if (is_array($sort)) {
+            $useMinMax = false;
+            if (isset($sort['min'])) {
+                $this->addUsingAlias(DocumentationPeer::SORT, $sort['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($sort['max'])) {
+                $this->addUsingAlias(DocumentationPeer::SORT, $sort['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(DocumentationPeer::SORT, $sort, $comparison);
     }
 
     /**

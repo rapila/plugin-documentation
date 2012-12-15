@@ -11,6 +11,7 @@
 		<reference local="language_id" foreign="id" />
 	</foreign-key>
 	<column name="is_published" type="boolean" size="1" default="1" />
+	<column name="sort" type="integer" />
 	<behavior name="denyable">
 		<parameter name="role_key" value="documentations" />
 	</behavior>

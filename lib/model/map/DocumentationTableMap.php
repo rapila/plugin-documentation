@@ -47,6 +47,7 @@ class DocumentationTableMap extends TableMap
         $this->addColumn('VERSION', 'Version', 'VARCHAR', false, 20, null);
         $this->addForeignKey('LANGUAGE_ID', 'LanguageId', 'VARCHAR', 'languages', 'ID', true, 3, null);
         $this->addColumn('IS_PUBLISHED', 'IsPublished', 'BOOLEAN', false, 1, true);
+        $this->addColumn('SORT', 'Sort', 'INTEGER', false, null, null);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
         $this->addForeignKey('CREATED_BY', 'CreatedBy', 'INTEGER', 'users', 'ID', false, null, null);

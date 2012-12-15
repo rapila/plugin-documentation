@@ -24,13 +24,13 @@ abstract class BaseDocumentationPeer
     const TM_CLASS = 'DocumentationTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 13;
+    const NUM_COLUMNS = 14;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 13;
+    const NUM_HYDRATE_COLUMNS = 14;
 
     /** the column name for the ID field */
     const ID = 'documentations.ID';
@@ -58,6 +58,9 @@ abstract class BaseDocumentationPeer
 
     /** the column name for the IS_PUBLISHED field */
     const IS_PUBLISHED = 'documentations.IS_PUBLISHED';
+
+    /** the column name for the SORT field */
+    const SORT = 'documentations.SORT';
 
     /** the column name for the CREATED_AT field */
     const CREATED_AT = 'documentations.CREATED_AT';
@@ -92,12 +95,12 @@ abstract class BaseDocumentationPeer
      * e.g. DocumentationPeer::$fieldNames[DocumentationPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'Name', 'Title', 'Description', 'YoutubeUrl', 'Key', 'Version', 'LanguageId', 'IsPublished', 'CreatedAt', 'UpdatedAt', 'CreatedBy', 'UpdatedBy', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'name', 'title', 'description', 'youtubeUrl', 'key', 'version', 'languageId', 'isPublished', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy', ),
-        BasePeer::TYPE_COLNAME => array (DocumentationPeer::ID, DocumentationPeer::NAME, DocumentationPeer::TITLE, DocumentationPeer::DESCRIPTION, DocumentationPeer::YOUTUBE_URL, DocumentationPeer::KEY, DocumentationPeer::VERSION, DocumentationPeer::LANGUAGE_ID, DocumentationPeer::IS_PUBLISHED, DocumentationPeer::CREATED_AT, DocumentationPeer::UPDATED_AT, DocumentationPeer::CREATED_BY, DocumentationPeer::UPDATED_BY, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'NAME', 'TITLE', 'DESCRIPTION', 'YOUTUBE_URL', 'KEY', 'VERSION', 'LANGUAGE_ID', 'IS_PUBLISHED', 'CREATED_AT', 'UPDATED_AT', 'CREATED_BY', 'UPDATED_BY', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'name', 'title', 'description', 'youtube_url', 'key', 'version', 'language_id', 'is_published', 'created_at', 'updated_at', 'created_by', 'updated_by', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'Name', 'Title', 'Description', 'YoutubeUrl', 'Key', 'Version', 'LanguageId', 'IsPublished', 'Sort', 'CreatedAt', 'UpdatedAt', 'CreatedBy', 'UpdatedBy', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'name', 'title', 'description', 'youtubeUrl', 'key', 'version', 'languageId', 'isPublished', 'sort', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy', ),
+        BasePeer::TYPE_COLNAME => array (DocumentationPeer::ID, DocumentationPeer::NAME, DocumentationPeer::TITLE, DocumentationPeer::DESCRIPTION, DocumentationPeer::YOUTUBE_URL, DocumentationPeer::KEY, DocumentationPeer::VERSION, DocumentationPeer::LANGUAGE_ID, DocumentationPeer::IS_PUBLISHED, DocumentationPeer::SORT, DocumentationPeer::CREATED_AT, DocumentationPeer::UPDATED_AT, DocumentationPeer::CREATED_BY, DocumentationPeer::UPDATED_BY, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'NAME', 'TITLE', 'DESCRIPTION', 'YOUTUBE_URL', 'KEY', 'VERSION', 'LANGUAGE_ID', 'IS_PUBLISHED', 'SORT', 'CREATED_AT', 'UPDATED_AT', 'CREATED_BY', 'UPDATED_BY', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'name', 'title', 'description', 'youtube_url', 'key', 'version', 'language_id', 'is_published', 'sort', 'created_at', 'updated_at', 'created_by', 'updated_by', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
     );
 
     /**
@@ -107,12 +110,12 @@ abstract class BaseDocumentationPeer
      * e.g. DocumentationPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Name' => 1, 'Title' => 2, 'Description' => 3, 'YoutubeUrl' => 4, 'Key' => 5, 'Version' => 6, 'LanguageId' => 7, 'IsPublished' => 8, 'CreatedAt' => 9, 'UpdatedAt' => 10, 'CreatedBy' => 11, 'UpdatedBy' => 12, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'name' => 1, 'title' => 2, 'description' => 3, 'youtubeUrl' => 4, 'key' => 5, 'version' => 6, 'languageId' => 7, 'isPublished' => 8, 'createdAt' => 9, 'updatedAt' => 10, 'createdBy' => 11, 'updatedBy' => 12, ),
-        BasePeer::TYPE_COLNAME => array (DocumentationPeer::ID => 0, DocumentationPeer::NAME => 1, DocumentationPeer::TITLE => 2, DocumentationPeer::DESCRIPTION => 3, DocumentationPeer::YOUTUBE_URL => 4, DocumentationPeer::KEY => 5, DocumentationPeer::VERSION => 6, DocumentationPeer::LANGUAGE_ID => 7, DocumentationPeer::IS_PUBLISHED => 8, DocumentationPeer::CREATED_AT => 9, DocumentationPeer::UPDATED_AT => 10, DocumentationPeer::CREATED_BY => 11, DocumentationPeer::UPDATED_BY => 12, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'NAME' => 1, 'TITLE' => 2, 'DESCRIPTION' => 3, 'YOUTUBE_URL' => 4, 'KEY' => 5, 'VERSION' => 6, 'LANGUAGE_ID' => 7, 'IS_PUBLISHED' => 8, 'CREATED_AT' => 9, 'UPDATED_AT' => 10, 'CREATED_BY' => 11, 'UPDATED_BY' => 12, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'name' => 1, 'title' => 2, 'description' => 3, 'youtube_url' => 4, 'key' => 5, 'version' => 6, 'language_id' => 7, 'is_published' => 8, 'created_at' => 9, 'updated_at' => 10, 'created_by' => 11, 'updated_by' => 12, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Name' => 1, 'Title' => 2, 'Description' => 3, 'YoutubeUrl' => 4, 'Key' => 5, 'Version' => 6, 'LanguageId' => 7, 'IsPublished' => 8, 'Sort' => 9, 'CreatedAt' => 10, 'UpdatedAt' => 11, 'CreatedBy' => 12, 'UpdatedBy' => 13, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'name' => 1, 'title' => 2, 'description' => 3, 'youtubeUrl' => 4, 'key' => 5, 'version' => 6, 'languageId' => 7, 'isPublished' => 8, 'sort' => 9, 'createdAt' => 10, 'updatedAt' => 11, 'createdBy' => 12, 'updatedBy' => 13, ),
+        BasePeer::TYPE_COLNAME => array (DocumentationPeer::ID => 0, DocumentationPeer::NAME => 1, DocumentationPeer::TITLE => 2, DocumentationPeer::DESCRIPTION => 3, DocumentationPeer::YOUTUBE_URL => 4, DocumentationPeer::KEY => 5, DocumentationPeer::VERSION => 6, DocumentationPeer::LANGUAGE_ID => 7, DocumentationPeer::IS_PUBLISHED => 8, DocumentationPeer::SORT => 9, DocumentationPeer::CREATED_AT => 10, DocumentationPeer::UPDATED_AT => 11, DocumentationPeer::CREATED_BY => 12, DocumentationPeer::UPDATED_BY => 13, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'NAME' => 1, 'TITLE' => 2, 'DESCRIPTION' => 3, 'YOUTUBE_URL' => 4, 'KEY' => 5, 'VERSION' => 6, 'LANGUAGE_ID' => 7, 'IS_PUBLISHED' => 8, 'SORT' => 9, 'CREATED_AT' => 10, 'UPDATED_AT' => 11, 'CREATED_BY' => 12, 'UPDATED_BY' => 13, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'name' => 1, 'title' => 2, 'description' => 3, 'youtube_url' => 4, 'key' => 5, 'version' => 6, 'language_id' => 7, 'is_published' => 8, 'sort' => 9, 'created_at' => 10, 'updated_at' => 11, 'created_by' => 12, 'updated_by' => 13, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
     );
 
     /**
@@ -195,6 +198,7 @@ abstract class BaseDocumentationPeer
             $criteria->addSelectColumn(DocumentationPeer::VERSION);
             $criteria->addSelectColumn(DocumentationPeer::LANGUAGE_ID);
             $criteria->addSelectColumn(DocumentationPeer::IS_PUBLISHED);
+            $criteria->addSelectColumn(DocumentationPeer::SORT);
             $criteria->addSelectColumn(DocumentationPeer::CREATED_AT);
             $criteria->addSelectColumn(DocumentationPeer::UPDATED_AT);
             $criteria->addSelectColumn(DocumentationPeer::CREATED_BY);
@@ -209,6 +213,7 @@ abstract class BaseDocumentationPeer
             $criteria->addSelectColumn($alias . '.VERSION');
             $criteria->addSelectColumn($alias . '.LANGUAGE_ID');
             $criteria->addSelectColumn($alias . '.IS_PUBLISHED');
+            $criteria->addSelectColumn($alias . '.SORT');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
             $criteria->addSelectColumn($alias . '.UPDATED_AT');
             $criteria->addSelectColumn($alias . '.CREATED_BY');
