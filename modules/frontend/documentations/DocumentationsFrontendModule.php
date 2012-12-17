@@ -57,22 +57,27 @@ class DocumentationsFrontendModule extends FrontendModule {
 		$this->setLinkPage();
 		$oTemplate = $this->constructTemplate('list');
 		$oItemPrototype = $this->constructTemplate($bExtendedList ? 'list_extended_item' : 'list_item');
-		$oPage = FrontendManager::$CURRENT_PAGE;
 		$sHasVideoString = StringPeer::getString('wns.documentation.with_video_tutorial');
 		foreach($aDocumentations as $oDocumentation) {
 			$oItemTemplate = clone $oItemPrototype;
+			if($oDocumentation->getTitle()) {
+				$oItemTemplate->replaceIdentifier('title_or_name', $oDocumentation->getTitle());
+				$oItemTemplate->replaceIdentifier('title', $oDocumentation->getTitle());
+			} else {
+				$oItemTemplate->replaceIdentifier('title_or_name', $oDocumentation->getName());
+			}			
+			$oItemTemplate->replaceIdentifier('name', $oDocumentation->getName());
 			$oItemTemplate->replaceIdentifier('detail_link', LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))));
 			if($oDocumentation->getYoutubeUrl() != null) {
 				$oItemTemplate->replaceIdentifier('has_video_tutorial', $sHasVideoString);
 			}
-			$oItemTemplate->replaceIdentifier('title_or_name', $oDocumentation->getTitle() != null ? $oDocumentation->getTitle() : $oDocumentation->getName());
 			if($bExtendedList) {
 				$aDocumentationParts = $oDocumentation->getDocumentationPartsOrdered();
 				if(count($aDocumentationParts) < 1) {
 					continue;
 				}
 				foreach($aDocumentationParts as $oPart) {
-					$aParams = array('href' => LinkUtil::link($oPage->getFullPathArray(array($oDocumentation->getKey()))).'#'.$oPart->getNameNormalized());
+					$aParams = array('href' => LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))).'#'.$oPart->getNameNormalized());
 					if($oPart->getTitle()) {
 						$aParams = array_merge($aParams, array('title' => $oPart->getTitle()));
 					}
