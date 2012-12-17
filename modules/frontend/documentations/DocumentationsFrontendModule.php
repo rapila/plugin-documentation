@@ -57,6 +57,8 @@ class DocumentationsFrontendModule extends FrontendModule {
 		$this->setLinkPage();
 		$oTemplate = $this->constructTemplate('list');
 		$oItemPrototype = $this->constructTemplate($bExtendedList ? 'list_extended_item' : 'list_item');
+		$oPartLinkPrototype = $this->constructTemplate('part_link');
+		
 		$sHasVideoString = StringPeer::getString('wns.documentation.with_video_tutorial');
 		foreach($aDocumentations as $oDocumentation) {
 			$oItemTemplate = clone $oItemPrototype;
@@ -73,15 +75,14 @@ class DocumentationsFrontendModule extends FrontendModule {
 			}
 			if($bExtendedList) {
 				$aDocumentationParts = $oDocumentation->getDocumentationPartsOrdered();
-				if(count($aDocumentationParts) < 1) {
-					continue;
-				}
 				foreach($aDocumentationParts as $oPart) {
-					$aParams = array('href' => LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))).'#'.$oPart->getNameNormalized());
+					$oPartLink = clone $oPartLinkPrototype;
+					$oPartLink->replaceIdentifier('href', LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))).'#'.$oPart->getNameNormalized());
+					$oPartLink->replaceIdentifier('link_text', $oPart->getName());
 					if($oPart->getTitle()) {
-						$aParams = array_merge($aParams, array('title' => $oPart->getTitle()));
+						$oPartLink->replaceIdentifier('title', $oPart->getTitle());
 					}
-			  	$oItemTemplate->replaceIdentifierMultiple('part_links', TagWriter::quickTag('a', $aParams, '«'.$oPart->getName().'»'), null, Template::NO_NEW_CONTEXT);
+	  			$oItemTemplate->replaceIdentifierMultiple('part_links', $oPartLink, null, Template::NO_NEW_CONTEXT);
 				}
 			}
 			$oTemplate->replaceIdentifierMultiple('list_item', $oItemTemplate);
@@ -145,17 +146,23 @@ class DocumentationsFrontendModule extends FrontendModule {
 		}
 		$sLinkToSelf = LinkUtil::linkToSelf();
 		$i = 1;
+		
 		$bRequiresQuicklinks = count($aDocumentationParts) > 1;
+		$oPartLinkPrototype = $this->constructTemplate('part_link');
 		foreach($aDocumentationParts as $oPart) {
+			// Add quick links
 		  if($bRequiresQuicklinks) {
-				$aParams = array('href' => $sLinkToSelf.'#'.$oPart->getNameNormalized());
-				if($oPart->getTitle()) {
-					$aParams = array_merge($aParams, array('title' => $oPart->getTitle()));
+				$oPartLink = clone $oPartLinkPrototype;
+				$oPartLink->replaceIdentifier('href', $sLinkToSelf.'#'.$oPart->getNameNormalized());
+				$oPartLink->replaceIdentifier('link_text', $oPart->getName());
+				if($oPart->getTitle() != null) {
+					$oPartLink->replaceIdentifier('title', $oPart->getTitle());
 				}
-  			$oTemplate->replaceIdentifierMultiple('part_links', TagWriter::quickTag('a', $aParams, $oPart->getName()), null, Template::NO_NEW_CONTEXT);
+  			$oTemplate->replaceIdentifierMultiple('part_links', $oPartLink, null, Template::NO_NEW_CONTEXT);
 		  }
+			// Add documentation part
 			$oPartTemplate = clone $oPartTmpl;
-			$oPartTemplate->replaceIdentifier('name', '«'.$oPart->getName().'»');
+			$oPartTemplate->replaceIdentifier('name', $oPart->getName());
 			$oPartTemplate->replaceIdentifier('anchor', $oPart->getNameNormalized());
 			if($oPart->getDocument()) {
 				$sSrc = !$oPart->getIsOverview() ? $oPart->getDocument()->getDisplayUrl(array('max_width' => 200)) : $oPart->getDocument()->getDisplayUrl(array('max_width' => 653));
