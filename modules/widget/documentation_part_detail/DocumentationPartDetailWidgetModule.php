@@ -48,6 +48,7 @@ class DocumentationPartDetailWidgetModule extends PersistentWidgetModule {
 		$oFlash->setArrayToCheck($aDocumentationPartData);
 		$oFlash->checkForValue('name', 'documentation_part_name_required');
 		$oFlash->checkForValue('body', 'documentation_part_body_required');
+		$oFlash->checkForValue('key', 'key_required');
 		$oFlash->checkForValue('documentation_id', 'documentation_required');
 		$oFlash->finishReporting();
 	}

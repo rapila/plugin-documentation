@@ -77,7 +77,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 				$aDocumentationParts = $oDocumentation->getDocumentationPartsOrdered();
 				foreach($aDocumentationParts as $oPart) {
 					$oPartLink = clone $oPartLinkPrototype;
-					$oPartLink->replaceIdentifier('href', LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))).'#'.$oPart->getNameNormalized());
+					$oPartLink->replaceIdentifier('href', LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))).'#'.$oPart->getKey());
 					$oPartLink->replaceIdentifier('link_text', $oPart->getName());
 					if($oPart->getTitle()) {
 						$oPartLink->replaceIdentifier('title', $oPart->getTitle());
@@ -153,7 +153,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 			// Add quick links
 		  if($bRequiresQuicklinks) {
 				$oPartLink = clone $oPartLinkPrototype;
-				$oPartLink->replaceIdentifier('href', $sLinkToSelf.'#'.$oPart->getNameNormalized());
+				$oPartLink->replaceIdentifier('href', $sLinkToSelf.'#'.$oPart->getKey());
 				$oPartLink->replaceIdentifier('link_text', $oPart->getName());
 				if($oPart->getTitle() != null) {
 					$oPartLink->replaceIdentifier('title', $oPart->getTitle());
@@ -163,7 +163,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 			// Add documentation part
 			$oPartTemplate = clone $oPartTmpl;
 			$oPartTemplate->replaceIdentifier('name', $oPart->getName());
-			$oPartTemplate->replaceIdentifier('anchor', $oPart->getNameNormalized());
+			$oPartTemplate->replaceIdentifier('anchor', $oPart->getKey());
 			if($oPart->getDocument()) {
 				$sSrc = !$oPart->getIsOverview() ? $oPart->getDocument()->getDisplayUrl(array('max_width' => 200)) : $oPart->getDocument()->getDisplayUrl(array('max_width' => 653));
 				if(RichtextUtil::$USE_ABSOLUTE_LINKS) {

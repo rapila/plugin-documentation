@@ -41,8 +41,9 @@ class DocumentationPartTableMap extends TableMap
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('NAME', 'Name', 'VARCHAR', true, 100, null);
         $this->addColumn('TITLE', 'Title', 'VARCHAR', false, 255, null);
-        $this->addColumn('NAME_NORMALIZED', 'NameNormalized', 'VARCHAR', true, 100, null);
         $this->addColumn('BODY', 'Body', 'BLOB', false, null, null);
+        $this->addColumn('KEY', 'Key', 'VARCHAR', true, 100, null);
+        $this->addForeignKey('LANGUAGE_ID', 'LanguageId', 'VARCHAR', 'languages', 'ID', true, 3, null);
         $this->addForeignKey('DOCUMENTATION_ID', 'DocumentationId', 'INTEGER', 'documentations', 'ID', true, null, null);
         $this->addForeignKey('IMAGE_ID', 'ImageId', 'INTEGER', 'documents', 'ID', false, null, null);
         $this->addColumn('SORT', 'Sort', 'INTEGER', false, null, null);
@@ -60,6 +61,7 @@ class DocumentationPartTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Language', 'Language', RelationMap::MANY_TO_ONE, array('language_id' => 'id', ), 'CASCADE', null);
         $this->addRelation('Documentation', 'Documentation', RelationMap::MANY_TO_ONE, array('documentation_id' => 'id', ), 'CASCADE', null);
         $this->addRelation('Document', 'Document', RelationMap::MANY_TO_ONE, array('image_id' => 'id', ), 'SET NULL', null);
         $this->addRelation('UserRelatedByCreatedBy', 'User', RelationMap::MANY_TO_ONE, array('created_by' => 'id', ), 'SET NULL', null);

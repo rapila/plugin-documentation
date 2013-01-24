@@ -66,6 +66,7 @@ Widget.types.documentation_part_detail = {
 			this.content.find("select[name='documentation_id']").val(documentation_part_data.DocumentationId);
 			this.content.find("input[name='name']").val(documentation_part_data.Name);
 			this.content.find("input[name='title']").val(documentation_part_data.Title);
+			this.content.find("input[name='key']").val(documentation_part_data.Key);
 			this.image_id = documentation_part_data.ImageId;
 			this.content.find(".updated_info").text(documentation_part_data.UpdatedInfo);
 			this.content.find(".created_info").text(documentation_part_data.CreatedInfo);

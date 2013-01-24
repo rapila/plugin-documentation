@@ -4,6 +4,9 @@
 			<span class="description">Bild<span title="{{writeString=wns.documentation_part.remove_image}}" class="remove"> ✘</span></span>
 			<div class="documentation_part_image"></div>
 		</div>
+		<input type="checkbox" name="is_overview" /><label for="is_overview" style="display:inline-block;margin-left:3px;">{{writeString=wns.documentation_part.is_overview}}</label><br />
+		<label for="documentation_id" class="validate-documentation_part_documentation_required">{{writeString=wns.documentation}}*</label>
+		<select name="documentation_id" class="ui-widget-content autowidth" data-widget-type="documentation_input"></select><br />
 		<div class="hide_if_not_saved">
   		<label>{{writeString=wns.created_info}}:</label><span class="created_info status"></span><br />
   		<label>{{writeString=wns.updated.info}}:</label><span class="updated_info status"></span><br />
@@ -16,16 +19,12 @@
 			<input type="text" name="name" class="ui-widget-content"/><br />
 		</div>
 		<div class="group_fields">
-			<label for="documentation_id" class="validate-documentation_part_documentation_required">{{writeString=wns.documentation}}*</label>
-			<select name="documentation_id" class="ui-widget-content autowidth" data-widget-type="documentation_input"></select><br />
+			<label for="key" class="validate-key_required">{{writeString=wns.documentation.key}}*</label>
+			<input type="text" name="key" class="ui-widget-content autowidth" size="28" /><br />
 		</div>
 		<div class="group_fields">
 			<label for="is_published">{{writeString=wns.documentation_part.is_published}}</label>
 			<input type="checkbox" name="is_published" /><br />
-		</div>
-		<div class="group_fields">
-			<label for="is_overview">{{writeString=wns.documentation_part.is_overview}}</label>
-			<input type="checkbox" name="is_overview" /><br />
 		</div>
 	</div>
 	<label for="title">{{writeString=wns.documentation_part.title}}</label>

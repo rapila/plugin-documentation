@@ -48,16 +48,22 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     protected $title;
 
     /**
-     * The value for the name_normalized field.
-     * @var        string
-     */
-    protected $name_normalized;
-
-    /**
      * The value for the body field.
      * @var        resource
      */
     protected $body;
+
+    /**
+     * The value for the key field.
+     * @var        string
+     */
+    protected $key;
+
+    /**
+     * The value for the language_id field.
+     * @var        string
+     */
+    protected $language_id;
 
     /**
      * The value for the documentation_id field.
@@ -114,6 +120,11 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      * @var        int
      */
     protected $updated_by;
+
+    /**
+     * @var        Language
+     */
+    protected $aLanguage;
 
     /**
      * @var        Documentation
@@ -202,16 +213,6 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [name_normalized] column value.
-     *
-     * @return string
-     */
-    public function getNameNormalized()
-    {
-        return $this->name_normalized;
-    }
-
-    /**
      * Get the [body] column value.
      *
      * @return resource
@@ -219,6 +220,26 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     public function getBody()
     {
         return $this->body;
+    }
+
+    /**
+     * Get the [key] column value.
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Get the [language_id] column value.
+     *
+     * @return string
+     */
+    public function getLanguageId()
+    {
+        return $this->language_id;
     }
 
     /**
@@ -429,27 +450,6 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     } // setTitle()
 
     /**
-     * Set the value of [name_normalized] column.
-     *
-     * @param string $v new value
-     * @return DocumentationPart The current object (for fluent API support)
-     */
-    public function setNameNormalized($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->name_normalized !== $v) {
-            $this->name_normalized = $v;
-            $this->modifiedColumns[] = DocumentationPartPeer::NAME_NORMALIZED;
-        }
-
-
-        return $this;
-    } // setNameNormalized()
-
-    /**
      * Set the value of [body] column.
      *
      * @param resource $v new value
@@ -472,6 +472,52 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
 
         return $this;
     } // setBody()
+
+    /**
+     * Set the value of [key] column.
+     *
+     * @param string $v new value
+     * @return DocumentationPart The current object (for fluent API support)
+     */
+    public function setKey($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->key !== $v) {
+            $this->key = $v;
+            $this->modifiedColumns[] = DocumentationPartPeer::KEY;
+        }
+
+
+        return $this;
+    } // setKey()
+
+    /**
+     * Set the value of [language_id] column.
+     *
+     * @param string $v new value
+     * @return DocumentationPart The current object (for fluent API support)
+     */
+    public function setLanguageId($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->language_id !== $v) {
+            $this->language_id = $v;
+            $this->modifiedColumns[] = DocumentationPartPeer::LANGUAGE_ID;
+        }
+
+        if ($this->aLanguage !== null && $this->aLanguage->getId() !== $v) {
+            $this->aLanguage = null;
+        }
+
+
+        return $this;
+    } // setLanguageId()
 
     /**
      * Set the value of [documentation_id] column.
@@ -741,23 +787,24 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
             $this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
             $this->name = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
             $this->title = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-            $this->name_normalized = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-            if ($row[$startcol + 4] !== null) {
+            if ($row[$startcol + 3] !== null) {
                 $this->body = fopen('php://memory', 'r+');
-                fwrite($this->body, $row[$startcol + 4]);
+                fwrite($this->body, $row[$startcol + 3]);
                 rewind($this->body);
             } else {
                 $this->body = null;
             }
-            $this->documentation_id = ($row[$startcol + 5] !== null) ? (int) $row[$startcol + 5] : null;
-            $this->image_id = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
-            $this->sort = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
-            $this->is_overview = ($row[$startcol + 8] !== null) ? (boolean) $row[$startcol + 8] : null;
-            $this->is_published = ($row[$startcol + 9] !== null) ? (boolean) $row[$startcol + 9] : null;
-            $this->created_at = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
-            $this->updated_at = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-            $this->created_by = ($row[$startcol + 12] !== null) ? (int) $row[$startcol + 12] : null;
-            $this->updated_by = ($row[$startcol + 13] !== null) ? (int) $row[$startcol + 13] : null;
+            $this->key = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+            $this->language_id = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+            $this->documentation_id = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
+            $this->image_id = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
+            $this->sort = ($row[$startcol + 8] !== null) ? (int) $row[$startcol + 8] : null;
+            $this->is_overview = ($row[$startcol + 9] !== null) ? (boolean) $row[$startcol + 9] : null;
+            $this->is_published = ($row[$startcol + 10] !== null) ? (boolean) $row[$startcol + 10] : null;
+            $this->created_at = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+            $this->updated_at = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+            $this->created_by = ($row[$startcol + 13] !== null) ? (int) $row[$startcol + 13] : null;
+            $this->updated_by = ($row[$startcol + 14] !== null) ? (int) $row[$startcol + 14] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -766,7 +813,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
 
-            return $startcol + 14; // 14 = DocumentationPartPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 15; // 15 = DocumentationPartPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating DocumentationPart object", $e);
@@ -789,6 +836,9 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
+        if ($this->aLanguage !== null && $this->language_id !== $this->aLanguage->getId()) {
+            $this->aLanguage = null;
+        }
         if ($this->aDocumentation !== null && $this->documentation_id !== $this->aDocumentation->getId()) {
             $this->aDocumentation = null;
         }
@@ -840,6 +890,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->aLanguage = null;
             $this->aDocumentation = null;
             $this->aDocument = null;
             $this->aUserRelatedByCreatedBy = null;
@@ -1006,6 +1057,13 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
+            if ($this->aLanguage !== null) {
+                if ($this->aLanguage->isModified() || $this->aLanguage->isNew()) {
+                    $affectedRows += $this->aLanguage->save($con);
+                }
+                $this->setLanguage($this->aLanguage);
+            }
+
             if ($this->aDocumentation !== null) {
                 if ($this->aDocumentation->isModified() || $this->aDocumentation->isNew()) {
                     $affectedRows += $this->aDocumentation->save($con);
@@ -1085,11 +1143,14 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
         if ($this->isColumnModified(DocumentationPartPeer::TITLE)) {
             $modifiedColumns[':p' . $index++]  = '`TITLE`';
         }
-        if ($this->isColumnModified(DocumentationPartPeer::NAME_NORMALIZED)) {
-            $modifiedColumns[':p' . $index++]  = '`NAME_NORMALIZED`';
-        }
         if ($this->isColumnModified(DocumentationPartPeer::BODY)) {
             $modifiedColumns[':p' . $index++]  = '`BODY`';
+        }
+        if ($this->isColumnModified(DocumentationPartPeer::KEY)) {
+            $modifiedColumns[':p' . $index++]  = '`KEY`';
+        }
+        if ($this->isColumnModified(DocumentationPartPeer::LANGUAGE_ID)) {
+            $modifiedColumns[':p' . $index++]  = '`LANGUAGE_ID`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::DOCUMENTATION_ID)) {
             $modifiedColumns[':p' . $index++]  = '`DOCUMENTATION_ID`';
@@ -1138,14 +1199,17 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
                     case '`TITLE`':
                         $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
                         break;
-                    case '`NAME_NORMALIZED`':
-                        $stmt->bindValue($identifier, $this->name_normalized, PDO::PARAM_STR);
-                        break;
                     case '`BODY`':
                         if (is_resource($this->body)) {
                             rewind($this->body);
                         }
                         $stmt->bindValue($identifier, $this->body, PDO::PARAM_LOB);
+                        break;
+                    case '`KEY`':
+                        $stmt->bindValue($identifier, $this->key, PDO::PARAM_STR);
+                        break;
+                    case '`LANGUAGE_ID`':
+                        $stmt->bindValue($identifier, $this->language_id, PDO::PARAM_STR);
                         break;
                     case '`DOCUMENTATION_ID`':
                         $stmt->bindValue($identifier, $this->documentation_id, PDO::PARAM_INT);
@@ -1273,6 +1337,12 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
+            if ($this->aLanguage !== null) {
+                if (!$this->aLanguage->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aLanguage->getValidationFailures());
+                }
+            }
+
             if ($this->aDocumentation !== null) {
                 if (!$this->aDocumentation->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aDocumentation->getValidationFailures());
@@ -1348,36 +1418,39 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
                 return $this->getTitle();
                 break;
             case 3:
-                return $this->getNameNormalized();
-                break;
-            case 4:
                 return $this->getBody();
                 break;
+            case 4:
+                return $this->getKey();
+                break;
             case 5:
-                return $this->getDocumentationId();
+                return $this->getLanguageId();
                 break;
             case 6:
-                return $this->getImageId();
+                return $this->getDocumentationId();
                 break;
             case 7:
-                return $this->getSort();
+                return $this->getImageId();
                 break;
             case 8:
-                return $this->getIsOverview();
+                return $this->getSort();
                 break;
             case 9:
-                return $this->getIsPublished();
+                return $this->getIsOverview();
                 break;
             case 10:
-                return $this->getCreatedAt();
+                return $this->getIsPublished();
                 break;
             case 11:
-                return $this->getUpdatedAt();
+                return $this->getCreatedAt();
                 break;
             case 12:
-                return $this->getCreatedBy();
+                return $this->getUpdatedAt();
                 break;
             case 13:
+                return $this->getCreatedBy();
+                break;
+            case 14:
                 return $this->getUpdatedBy();
                 break;
             default:
@@ -1412,19 +1485,23 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
             $keys[2] => $this->getTitle(),
-            $keys[3] => $this->getNameNormalized(),
-            $keys[4] => $this->getBody(),
-            $keys[5] => $this->getDocumentationId(),
-            $keys[6] => $this->getImageId(),
-            $keys[7] => $this->getSort(),
-            $keys[8] => $this->getIsOverview(),
-            $keys[9] => $this->getIsPublished(),
-            $keys[10] => $this->getCreatedAt(),
-            $keys[11] => $this->getUpdatedAt(),
-            $keys[12] => $this->getCreatedBy(),
-            $keys[13] => $this->getUpdatedBy(),
+            $keys[3] => $this->getBody(),
+            $keys[4] => $this->getKey(),
+            $keys[5] => $this->getLanguageId(),
+            $keys[6] => $this->getDocumentationId(),
+            $keys[7] => $this->getImageId(),
+            $keys[8] => $this->getSort(),
+            $keys[9] => $this->getIsOverview(),
+            $keys[10] => $this->getIsPublished(),
+            $keys[11] => $this->getCreatedAt(),
+            $keys[12] => $this->getUpdatedAt(),
+            $keys[13] => $this->getCreatedBy(),
+            $keys[14] => $this->getUpdatedBy(),
         );
         if ($includeForeignObjects) {
+            if (null !== $this->aLanguage) {
+                $result['Language'] = $this->aLanguage->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
             if (null !== $this->aDocumentation) {
                 $result['Documentation'] = $this->aDocumentation->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
@@ -1481,36 +1558,39 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
                 $this->setTitle($value);
                 break;
             case 3:
-                $this->setNameNormalized($value);
-                break;
-            case 4:
                 $this->setBody($value);
                 break;
+            case 4:
+                $this->setKey($value);
+                break;
             case 5:
-                $this->setDocumentationId($value);
+                $this->setLanguageId($value);
                 break;
             case 6:
-                $this->setImageId($value);
+                $this->setDocumentationId($value);
                 break;
             case 7:
-                $this->setSort($value);
+                $this->setImageId($value);
                 break;
             case 8:
-                $this->setIsOverview($value);
+                $this->setSort($value);
                 break;
             case 9:
-                $this->setIsPublished($value);
+                $this->setIsOverview($value);
                 break;
             case 10:
-                $this->setCreatedAt($value);
+                $this->setIsPublished($value);
                 break;
             case 11:
-                $this->setUpdatedAt($value);
+                $this->setCreatedAt($value);
                 break;
             case 12:
-                $this->setCreatedBy($value);
+                $this->setUpdatedAt($value);
                 break;
             case 13:
+                $this->setCreatedBy($value);
+                break;
+            case 14:
                 $this->setUpdatedBy($value);
                 break;
         } // switch()
@@ -1540,17 +1620,18 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
         if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setName($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setTitle($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setNameNormalized($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setBody($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setDocumentationId($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setImageId($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setSort($arr[$keys[7]]);
-        if (array_key_exists($keys[8], $arr)) $this->setIsOverview($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setIsPublished($arr[$keys[9]]);
-        if (array_key_exists($keys[10], $arr)) $this->setCreatedAt($arr[$keys[10]]);
-        if (array_key_exists($keys[11], $arr)) $this->setUpdatedAt($arr[$keys[11]]);
-        if (array_key_exists($keys[12], $arr)) $this->setCreatedBy($arr[$keys[12]]);
-        if (array_key_exists($keys[13], $arr)) $this->setUpdatedBy($arr[$keys[13]]);
+        if (array_key_exists($keys[3], $arr)) $this->setBody($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setKey($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setLanguageId($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setDocumentationId($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setImageId($arr[$keys[7]]);
+        if (array_key_exists($keys[8], $arr)) $this->setSort($arr[$keys[8]]);
+        if (array_key_exists($keys[9], $arr)) $this->setIsOverview($arr[$keys[9]]);
+        if (array_key_exists($keys[10], $arr)) $this->setIsPublished($arr[$keys[10]]);
+        if (array_key_exists($keys[11], $arr)) $this->setCreatedAt($arr[$keys[11]]);
+        if (array_key_exists($keys[12], $arr)) $this->setUpdatedAt($arr[$keys[12]]);
+        if (array_key_exists($keys[13], $arr)) $this->setCreatedBy($arr[$keys[13]]);
+        if (array_key_exists($keys[14], $arr)) $this->setUpdatedBy($arr[$keys[14]]);
     }
 
     /**
@@ -1565,8 +1646,9 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
         if ($this->isColumnModified(DocumentationPartPeer::ID)) $criteria->add(DocumentationPartPeer::ID, $this->id);
         if ($this->isColumnModified(DocumentationPartPeer::NAME)) $criteria->add(DocumentationPartPeer::NAME, $this->name);
         if ($this->isColumnModified(DocumentationPartPeer::TITLE)) $criteria->add(DocumentationPartPeer::TITLE, $this->title);
-        if ($this->isColumnModified(DocumentationPartPeer::NAME_NORMALIZED)) $criteria->add(DocumentationPartPeer::NAME_NORMALIZED, $this->name_normalized);
         if ($this->isColumnModified(DocumentationPartPeer::BODY)) $criteria->add(DocumentationPartPeer::BODY, $this->body);
+        if ($this->isColumnModified(DocumentationPartPeer::KEY)) $criteria->add(DocumentationPartPeer::KEY, $this->key);
+        if ($this->isColumnModified(DocumentationPartPeer::LANGUAGE_ID)) $criteria->add(DocumentationPartPeer::LANGUAGE_ID, $this->language_id);
         if ($this->isColumnModified(DocumentationPartPeer::DOCUMENTATION_ID)) $criteria->add(DocumentationPartPeer::DOCUMENTATION_ID, $this->documentation_id);
         if ($this->isColumnModified(DocumentationPartPeer::IMAGE_ID)) $criteria->add(DocumentationPartPeer::IMAGE_ID, $this->image_id);
         if ($this->isColumnModified(DocumentationPartPeer::SORT)) $criteria->add(DocumentationPartPeer::SORT, $this->sort);
@@ -1641,8 +1723,9 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     {
         $copyObj->setName($this->getName());
         $copyObj->setTitle($this->getTitle());
-        $copyObj->setNameNormalized($this->getNameNormalized());
         $copyObj->setBody($this->getBody());
+        $copyObj->setKey($this->getKey());
+        $copyObj->setLanguageId($this->getLanguageId());
         $copyObj->setDocumentationId($this->getDocumentationId());
         $copyObj->setImageId($this->getImageId());
         $copyObj->setSort($this->getSort());
@@ -1708,6 +1791,57 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
         }
 
         return self::$peer;
+    }
+
+    /**
+     * Declares an association between this object and a Language object.
+     *
+     * @param             Language $v
+     * @return DocumentationPart The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setLanguage(Language $v = null)
+    {
+        if ($v === null) {
+            $this->setLanguageId(NULL);
+        } else {
+            $this->setLanguageId($v->getId());
+        }
+
+        $this->aLanguage = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Language object, it will not be re-added.
+        if ($v !== null) {
+            $v->addDocumentationPart($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Language object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @return Language The associated Language object.
+     * @throws PropelException
+     */
+    public function getLanguage(PropelPDO $con = null)
+    {
+        if ($this->aLanguage === null && (($this->language_id !== "" && $this->language_id !== null))) {
+            $this->aLanguage = LanguageQuery::create()->findPk($this->language_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aLanguage->addDocumentationParts($this);
+             */
+        }
+
+        return $this->aLanguage;
     }
 
     /**
@@ -1922,8 +2056,9 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
         $this->id = null;
         $this->name = null;
         $this->title = null;
-        $this->name_normalized = null;
         $this->body = null;
+        $this->key = null;
+        $this->language_id = null;
         $this->documentation_id = null;
         $this->image_id = null;
         $this->sort = null;
@@ -1956,6 +2091,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
         if ($deep) {
         } // if ($deep)
 
+        $this->aLanguage = null;
         $this->aDocumentation = null;
         $this->aDocument = null;
         $this->aUserRelatedByCreatedBy = null;

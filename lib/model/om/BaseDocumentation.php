@@ -2108,6 +2108,31 @@ abstract class BaseDocumentation extends BaseObject implements Persistent
      * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
      * @return PropelObjectCollection|DocumentationPart[] List of DocumentationPart objects
      */
+    public function getDocumentationPartsJoinLanguage($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = DocumentationPartQuery::create(null, $criteria);
+        $query->joinWith('Language', $join_behavior);
+
+        return $this->getDocumentationParts($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Documentation is new, it will return
+     * an empty collection; or if this Documentation has previously
+     * been saved, it will retrieve related DocumentationParts from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Documentation.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|DocumentationPart[] List of DocumentationPart objects
+     */
     public function getDocumentationPartsJoinDocument($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $query = DocumentationPartQuery::create(null, $criteria);

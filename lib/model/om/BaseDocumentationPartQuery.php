@@ -9,8 +9,9 @@
  * @method DocumentationPartQuery orderById($order = Criteria::ASC) Order by the id column
  * @method DocumentationPartQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method DocumentationPartQuery orderByTitle($order = Criteria::ASC) Order by the title column
- * @method DocumentationPartQuery orderByNameNormalized($order = Criteria::ASC) Order by the name_normalized column
  * @method DocumentationPartQuery orderByBody($order = Criteria::ASC) Order by the body column
+ * @method DocumentationPartQuery orderByKey($order = Criteria::ASC) Order by the key column
+ * @method DocumentationPartQuery orderByLanguageId($order = Criteria::ASC) Order by the language_id column
  * @method DocumentationPartQuery orderByDocumentationId($order = Criteria::ASC) Order by the documentation_id column
  * @method DocumentationPartQuery orderByImageId($order = Criteria::ASC) Order by the image_id column
  * @method DocumentationPartQuery orderBySort($order = Criteria::ASC) Order by the sort column
@@ -24,8 +25,9 @@
  * @method DocumentationPartQuery groupById() Group by the id column
  * @method DocumentationPartQuery groupByName() Group by the name column
  * @method DocumentationPartQuery groupByTitle() Group by the title column
- * @method DocumentationPartQuery groupByNameNormalized() Group by the name_normalized column
  * @method DocumentationPartQuery groupByBody() Group by the body column
+ * @method DocumentationPartQuery groupByKey() Group by the key column
+ * @method DocumentationPartQuery groupByLanguageId() Group by the language_id column
  * @method DocumentationPartQuery groupByDocumentationId() Group by the documentation_id column
  * @method DocumentationPartQuery groupByImageId() Group by the image_id column
  * @method DocumentationPartQuery groupBySort() Group by the sort column
@@ -39,6 +41,10 @@
  * @method DocumentationPartQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method DocumentationPartQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method DocumentationPartQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ *
+ * @method DocumentationPartQuery leftJoinLanguage($relationAlias = null) Adds a LEFT JOIN clause to the query using the Language relation
+ * @method DocumentationPartQuery rightJoinLanguage($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Language relation
+ * @method DocumentationPartQuery innerJoinLanguage($relationAlias = null) Adds a INNER JOIN clause to the query using the Language relation
  *
  * @method DocumentationPartQuery leftJoinDocumentation($relationAlias = null) Adds a LEFT JOIN clause to the query using the Documentation relation
  * @method DocumentationPartQuery rightJoinDocumentation($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Documentation relation
@@ -62,8 +68,9 @@
  * @method DocumentationPart findOneById(int $id) Return the first DocumentationPart filtered by the id column
  * @method DocumentationPart findOneByName(string $name) Return the first DocumentationPart filtered by the name column
  * @method DocumentationPart findOneByTitle(string $title) Return the first DocumentationPart filtered by the title column
- * @method DocumentationPart findOneByNameNormalized(string $name_normalized) Return the first DocumentationPart filtered by the name_normalized column
  * @method DocumentationPart findOneByBody(resource $body) Return the first DocumentationPart filtered by the body column
+ * @method DocumentationPart findOneByKey(string $key) Return the first DocumentationPart filtered by the key column
+ * @method DocumentationPart findOneByLanguageId(string $language_id) Return the first DocumentationPart filtered by the language_id column
  * @method DocumentationPart findOneByDocumentationId(int $documentation_id) Return the first DocumentationPart filtered by the documentation_id column
  * @method DocumentationPart findOneByImageId(int $image_id) Return the first DocumentationPart filtered by the image_id column
  * @method DocumentationPart findOneBySort(int $sort) Return the first DocumentationPart filtered by the sort column
@@ -77,8 +84,9 @@
  * @method array findById(int $id) Return DocumentationPart objects filtered by the id column
  * @method array findByName(string $name) Return DocumentationPart objects filtered by the name column
  * @method array findByTitle(string $title) Return DocumentationPart objects filtered by the title column
- * @method array findByNameNormalized(string $name_normalized) Return DocumentationPart objects filtered by the name_normalized column
  * @method array findByBody(resource $body) Return DocumentationPart objects filtered by the body column
+ * @method array findByKey(string $key) Return DocumentationPart objects filtered by the key column
+ * @method array findByLanguageId(string $language_id) Return DocumentationPart objects filtered by the language_id column
  * @method array findByDocumentationId(int $documentation_id) Return DocumentationPart objects filtered by the documentation_id column
  * @method array findByImageId(int $image_id) Return DocumentationPart objects filtered by the image_id column
  * @method array findBySort(int $sort) Return DocumentationPart objects filtered by the sort column
@@ -177,7 +185,7 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `ID`, `NAME`, `TITLE`, `NAME_NORMALIZED`, `BODY`, `DOCUMENTATION_ID`, `IMAGE_ID`, `SORT`, `IS_OVERVIEW`, `IS_PUBLISHED`, `CREATED_AT`, `UPDATED_AT`, `CREATED_BY`, `UPDATED_BY` FROM `documentation_parts` WHERE `ID` = :p0';
+        $sql = 'SELECT `ID`, `NAME`, `TITLE`, `BODY`, `KEY`, `LANGUAGE_ID`, `DOCUMENTATION_ID`, `IMAGE_ID`, `SORT`, `IS_OVERVIEW`, `IS_PUBLISHED`, `CREATED_AT`, `UPDATED_AT`, `CREATED_BY`, `UPDATED_BY` FROM `documentation_parts` WHERE `ID` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -352,35 +360,6 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the name_normalized column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByNameNormalized('fooValue');   // WHERE name_normalized = 'fooValue'
-     * $query->filterByNameNormalized('%fooValue%'); // WHERE name_normalized LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $nameNormalized The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return DocumentationPartQuery The current query, for fluid interface
-     */
-    public function filterByNameNormalized($nameNormalized = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($nameNormalized)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $nameNormalized)) {
-                $nameNormalized = str_replace('*', '%', $nameNormalized);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(DocumentationPartPeer::NAME_NORMALIZED, $nameNormalized, $comparison);
-    }
-
-    /**
      * Filter the query on the body column
      *
      * @param     mixed $body The value to use as filter
@@ -392,6 +371,64 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
     {
 
         return $this->addUsingAlias(DocumentationPartPeer::BODY, $body, $comparison);
+    }
+
+    /**
+     * Filter the query on the key column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByKey('fooValue');   // WHERE key = 'fooValue'
+     * $query->filterByKey('%fooValue%'); // WHERE key LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $key The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return DocumentationPartQuery The current query, for fluid interface
+     */
+    public function filterByKey($key = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($key)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $key)) {
+                $key = str_replace('*', '%', $key);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(DocumentationPartPeer::KEY, $key, $comparison);
+    }
+
+    /**
+     * Filter the query on the language_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByLanguageId('fooValue');   // WHERE language_id = 'fooValue'
+     * $query->filterByLanguageId('%fooValue%'); // WHERE language_id LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $languageId The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return DocumentationPartQuery The current query, for fluid interface
+     */
+    public function filterByLanguageId($languageId = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($languageId)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $languageId)) {
+                $languageId = str_replace('*', '%', $languageId);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(DocumentationPartPeer::LANGUAGE_ID, $languageId, $comparison);
     }
 
     /**
@@ -745,6 +782,82 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DocumentationPartPeer::UPDATED_BY, $updatedBy, $comparison);
+    }
+
+    /**
+     * Filter the query by a related Language object
+     *
+     * @param   Language|PropelObjectCollection $language The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return   DocumentationPartQuery The current query, for fluid interface
+     * @throws   PropelException - if the provided filter is invalid.
+     */
+    public function filterByLanguage($language, $comparison = null)
+    {
+        if ($language instanceof Language) {
+            return $this
+                ->addUsingAlias(DocumentationPartPeer::LANGUAGE_ID, $language->getId(), $comparison);
+        } elseif ($language instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(DocumentationPartPeer::LANGUAGE_ID, $language->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByLanguage() only accepts arguments of type Language or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Language relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return DocumentationPartQuery The current query, for fluid interface
+     */
+    public function joinLanguage($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Language');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Language');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Language relation Language object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   LanguageQuery A secondary query class using the current class as primary query
+     */
+    public function useLanguageQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinLanguage($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Language', 'LanguageQuery');
     }
 
     /**
