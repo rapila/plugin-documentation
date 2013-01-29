@@ -10,6 +10,13 @@ class DocumentationPart extends BaseDocumentationPart {
 		parent::setName($sName);
 	}
 	
+	public function getDisplayTitle() {
+		if(parent::getTitle()) {
+			return parent::getTitle();
+		}
+		return $this->getName();
+	}
+	
 	public function getDocumentationName() {
 		return $this->getDocumentation()->getName();
 	}
@@ -32,6 +39,13 @@ class DocumentationPart extends BaseDocumentationPart {
 
 	public function getIsActive() {
 		return !$this->getIsInactive();
+	}
+	
+	public function getLink() {
+		$oPage = PageQuery::create()->filterByIdentifier(DocumentationFilterModule::PARENT_PAGE_IDENTIFIER)->findOne();
+		$aParams = $oPage->getLink();
+		$aParams[] = $this->getDocumentation()->getKey();
+		return LinkUtil::link($aParams, 'FrontendManager').'#'.$this->getKey();
 	}
 
 	public function delete(PropelPDO $oConnection = null) {

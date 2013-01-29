@@ -1,35 +1,32 @@
 <?php
-/**
-* @package modules.filter
-*/
 class DocumentationFilterModule extends FilterModule {
-	
 	const ITEM_TYPE = 'documentation';
+	const PARENT_PAGE_IDENTIFIER = 'documentation-page';
 	
 	public function onNavigationItemChildrenRequested(NavigationItem $oNavigationItem) {
-		if(!($oNavigationItem instanceof PageNavigationItem && $oNavigationItem->getIdentifier() === 'documentations')) {
+		if(!($oNavigationItem instanceof PageNavigationItem && $oNavigationItem->getIdentifier() === self::PARENT_PAGE_IDENTIFIER)) {
 			return;
 		}
 		
-		// $oObject = LanguageObjectQuery::create()->filterByLanguageId(Session::language())->joinContentObject()->useQuery('ContentObject')->filterByPageId($oNavigationItem->getMe()->getId())->filterByContainerName('content')->filterByObjectType('documentations')->endUse()->findOne();
-		// if(!$oObject) {
-		// 	return;
-		// }
+		$oObject = LanguageObjectQuery::create()->filterByLanguageId(Session::language())->joinContentObject()->useQuery('ContentObject')->filterByPageId($oNavigationItem->getMe()->getId())->filterByContainerName('content')->filterByObjectType('documentations')->endUse()->findOne();
+		if(!$oObject) {
+			return;
+		}
 		
-		// $oModule = new DocumentationsFrontendModule($oObject);
-		// $aOptions = $oModule->widgetData();
-		// $oModule->sVersion = isset($aOptions['version']) ? $aOptions['version'] : DocumentationsFrontendModule::DEFAULT_RAPILA_VERSION;
-		// foreach($oModule->listQuery()->select(array('Slug', 'Name'))->orderByName()->find() as $aParams) {
-		// 	$oNavItem = new VirtualNavigationItem(self::ITEM_TYPE, $aParams['Slug'], $aParams['Name'], null, null);
-		// 	$oNavigationItem->addChild($oNavItem);
-		// }
+		foreach(DocumentationsFrontendModule::listQuery()->select(array('Key', 'Name', 'Title'))->orderByName()->find() as $aParams) {
+			$sTitle = $aParams['Title'] != null ? $aParams['Title'] : $aParams['Name'];
+			$oNavItem = new VirtualNavigationItem(self::ITEM_TYPE, $aParams['Key'], $sTitle, null, null);
+			$oNavigationItem->addChild($oNavItem);
+		}
 	}
 	
 	public function onPageHasBeenSet($oPage, $bIsNotFound, $oNavigationItem) {
-		if($bIsNotFound || !($oNavigationItem instanceof VirtualNavigationItem) || $oNavigationItem->getType() !== get_class()) {
-			return;
+		if($bIsNotFound || !($oNavigationItem instanceof VirtualNavigationItem) || $oNavigationItem->getType() !== self::ITEM_TYPE) {
+				return;
 		}
-		$_REQUEST['documentation_id'] = $oNavigationItem->getData();
-		ErrorHandler::log($oNavigationItem, $_REQUEST['documentation_id']);
+		if($oNavigationItem instanceof VirtualNavigationItem && $oNavigationItem->getType() === self::ITEM_TYPE) {
+			DocumentationsFrontendModule::$DOCUMENTATION = DocumentationQuery::create()->active()->filterByKey($oNavigationItem->getName())->findOne();
+		}
+		ErrorHandler::log($oNavigationItem->getName());
 	}
 }
