@@ -4,11 +4,6 @@
  * @package    propel.generator.model
  */
 class DocumentationPart extends BaseDocumentationPart {
-
-	public function setName($sName) {
-		$this->setNameNormalized(StringUtil::truncate(StringUtil::normalizePath($sName, '-', '-'), 50, '', 0));
-		parent::setName($sName);
-	}
 	
 	public function getDisplayTitle() {
 		if(parent::getTitle()) {

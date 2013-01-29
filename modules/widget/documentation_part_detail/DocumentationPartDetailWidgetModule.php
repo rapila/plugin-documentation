@@ -60,6 +60,9 @@ class DocumentationPartDetailWidgetModule extends PersistentWidgetModule {
 		  $oDocumentationPart = DocumentationPartQuery::create()->findPk($this->iDocumentationPartId);
 		}
 		$oDocumentationPart->fromArray($aDocumentationPartData, BasePeer::TYPE_FIELDNAME);
+		if($oDocumentationPart->getTitle() == null) {
+			$oDocumentationPart->setTitle(null);
+		}
 		$oDocumentationPart->setBody(RichtextUtil::parseInputFromEditorForStorage($aDocumentationPartData['body']));
 		if($oDocumentationPart->isNew() && $oDocumentationPart->getDocumentationId() !== null) {
   		$oDocumentationPart->setSort(DocumentationPartQuery::create()->filterByDocumentationId($oDocumentationPart->getDocumentationId())->count()+1);
