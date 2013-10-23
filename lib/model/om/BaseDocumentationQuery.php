@@ -12,6 +12,7 @@
  * @method DocumentationQuery orderByDescription($order = Criteria::ASC) Order by the description column
  * @method DocumentationQuery orderByYoutubeUrl($order = Criteria::ASC) Order by the youtube_url column
  * @method DocumentationQuery orderByKey($order = Criteria::ASC) Order by the key column
+ * @method DocumentationQuery orderByNameSpace($order = Criteria::ASC) Order by the name_space column
  * @method DocumentationQuery orderByVersion($order = Criteria::ASC) Order by the version column
  * @method DocumentationQuery orderByLanguageId($order = Criteria::ASC) Order by the language_id column
  * @method DocumentationQuery orderByIsPublished($order = Criteria::ASC) Order by the is_published column
@@ -27,6 +28,7 @@
  * @method DocumentationQuery groupByDescription() Group by the description column
  * @method DocumentationQuery groupByYoutubeUrl() Group by the youtube_url column
  * @method DocumentationQuery groupByKey() Group by the key column
+ * @method DocumentationQuery groupByNameSpace() Group by the name_space column
  * @method DocumentationQuery groupByVersion() Group by the version column
  * @method DocumentationQuery groupByLanguageId() Group by the language_id column
  * @method DocumentationQuery groupByIsPublished() Group by the is_published column
@@ -65,6 +67,7 @@
  * @method Documentation findOneByDescription(resource $description) Return the first Documentation filtered by the description column
  * @method Documentation findOneByYoutubeUrl(string $youtube_url) Return the first Documentation filtered by the youtube_url column
  * @method Documentation findOneByKey(string $key) Return the first Documentation filtered by the key column
+ * @method Documentation findOneByNameSpace(string $name_space) Return the first Documentation filtered by the name_space column
  * @method Documentation findOneByVersion(string $version) Return the first Documentation filtered by the version column
  * @method Documentation findOneByLanguageId(string $language_id) Return the first Documentation filtered by the language_id column
  * @method Documentation findOneByIsPublished(boolean $is_published) Return the first Documentation filtered by the is_published column
@@ -80,6 +83,7 @@
  * @method array findByDescription(resource $description) Return Documentation objects filtered by the description column
  * @method array findByYoutubeUrl(string $youtube_url) Return Documentation objects filtered by the youtube_url column
  * @method array findByKey(string $key) Return Documentation objects filtered by the key column
+ * @method array findByNameSpace(string $name_space) Return Documentation objects filtered by the name_space column
  * @method array findByVersion(string $version) Return Documentation objects filtered by the version column
  * @method array findByLanguageId(string $language_id) Return Documentation objects filtered by the language_id column
  * @method array findByIsPublished(boolean $is_published) Return Documentation objects filtered by the is_published column
@@ -177,7 +181,7 @@ abstract class BaseDocumentationQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `ID`, `NAME`, `TITLE`, `DESCRIPTION`, `YOUTUBE_URL`, `KEY`, `VERSION`, `LANGUAGE_ID`, `IS_PUBLISHED`, `SORT`, `CREATED_AT`, `UPDATED_AT`, `CREATED_BY`, `UPDATED_BY` FROM `documentations` WHERE `ID` = :p0';
+        $sql = 'SELECT `ID`, `NAME`, `TITLE`, `DESCRIPTION`, `YOUTUBE_URL`, `KEY`, `NAME_SPACE`, `VERSION`, `LANGUAGE_ID`, `IS_PUBLISHED`, `SORT`, `CREATED_AT`, `UPDATED_AT`, `CREATED_BY`, `UPDATED_BY` FROM `documentations` WHERE `ID` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -421,6 +425,35 @@ abstract class BaseDocumentationQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DocumentationPeer::KEY, $key, $comparison);
+    }
+
+    /**
+     * Filter the query on the name_space column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByNameSpace('fooValue');   // WHERE name_space = 'fooValue'
+     * $query->filterByNameSpace('%fooValue%'); // WHERE name_space LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $nameSpace The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return DocumentationQuery The current query, for fluid interface
+     */
+    public function filterByNameSpace($nameSpace = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($nameSpace)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $nameSpace)) {
+                $nameSpace = str_replace('*', '%', $nameSpace);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(DocumentationPeer::NAME_SPACE, $nameSpace, $comparison);
     }
 
     /**
@@ -1104,4 +1137,14 @@ abstract class BaseDocumentationQuery extends ModelCriteria
     {
         return $this->addAscendingOrderByColumn(DocumentationPeer::CREATED_AT);
     }
+    // extended_keyable behavior
+
+    public function filterByPKArray($pkArray) {
+            return $this->filterByPrimaryKey($pkArray[0]);
+    }
+
+    public function filterByPKString($pkString) {
+        return $this->filterByPrimaryKey($pkString);
+    }
+
 }

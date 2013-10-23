@@ -44,6 +44,7 @@ class DocumentationTableMap extends TableMap
         $this->addColumn('DESCRIPTION', 'Description', 'BLOB', true, null, null);
         $this->addColumn('YOUTUBE_URL', 'YoutubeUrl', 'VARCHAR', false, 200, null);
         $this->addColumn('KEY', 'Key', 'VARCHAR', false, 100, null);
+        $this->addColumn('NAME_SPACE', 'NameSpace', 'VARCHAR', false, 60, null);
         $this->addColumn('VERSION', 'Version', 'VARCHAR', false, 20, null);
         $this->addForeignKey('LANGUAGE_ID', 'LanguageId', 'VARCHAR', 'languages', 'ID', true, 3, null);
         $this->addColumn('IS_PUBLISHED', 'IsPublished', 'BOOLEAN', false, 1, true);
@@ -78,6 +79,7 @@ class DocumentationTableMap extends TableMap
             'denyable' => array('mode' => '', 'role_key' => 'documentations', 'owner_allowed' => '', ),
             'extended_timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_updated_at' => 'false', ),
             'attributable' => array('create_column' => 'created_by', 'update_column' => 'updated_by', ),
+            'extended_keyable' => array('key_separator' => '_', ),
         );
     } // getBehaviors()
 
