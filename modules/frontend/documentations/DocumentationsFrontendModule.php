@@ -10,6 +10,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 	public $sVersion = null;
 	
 	public static $DOCUMENTATION = null;
+	public static $DOCUMENTATION_PARTS = null;
 	
 	public $oPage = null;
 	
@@ -23,7 +24,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 		}
 		$this->sVersion = isset($aOptions['version']) ? $aOptions['version'] : self::DEFAULT_RAPILA_VERSION;
 		
-		if(self::$DOCUMENTATION !== null) {
+		if(self::$DOCUMENTATION !== null || self::$DOCUMENTATION_PARTS !== null) {
 			return $this->renderDetail(self::$DOCUMENTATION);
 		} 
 		switch($aOptions[self::MODE_SELECT_KEY]) {
@@ -36,7 +37,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 			return;
 		}
 		// Detail is displayed if exists
-		return $this->renderDetail(DocumentationQuery::create()->findPk($iDocumentationId));
+		return $this->renderDetail(DocumentationQuery::create()->findPk($aOptions['documentation_id']));
 	}
 	
 	private function setLinkPage() {
@@ -105,77 +106,102 @@ class DocumentationsFrontendModule extends FrontendModule {
 		$oTemplate->replaceIdentifier('title', $oDocumentation->getTitle());
 		$oTemplate->replaceIdentifier('name', $oDocumentation->getName());
 		if($oDocumentation->getYoutubeUrl() != null) {
-			$this->embedVideo($oTemplate, $oDocumentation);
+			$this->embedVideo($oTemplate, $oDocumentation->getYoutubeUrl());
 		}		
 		$oLink = TagWriter::quickTag('a', array('rel' => 'internal', 'href' => LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))), 'class' => 'read_more'), StringPeer::getString('wns.read_more'));
 		$oTemplate->replaceIdentifier('more_link', $oLink);
 		return $oTemplate;
 	}
 	
-	public function embedVideo($oTemplate, $oDocumentation) {
+	public function embedVideo($oTemplate, $sLocation) {
 		$oVideoTempl = $this->constructTemplate('iframe');
-		$oVideoTempl->replaceIdentifier('src', $oDocumentation->getYoutubeUrl());
+		$oVideoTempl->replaceIdentifier('src', $sLocation);
 		$oVideoTempl->replaceIdentifier('width', 620);
 		$oVideoTempl->replaceIdentifier('height', 400);
 		$oTemplate->replaceIdentifier('youtube_video', $oVideoTempl);
 	}
 
-	public function renderDetail($oDocumentation, $bToPdf = false) {
-		if($oDocumentation === null) {
-			return null;
+	public function renderDetail(Documentation $oDocumentation = null) {
+		if(self::$DOCUMENTATION_PARTS === null) {
+			self::$DOCUMENTATION_PARTS = DocumentationPartQuery::create()->filterByDocumentationId($oDocumentation->getId())->filterByIsPublished(true)->orderBySort()->find();
 		}
-		$aDocumentationParts = DocumentationPartQuery::create()->filterByDocumentationId($oDocumentation->getId())->filterByIsPublished(true)->orderBySort()->find();
-		$oTemplate = $this->constructTemplate('documentation'.($bToPdf ? '_pdf' : ''));
+		
+		if($oDocumentation) {
+			$sName = $oDocumentation->getName();
+			$sEmbedUrl = $oDocumentation->getYoutubeUrl();
+			$sDescription = RichtextUtil::parseStorageForFrontendOutput(stream_get_contents($oDocumentation->getDescription()));
+		} else {
+			$sName = StringPeer::getString('documentations.uncategorized');
+			$sEmbedUrl = null;
+			$sDescription = null;
+		}
+
+		$oTemplate = $this->constructTemplate('documentation');
 		
 		// render video if exists
-		if($oDocumentation->getYoutubeUrl() != null && $bToPdf === false) {
-			$this->embedVideo($oTemplate, $oDocumentation);
+		if($sEmbedUrl != null) {
+			$this->embedVideo($oTemplate, $sEmbedUrl);
 		}
-		$oTemplate->replaceIdentifier('documentation_name', $oDocumentation->getName());
-		$sDescription = RichtextUtil::parseStorageForFrontendOutput(stream_get_contents($oDocumentation->getDescription()));
+		$oTemplate->replaceIdentifier('documentation_name', $sName);
 		$oTemplate->replaceIdentifier('description', $sDescription);
-		if($bToPdf === false) {
-			$oTemplate->replaceIdentifier('pdf_link', TagWriter::quickTag('a', array('href' => LinkUtil::link(array('export_pdf', $oDocumentation->getId()), 'FileManager'), 'rel' => 'internal', 'class' => 'not_to_be_printed download'), 'PDF runterladen'));
-		}
 		
 		// render parts
-		if($bToPdf) {
-			$oPartTmpl = $this->constructTemplate('part');
-		} else {
-			$oPartTmpl = $this->constructTemplate('part');
-		}
+		$oPartTmpl = $this->constructTemplate('part');
 		$sLinkToSelf = LinkUtil::linkToSelf();
-		$i = 1;
 		
-		$bRequiresQuicklinks = count($aDocumentationParts) > 1;
+		$bRequiresQuicklinks = count(self::$DOCUMENTATION_PARTS) > 1;
 		$oPartLinkPrototype = $this->constructTemplate('part_link');
-		foreach($aDocumentationParts as $oPart) {
+		foreach(self::$DOCUMENTATION_PARTS as $sKey => $mPart) {
+			if($mPart === true) {
+				$mPart = DocumentationPartQuery::create()->filterByKey($sKey)->findOne();
+			}
+			$bIsOverview = false;
+			if($mPart instanceof DocumentationPart) { //Internal documentation
+				$sBody = RichtextUtil::parseStorageForFrontendOutput(stream_get_contents($mPart->getBody()));
+				$sLinkText = $mPart->getName();
+				$sTitle = $mPart->getTitle();
+				$sImageUrl = null;
+				if($mPart->getDocument()) {
+					$sImageUrl = $mPart->getDocument()->getDisplayUrl(array('max_width' => ($mPart->getIsOverview() ? 653 : 200)));
+					if(RichtextUtil::$USE_ABSOLUTE_LINKS) {
+						$sImageUrl = LinkUtil::absoluteLink($sImageUrl);
+					}
+				}
+				$sKey = $mPart->getKey();
+				$bIsOverview = $mPart->getIsOverview();
+				$sExternalLink = null;
+			} else { //External documentation
+				$aData = DocumentationProviderTypeModule::dataForPart($sKey, Session::language());
+				$sBody = new Template($aData['content'], null, true);
+				$sLinkText = $aData['title'];
+				$sTitle = null;
+				$sImageUrl = null;
+				$sExternalLink = $aData['url'];
+			}
 			// Add quick links
 		  if($bRequiresQuicklinks) {
 				$oPartLink = clone $oPartLinkPrototype;
-				$oPartLink->replaceIdentifier('href', $sLinkToSelf.'#'.$oPart->getKey());
-				$oPartLink->replaceIdentifier('link_text', $oPart->getName());
-				if($oPart->getTitle() != null) {
-					$oPartLink->replaceIdentifier('title', $oPart->getTitle());
+				$oPartLink->replaceIdentifier('href', $sLinkToSelf.'#'.$sKey);
+				
+				$oPartLink->replaceIdentifier('link_text', $sLinkText);
+				if($sTitle != null) {
+					$oPartLink->replaceIdentifier('title', $sTitle);
 				}
   			$oTemplate->replaceIdentifierMultiple('part_links', $oPartLink, null, Template::NO_NEW_CONTEXT);
 		  }
 			// Add documentation part
 			$oPartTemplate = clone $oPartTmpl;
-			$oPartTemplate->replaceIdentifier('name', $oPart->getName());
-			$oPartTemplate->replaceIdentifier('anchor', $oPart->getKey());
-			if($oPart->getDocument()) {
-				$sSrc = !$oPart->getIsOverview() ? $oPart->getDocument()->getDisplayUrl(array('max_width' => 200)) : $oPart->getDocument()->getDisplayUrl(array('max_width' => 653));
-				if(RichtextUtil::$USE_ABSOLUTE_LINKS) {
-					$sSrc = LinkUtil::absoluteLink($sSrc);
-				}
-				$oPartTemplate->replaceIdentifier('image', TagWriter::quickTag('img', array('class' => (!$oPart->getIsOverview() ? 'image_float' : "image_fullwidth"), 'src' => $sSrc, 'alt' => 'Bildschirmfoto von '.$oPart->getName())));
-				$oPartTemplate->replaceIdentifier('margin_left_class', $oPart->getIsOverview() ? '' : ' margin_left_class');
-			}
-			$oPartTemplate->replaceIdentifier('content', RichtextUtil::parseStorageForFrontendOutput(stream_get_contents($oPart->getBody())));
+			$oPartTemplate->replaceIdentifier('name', $sLinkText);
+			$oPartTemplate->replaceIdentifier('anchor', $sKey);
+			$oPartTemplate->replaceIdentifier('href_top', $sLinkToSelf."#top_of_page");
 			
+			$oPartTemplate->replaceIdentifier('external_link', $sExternalLink);
+			if($sImageUrl) {
+				$oPartTemplate->replaceIdentifier('image', TagWriter::quickTag('img', array('class' => (!$bIsOverview ? 'image_float' : "image_fullwidth"), 'src' => $sImageUrl, 'alt' => 'Bildschirmfoto von '.$sLinkText)));
+				$oPartTemplate->replaceIdentifier('margin_left_class', $bIsOverview ? '' : ' margin_left_class');
+			}
+			$oPartTemplate->replaceIdentifier('content', $sBody);
 			$oTemplate->replaceIdentifierMultiple('part', $oPartTemplate);
-			$i++;
 		}
 		return $oTemplate;
 	}

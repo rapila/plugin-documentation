@@ -5,6 +5,7 @@
 	<column name="description" type="blob" required="true"/>
 	<column name="youtube_url" type="varchar" size="200"/>
 	<column name="key" type="varchar" size="100" />
+	<column name="name_space" type="varchar" size="60" />
 	<column name="version" type="varchar" size="20" />
 	<column name="language_id" type="varchar" size="3" required="true" />
 	<foreign-key foreignTable="languages" onDelete="cascade">
