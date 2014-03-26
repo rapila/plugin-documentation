@@ -1,0 +1,5 @@
+---
+aspects:
+  - frontend_config
+  - persistent
+enabled: true

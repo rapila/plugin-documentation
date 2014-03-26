@@ -1,0 +1,61 @@
+Widget.types.documentations_frontend_config = {
+	prepare: function() {
+		var _this = this;
+		this._element.append(Widget.parseHTML('{{includeTemplate=config}}'));
+
+		var config = this.getConfigData() || {};
+
+		//Elements
+		this.mode_dropdown = this._element.find('select[name=display_mode]');
+		this.documentation_dropdown = this._element.find('select[name=documentation\\[\\]]');
+		this.result_list = this._element.find('ol.ui-editable-items-list');
+	
+		this._element.on('change', ':input', this.update_preview.bind(this));
+
+		//Set options
+		var finish = [];
+		this.options(function(data) {
+			this.mode_dropdown.populate(data.display_options, config.display_mode);
+			this.documentation_dropdown.populate(data.documentation_options, config.documentation);
+		}.deferred(finish));
+	
+		jQuery.when.apply(jQuery, finish).then(function() {
+			this.update_preview();
+		}.bind(this));
+	
+		//Init preview stuff
+		Widget.create('documentation_part_detail', function(widget) {
+			_this.detail_widget = widget;
+			widget.save_callback = _this.update_preview.bind(_this);
+		});
+		this.result_list.delegate('li', 'click', function() {
+			var id = jQuery(this).data('id');
+			_this.detail_widget.setDocumentationPartId(id);
+			_this.detail_widget.fill_data();
+			_this.detail_widget.open();
+		});
+	},
+
+	update_preview: function() {
+		var result_list = this.result_list;
+		result_list.empty();
+		var data = this.save();
+		this.listDocumentationParts(data, function(documentation_parts) {
+			jQuery.each(documentation_parts, function(id, documentation_part_name) {
+				result_list.append(jQuery('<li/>').text(documentation_part_name).attr('title', "{{writeString=wns.edit_entry}}").addClass('preview_edit').data('id', id));
+			});
+		});
+	},
+
+	save: function() {
+		return this._element.serializeArrayKV();
+	},
+
+	additional_buttons: [
+		{
+			text: '{{writeString=documentation_parts.do_admin}}',
+			icon: 'wrench',
+			action: jQuery.openLink.bind(window, "{{writeLink=documentation_parts;manager=AdminManager}}")
+		}
+	]
+};

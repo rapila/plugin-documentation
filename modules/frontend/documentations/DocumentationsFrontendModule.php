@@ -205,23 +205,4 @@ class DocumentationsFrontendModule extends FrontendModule {
 		}
 		return $oTemplate;
 	}
-	
-	public function renderBackend() {
-		$oTemplate = $this->constructTemplate('config');
-
-		// display option
-		$aDisplayOptions = array();
-		foreach(self::$DISPLAY_MODES as $sDisplayMode) {
-			$aDisplayOptions[$sDisplayMode] = StringPeer::getString('documentation.display_option.'.$sDisplayMode, null, StringUtil::makeReadableName($sDisplayMode));
-		}
-		$oTemplate->replaceIdentifier('display_options', TagWriter::optionsFromArray($aDisplayOptions, null, null, null));
-		
-		// documentation options
-		$aDocumentationOptions = array();
-		foreach(DocumentationQuery::create()->orderByName()->select(array('Id', 'Name'))->find() as $aParams) {
-			$aDocumentationOptions[$aParams['Id']] = $aParams['Name'];
-		}
-		$oTemplate->replaceIdentifier('documentation_options', TagWriter::optionsFromArray($aDocumentationOptions, null, null, array('' => StringPeer::getString('wns.documentation_option.choose'))));
-		return $oTemplate;
-	}
 }
