@@ -16,6 +16,9 @@ class DocumentationsFrontendConfigWidgetModule extends FrontendConfigWidgetModul
 		if($aData['documentation'] !== null) {
 			$oDocumentationPartQuery->filterByDocumentationId($aData['documentation']);
 		}
+		if($aData['display_mode'] == 'most_recent_teaser') {
+			return $oDocumentationPartQuery->orderByUpdatedAt()->limit(1)->find()->toKeyValue('Id', 'Name');
+		}
 		return $oDocumentationPartQuery->orderByDocumentationId()->orderBySort()->find()->toKeyValue('Id', 'Name');
 	}	
 	
@@ -28,6 +31,6 @@ class DocumentationsFrontendConfigWidgetModule extends FrontendConfigWidgetModul
 	}
 
 	private function getDocumentationOptions() {
-		return array_merge(array('' => StringPeer::getString('wns.documentation_option.choose')), DocumentationQuery::create()->orderByName()->find()->toKeyValue('Id', 'Name'));
+		return DocumentationQuery::create()->orderByName()->find()->toKeyValue('Id', 'Name');
 	}
 }
