@@ -4,29 +4,32 @@
  */
 
 class DocumentationsFrontendModule extends FrontendModule {
-	
+
 	public static $DISPLAY_MODES = array('detail', 'list', 'extended_list', 'most_recent_teaser');
-	
+
 	public $sVersion = null;
-	
+
 	public static $DOCUMENTATION = null;
 	public static $DOCUMENTATION_PARTS = null;
-	
+
 	public $oPage = null;
-	
+
 	const MODE_SELECT_KEY = 'display_mode';
 	const DEFAULT_RAPILA_VERSION = '1.0';
-	
-	public function renderFrontend() {		
+
+	public function renderFrontend() {
 		$aOptions = $this->widgetData();
 		if(!isset($aOptions[self::MODE_SELECT_KEY])) {
 			return null;
 		}
+
 		$this->sVersion = isset($aOptions['version']) ? $aOptions['version'] : self::DEFAULT_RAPILA_VERSION;
 		
+		// onPageHasBeenSet in DocumentationFilterModule
 		if(self::$DOCUMENTATION !== null || self::$DOCUMENTATION_PARTS !== null) {
 			return $this->renderDetail(self::$DOCUMENTATION);
-		} 
+		}
+
 		switch($aOptions[self::MODE_SELECT_KEY]) {
 			case 'most_recent_teaser' : return $this->renderMostRecentTeaser();
 			case 'list' : return $this->renderList();
@@ -122,10 +125,9 @@ class DocumentationsFrontendModule extends FrontendModule {
 	}
 
 	public function renderDetail(Documentation $oDocumentation = null) {
-		if(self::$DOCUMENTATION_PARTS === null) {
+		if(self::$DOCUMENTATION_PARTS == null) {
 			self::$DOCUMENTATION_PARTS = DocumentationPartQuery::create()->filterByDocumentationId($oDocumentation->getId())->filterByIsPublished(true)->orderBySort()->find();
 		}
-		
 		if($oDocumentation) {
 			$sName = $oDocumentation->getName();
 			$sEmbedUrl = $oDocumentation->getYoutubeUrl();
@@ -151,6 +153,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 		
 		$bRequiresQuicklinks = count(self::$DOCUMENTATION_PARTS) > 1;
 		$oPartLinkPrototype = $this->constructTemplate('part_link');
+
 		foreach(self::$DOCUMENTATION_PARTS as $sKey => $mPart) {
 			if($mPart === true) {
 				$mPart = DocumentationPartQuery::create()->filterByKey($sKey)->findOne();

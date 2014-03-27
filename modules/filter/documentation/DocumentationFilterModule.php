@@ -52,7 +52,6 @@ class DocumentationFilterModule extends FilterModule {
 		if($oNavigationItem->getType() === self::ITEM_TYPE) {
 			DocumentationsFrontendModule::$DOCUMENTATION = DocumentationQuery::create()->active()->filterByKey($oNavigationItem->getName())->findOne();
 		}
-
 		DocumentationsFrontendModule::$DOCUMENTATION_PARTS = $oNavigationItem->getData();
 	}
 }
