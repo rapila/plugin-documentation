@@ -12,7 +12,6 @@ class DocumentationsFrontendConfigWidgetModule extends FrontendConfigWidgetModul
 
 	public function listDocumentationParts($aData) {
 		// how to display internal and external documentation(s parts)
-		ErrorHandler::log('listDocumentationParts', $aData);
 		$oDocumentationPartQuery = DocumentationPartQuery::create()->active();
 		if($aData['documentation'] !== null) {
 			$oDocumentationPartQuery->filterByDocumentationId($aData['documentation']);
