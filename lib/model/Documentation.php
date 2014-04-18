@@ -15,7 +15,7 @@ class Documentation extends BaseDocumentation {
 	}
 	
 	public function getFullName() {
-		return '['.$this->getLanguageId().'] '.$this->getName().(!$this->getIsPublished() ? ' [!]' : '');
+		return '['.$this->getLanguageId().'] '.$this->getName().(!$this->getIsPublished() ? '' : ' ✔');
 	}
 	
 	public function getDocumentationPartsOrdered() {
