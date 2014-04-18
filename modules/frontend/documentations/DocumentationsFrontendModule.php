@@ -165,7 +165,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 				$sTitle = $mPart->getTitle();
 				$sImageUrl = null;
 				if($mPart->getDocument()) {
-					$sImageUrl = $mPart->getDocument()->getDisplayUrl(array('max_width' => ($mPart->getIsOverview() ? 653 : 200)));
+					$sImageUrl = $mPart->getDocument()->getDisplayUrl();
 					if(RichtextUtil::$USE_ABSOLUTE_LINKS) {
 						$sImageUrl = LinkUtil::absoluteLink($sImageUrl);
 					}
