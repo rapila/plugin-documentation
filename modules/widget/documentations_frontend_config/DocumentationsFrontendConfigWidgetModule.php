@@ -16,13 +16,13 @@ class DocumentationsFrontendConfigWidgetModule extends FrontendConfigWidgetModul
 		if($aData['documentation'] !== null) {
 			$oDocumentationPartQuery->filterByDocumentationId($aData['documentation']);
 		}
-		if($aData['display_mode'] == 'detail') {
-			return null;
-		}
 		if($aData['display_mode'] == 'most_recent_teaser') {
 			return $oDocumentationPartQuery->orderByUpdatedAt()->limit(1)->find()->toKeyValue('Id', 'Name');
 		}
-		return $oDocumentationPartQuery->orderByDocumentationId()->orderBySort()->select(array('Id', 'Name'))->find()->toKeyValue('Id', 'Name');
+		if(strpos($aData['display_mode'], 'list') !== false) {
+			return $oDocumentationPartQuery->orderByDocumentationId()->orderBySort()->select(array('Id', 'Name'))->find()->toKeyValue('Id', 'Name');
+		}
+		return null;
 	}	
 	
 	private function getDisplayOptions() {

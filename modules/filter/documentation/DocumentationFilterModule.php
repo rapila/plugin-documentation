@@ -44,6 +44,7 @@ class DocumentationFilterModule extends FilterModule {
 		if($bIsNotFound || !($oNavigationItem instanceof VirtualNavigationItem) || ($oNavigationItem->getType() !== self::ITEM_TYPE && $oNavigationItem->getType() !== self::ITEM_TYPE_UNCATEGORIZED)) {
 				return;
 		}
+		// IMPORTANT: documentation needs to be configured as content in the parent page, f.e. "show detail"
 		if($oNavigationItem->getType() === self::ITEM_TYPE) {
 			DocumentationsFrontendModule::$DOCUMENTATION = DocumentationQuery::create()->active()->filterByKey($oNavigationItem->getName())->findOne();
 		}
