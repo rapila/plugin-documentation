@@ -9,11 +9,6 @@ class DocumentationFilterModule extends FilterModule {
 			return;
 		}
 
-		$oObject = LanguageObjectQuery::create()->filterByLanguageId(Session::language())->joinContentObject()->useQuery('ContentObject')->filterByPageId($oNavigationItem->getMe()->getId())->filterByContainerName('content')->filterByObjectType('documentations')->endUse()->findOne();
-		if(!$oObject) {
-			return;
-		}
-		
 		$aDocumentationPartKeys = array();
 		foreach(DocumentationProviderTypeModule::completeMetadata() as $sPart => $aLanguages) {
 			if(isset($aLanguages[Session::language()])) {
@@ -24,8 +19,8 @@ class DocumentationFilterModule extends FilterModule {
 			$aDocumentationPartKeys[$sPart] = true;
 		}
 		ksort($aDocumentationPartKeys);
-		
-		foreach(DocumentationsFrontendModule::listQuery()->select(array('Key', 'Name', 'Title', 'NameSpace'))->orderByName()->find() as $aParams) {
+		$aDocumentations = DocumentationsFrontendModule::listQuery()->select(array('Key', 'Name', 'Title', 'NameSpace'))->orderByName()->find();
+		foreach($aDocumentations as $aParams) {
 			$aConfiguredParts = array();
 			foreach($aDocumentationPartKeys as $sKey => $bIsInternal) {
 				if(StringUtil::startsWith($sKey, $aParams['NameSpace'].'.')) {
