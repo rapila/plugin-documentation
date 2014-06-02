@@ -11,6 +11,7 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 		$oRichtext = WidgetModule::getWidget('rich_text', null, null, 'documentation');
 		$oRichtext->setTemplate(PagePeer::getRootPage()->getTemplate());
 		$this->setSetting('richtext_session', $oRichtext->getSessionKey());
+		$this->setSetting('international_option', LanguageInputWidgetModule::isMonolingual());
 	}
 
 	public function setDocumentationId($iDocumentationId) {
@@ -37,7 +38,7 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 		$oFlash->setArrayToCheck($aDocumentationData);
 		$oFlash->checkForValue('name', 'name_required');
 		$oFlash->checkForValue('key', 'key_required');
-		if(LanguageQuery::create()->count() > 1) {
+		if(!LanguageInputWidgetModule::isMonolingual()) {
 			$oFlash->checkForValue('language_id', 'language_required');
 		} else {
 			$oLanguage = LanguageQuery::create()->findOne();
