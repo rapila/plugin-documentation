@@ -46,6 +46,7 @@
 	<unique>
 		<unique-column name="key" />
 		<unique-column name="language_id" />
+		<unique-column name="documentation_id" />
 	</unique>
 	<behavior name="denyable">
 		<parameter name="role_key" value="documentations"/>

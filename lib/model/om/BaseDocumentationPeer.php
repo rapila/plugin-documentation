@@ -32,56 +32,56 @@ abstract class BaseDocumentationPeer
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
     const NUM_HYDRATE_COLUMNS = 15;
 
-    /** the column name for the ID field */
-    const ID = 'documentations.ID';
+    /** the column name for the id field */
+    const ID = 'documentations.id';
 
-    /** the column name for the NAME field */
-    const NAME = 'documentations.NAME';
+    /** the column name for the name field */
+    const NAME = 'documentations.name';
 
-    /** the column name for the TITLE field */
-    const TITLE = 'documentations.TITLE';
+    /** the column name for the title field */
+    const TITLE = 'documentations.title';
 
-    /** the column name for the DESCRIPTION field */
-    const DESCRIPTION = 'documentations.DESCRIPTION';
+    /** the column name for the description field */
+    const DESCRIPTION = 'documentations.description';
 
-    /** the column name for the YOUTUBE_URL field */
-    const YOUTUBE_URL = 'documentations.YOUTUBE_URL';
+    /** the column name for the youtube_url field */
+    const YOUTUBE_URL = 'documentations.youtube_url';
 
-    /** the column name for the KEY field */
-    const KEY = 'documentations.KEY';
+    /** the column name for the key field */
+    const KEY = 'documentations.key';
 
-    /** the column name for the NAME_SPACE field */
-    const NAME_SPACE = 'documentations.NAME_SPACE';
+    /** the column name for the name_space field */
+    const NAME_SPACE = 'documentations.name_space';
 
-    /** the column name for the VERSION field */
-    const VERSION = 'documentations.VERSION';
+    /** the column name for the version field */
+    const VERSION = 'documentations.version';
 
-    /** the column name for the LANGUAGE_ID field */
-    const LANGUAGE_ID = 'documentations.LANGUAGE_ID';
+    /** the column name for the language_id field */
+    const LANGUAGE_ID = 'documentations.language_id';
 
-    /** the column name for the IS_PUBLISHED field */
-    const IS_PUBLISHED = 'documentations.IS_PUBLISHED';
+    /** the column name for the is_published field */
+    const IS_PUBLISHED = 'documentations.is_published';
 
-    /** the column name for the SORT field */
-    const SORT = 'documentations.SORT';
+    /** the column name for the sort field */
+    const SORT = 'documentations.sort';
 
-    /** the column name for the CREATED_AT field */
-    const CREATED_AT = 'documentations.CREATED_AT';
+    /** the column name for the created_at field */
+    const CREATED_AT = 'documentations.created_at';
 
-    /** the column name for the UPDATED_AT field */
-    const UPDATED_AT = 'documentations.UPDATED_AT';
+    /** the column name for the updated_at field */
+    const UPDATED_AT = 'documentations.updated_at';
 
-    /** the column name for the CREATED_BY field */
-    const CREATED_BY = 'documentations.CREATED_BY';
+    /** the column name for the created_by field */
+    const CREATED_BY = 'documentations.created_by';
 
-    /** the column name for the UPDATED_BY field */
-    const UPDATED_BY = 'documentations.UPDATED_BY';
+    /** the column name for the updated_by field */
+    const UPDATED_BY = 'documentations.updated_by';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
 
     /**
-     * An identiy map to hold any loaded instances of Documentation objects.
+     * An identity map to hold any loaded instances of Documentation objects.
      * This must be public so that other peer classes can access this when hydrating from JOIN
      * queries.
      * @var        array Documentation[]
@@ -208,21 +208,21 @@ abstract class BaseDocumentationPeer
             $criteria->addSelectColumn(DocumentationPeer::CREATED_BY);
             $criteria->addSelectColumn(DocumentationPeer::UPDATED_BY);
         } else {
-            $criteria->addSelectColumn($alias . '.ID');
-            $criteria->addSelectColumn($alias . '.NAME');
-            $criteria->addSelectColumn($alias . '.TITLE');
-            $criteria->addSelectColumn($alias . '.DESCRIPTION');
-            $criteria->addSelectColumn($alias . '.YOUTUBE_URL');
-            $criteria->addSelectColumn($alias . '.KEY');
-            $criteria->addSelectColumn($alias . '.NAME_SPACE');
-            $criteria->addSelectColumn($alias . '.VERSION');
-            $criteria->addSelectColumn($alias . '.LANGUAGE_ID');
-            $criteria->addSelectColumn($alias . '.IS_PUBLISHED');
-            $criteria->addSelectColumn($alias . '.SORT');
-            $criteria->addSelectColumn($alias . '.CREATED_AT');
-            $criteria->addSelectColumn($alias . '.UPDATED_AT');
-            $criteria->addSelectColumn($alias . '.CREATED_BY');
-            $criteria->addSelectColumn($alias . '.UPDATED_BY');
+            $criteria->addSelectColumn($alias . '.id');
+            $criteria->addSelectColumn($alias . '.name');
+            $criteria->addSelectColumn($alias . '.title');
+            $criteria->addSelectColumn($alias . '.description');
+            $criteria->addSelectColumn($alias . '.youtube_url');
+            $criteria->addSelectColumn($alias . '.key');
+            $criteria->addSelectColumn($alias . '.name_space');
+            $criteria->addSelectColumn($alias . '.version');
+            $criteria->addSelectColumn($alias . '.language_id');
+            $criteria->addSelectColumn($alias . '.is_published');
+            $criteria->addSelectColumn($alias . '.sort');
+            $criteria->addSelectColumn($alias . '.created_at');
+            $criteria->addSelectColumn($alias . '.updated_at');
+            $criteria->addSelectColumn($alias . '.created_by');
+            $criteria->addSelectColumn($alias . '.updated_by');
         }
     }
 
@@ -275,7 +275,7 @@ abstract class BaseDocumentationPeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      PropelPDO $con
-     * @return                 Documentation
+     * @return Documentation
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
@@ -306,7 +306,7 @@ abstract class BaseDocumentationPeer
     /**
      * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
      *
-     * Use this method directly if you want to work with an executed statement durirectly (for example
+     * Use this method directly if you want to work with an executed statement directly (for example
      * to perform your own object hydration).
      *
      * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
@@ -342,7 +342,7 @@ abstract class BaseDocumentationPeer
      * to the cache in order to ensure that the same objects are always returned by doSelect*()
      * and retrieveByPK*() calls.
      *
-     * @param      Documentation $obj A Documentation object.
+     * @param Documentation $obj A Documentation object.
      * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
     public static function addInstanceToPool($obj, $key = null)
@@ -392,7 +392,7 @@ abstract class BaseDocumentationPeer
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
      * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-     * @return   Documentation Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+     * @return Documentation Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
      * @see        getPrimaryKeyHash()
      */
     public static function getInstanceFromPool($key)
@@ -411,8 +411,13 @@ abstract class BaseDocumentationPeer
      *
      * @return void
      */
-    public static function clearInstancePool()
+    public static function clearInstancePool($and_clear_all_references = false)
     {
+      if ($and_clear_all_references) {
+        foreach (DocumentationPeer::$instances as $instance) {
+          $instance->clearAllReferences(true);
+        }
+      }
         DocumentationPeer::$instances = array();
     }
 
@@ -1465,7 +1470,7 @@ abstract class BaseDocumentationPeer
     {
       $dbMap = Propel::getDatabaseMap(BaseDocumentationPeer::DATABASE_NAME);
       if (!$dbMap->hasTable(BaseDocumentationPeer::TABLE_NAME)) {
-        $dbMap->addTableObject(new DocumentationTableMap());
+        $dbMap->addTableObject(new \DocumentationTableMap());
       }
     }
 
@@ -1475,7 +1480,7 @@ abstract class BaseDocumentationPeer
      *
      * @return string ClassName
      */
-    public static function getOMClass()
+    public static function getOMClass($row = 0, $colnum = 0)
     {
         return DocumentationPeer::OM_CLASS;
     }
@@ -1515,7 +1520,7 @@ abstract class BaseDocumentationPeer
             $con->beginTransaction();
             $pk = BasePeer::doInsert($criteria, $con);
             $con->commit();
-        } catch (PropelException $e) {
+        } catch (Exception $e) {
             $con->rollBack();
             throw $e;
         }
@@ -1589,7 +1594,7 @@ abstract class BaseDocumentationPeer
             $con->commit();
 
             return $affectedRows;
-        } catch (PropelException $e) {
+        } catch (Exception $e) {
             $con->rollBack();
             throw $e;
         }
@@ -1655,7 +1660,7 @@ abstract class BaseDocumentationPeer
             $con->commit();
 
             return $affectedRows;
-        } catch (PropelException $e) {
+        } catch (Exception $e) {
             $con->rollBack();
             throw $e;
         }
@@ -1701,7 +1706,7 @@ abstract class BaseDocumentationPeer
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      Documentation $obj The object to validate.
+     * @param Documentation $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return mixed TRUE if all columns are valid or the error message of the first invalid column.
@@ -1734,7 +1739,7 @@ abstract class BaseDocumentationPeer
     /**
      * Retrieve a single object by pkey.
      *
-     * @param      int $pk the primary key.
+     * @param int $pk the primary key.
      * @param      PropelPDO $con the connection to use
      * @return Documentation
      */

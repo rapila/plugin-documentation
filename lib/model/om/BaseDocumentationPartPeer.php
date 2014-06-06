@@ -32,56 +32,56 @@ abstract class BaseDocumentationPartPeer
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
     const NUM_HYDRATE_COLUMNS = 15;
 
-    /** the column name for the ID field */
-    const ID = 'documentation_parts.ID';
+    /** the column name for the id field */
+    const ID = 'documentation_parts.id';
 
-    /** the column name for the NAME field */
-    const NAME = 'documentation_parts.NAME';
+    /** the column name for the name field */
+    const NAME = 'documentation_parts.name';
 
-    /** the column name for the TITLE field */
-    const TITLE = 'documentation_parts.TITLE';
+    /** the column name for the title field */
+    const TITLE = 'documentation_parts.title';
 
-    /** the column name for the BODY field */
-    const BODY = 'documentation_parts.BODY';
+    /** the column name for the body field */
+    const BODY = 'documentation_parts.body';
 
-    /** the column name for the KEY field */
-    const KEY = 'documentation_parts.KEY';
+    /** the column name for the key field */
+    const KEY = 'documentation_parts.key';
 
-    /** the column name for the LANGUAGE_ID field */
-    const LANGUAGE_ID = 'documentation_parts.LANGUAGE_ID';
+    /** the column name for the language_id field */
+    const LANGUAGE_ID = 'documentation_parts.language_id';
 
-    /** the column name for the DOCUMENTATION_ID field */
-    const DOCUMENTATION_ID = 'documentation_parts.DOCUMENTATION_ID';
+    /** the column name for the documentation_id field */
+    const DOCUMENTATION_ID = 'documentation_parts.documentation_id';
 
-    /** the column name for the IMAGE_ID field */
-    const IMAGE_ID = 'documentation_parts.IMAGE_ID';
+    /** the column name for the image_id field */
+    const IMAGE_ID = 'documentation_parts.image_id';
 
-    /** the column name for the SORT field */
-    const SORT = 'documentation_parts.SORT';
+    /** the column name for the sort field */
+    const SORT = 'documentation_parts.sort';
 
-    /** the column name for the IS_OVERVIEW field */
-    const IS_OVERVIEW = 'documentation_parts.IS_OVERVIEW';
+    /** the column name for the is_overview field */
+    const IS_OVERVIEW = 'documentation_parts.is_overview';
 
-    /** the column name for the IS_PUBLISHED field */
-    const IS_PUBLISHED = 'documentation_parts.IS_PUBLISHED';
+    /** the column name for the is_published field */
+    const IS_PUBLISHED = 'documentation_parts.is_published';
 
-    /** the column name for the CREATED_AT field */
-    const CREATED_AT = 'documentation_parts.CREATED_AT';
+    /** the column name for the created_at field */
+    const CREATED_AT = 'documentation_parts.created_at';
 
-    /** the column name for the UPDATED_AT field */
-    const UPDATED_AT = 'documentation_parts.UPDATED_AT';
+    /** the column name for the updated_at field */
+    const UPDATED_AT = 'documentation_parts.updated_at';
 
-    /** the column name for the CREATED_BY field */
-    const CREATED_BY = 'documentation_parts.CREATED_BY';
+    /** the column name for the created_by field */
+    const CREATED_BY = 'documentation_parts.created_by';
 
-    /** the column name for the UPDATED_BY field */
-    const UPDATED_BY = 'documentation_parts.UPDATED_BY';
+    /** the column name for the updated_by field */
+    const UPDATED_BY = 'documentation_parts.updated_by';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
 
     /**
-     * An identiy map to hold any loaded instances of DocumentationPart objects.
+     * An identity map to hold any loaded instances of DocumentationPart objects.
      * This must be public so that other peer classes can access this when hydrating from JOIN
      * queries.
      * @var        array DocumentationPart[]
@@ -208,21 +208,21 @@ abstract class BaseDocumentationPartPeer
             $criteria->addSelectColumn(DocumentationPartPeer::CREATED_BY);
             $criteria->addSelectColumn(DocumentationPartPeer::UPDATED_BY);
         } else {
-            $criteria->addSelectColumn($alias . '.ID');
-            $criteria->addSelectColumn($alias . '.NAME');
-            $criteria->addSelectColumn($alias . '.TITLE');
-            $criteria->addSelectColumn($alias . '.BODY');
-            $criteria->addSelectColumn($alias . '.KEY');
-            $criteria->addSelectColumn($alias . '.LANGUAGE_ID');
-            $criteria->addSelectColumn($alias . '.DOCUMENTATION_ID');
-            $criteria->addSelectColumn($alias . '.IMAGE_ID');
-            $criteria->addSelectColumn($alias . '.SORT');
-            $criteria->addSelectColumn($alias . '.IS_OVERVIEW');
-            $criteria->addSelectColumn($alias . '.IS_PUBLISHED');
-            $criteria->addSelectColumn($alias . '.CREATED_AT');
-            $criteria->addSelectColumn($alias . '.UPDATED_AT');
-            $criteria->addSelectColumn($alias . '.CREATED_BY');
-            $criteria->addSelectColumn($alias . '.UPDATED_BY');
+            $criteria->addSelectColumn($alias . '.id');
+            $criteria->addSelectColumn($alias . '.name');
+            $criteria->addSelectColumn($alias . '.title');
+            $criteria->addSelectColumn($alias . '.body');
+            $criteria->addSelectColumn($alias . '.key');
+            $criteria->addSelectColumn($alias . '.language_id');
+            $criteria->addSelectColumn($alias . '.documentation_id');
+            $criteria->addSelectColumn($alias . '.image_id');
+            $criteria->addSelectColumn($alias . '.sort');
+            $criteria->addSelectColumn($alias . '.is_overview');
+            $criteria->addSelectColumn($alias . '.is_published');
+            $criteria->addSelectColumn($alias . '.created_at');
+            $criteria->addSelectColumn($alias . '.updated_at');
+            $criteria->addSelectColumn($alias . '.created_by');
+            $criteria->addSelectColumn($alias . '.updated_by');
         }
     }
 
@@ -275,7 +275,7 @@ abstract class BaseDocumentationPartPeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      PropelPDO $con
-     * @return                 DocumentationPart
+     * @return DocumentationPart
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
@@ -306,7 +306,7 @@ abstract class BaseDocumentationPartPeer
     /**
      * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
      *
-     * Use this method directly if you want to work with an executed statement durirectly (for example
+     * Use this method directly if you want to work with an executed statement directly (for example
      * to perform your own object hydration).
      *
      * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
@@ -342,7 +342,7 @@ abstract class BaseDocumentationPartPeer
      * to the cache in order to ensure that the same objects are always returned by doSelect*()
      * and retrieveByPK*() calls.
      *
-     * @param      DocumentationPart $obj A DocumentationPart object.
+     * @param DocumentationPart $obj A DocumentationPart object.
      * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
     public static function addInstanceToPool($obj, $key = null)
@@ -392,7 +392,7 @@ abstract class BaseDocumentationPartPeer
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
      * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-     * @return   DocumentationPart Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+     * @return DocumentationPart Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
      * @see        getPrimaryKeyHash()
      */
     public static function getInstanceFromPool($key)
@@ -411,8 +411,13 @@ abstract class BaseDocumentationPartPeer
      *
      * @return void
      */
-    public static function clearInstancePool()
+    public static function clearInstancePool($and_clear_all_references = false)
     {
+      if ($and_clear_all_references) {
+        foreach (DocumentationPartPeer::$instances as $instance) {
+          $instance->clearAllReferences(true);
+        }
+      }
         DocumentationPartPeer::$instances = array();
     }
 
@@ -2310,7 +2315,7 @@ abstract class BaseDocumentationPartPeer
     {
       $dbMap = Propel::getDatabaseMap(BaseDocumentationPartPeer::DATABASE_NAME);
       if (!$dbMap->hasTable(BaseDocumentationPartPeer::TABLE_NAME)) {
-        $dbMap->addTableObject(new DocumentationPartTableMap());
+        $dbMap->addTableObject(new \DocumentationPartTableMap());
       }
     }
 
@@ -2320,7 +2325,7 @@ abstract class BaseDocumentationPartPeer
      *
      * @return string ClassName
      */
-    public static function getOMClass()
+    public static function getOMClass($row = 0, $colnum = 0)
     {
         return DocumentationPartPeer::OM_CLASS;
     }
@@ -2360,7 +2365,7 @@ abstract class BaseDocumentationPartPeer
             $con->beginTransaction();
             $pk = BasePeer::doInsert($criteria, $con);
             $con->commit();
-        } catch (PropelException $e) {
+        } catch (Exception $e) {
             $con->rollBack();
             throw $e;
         }
@@ -2433,7 +2438,7 @@ abstract class BaseDocumentationPartPeer
             $con->commit();
 
             return $affectedRows;
-        } catch (PropelException $e) {
+        } catch (Exception $e) {
             $con->rollBack();
             throw $e;
         }
@@ -2492,7 +2497,7 @@ abstract class BaseDocumentationPartPeer
             $con->commit();
 
             return $affectedRows;
-        } catch (PropelException $e) {
+        } catch (Exception $e) {
             $con->rollBack();
             throw $e;
         }
@@ -2505,7 +2510,7 @@ abstract class BaseDocumentationPartPeer
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      DocumentationPart $obj The object to validate.
+     * @param DocumentationPart $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return mixed TRUE if all columns are valid or the error message of the first invalid column.
@@ -2538,7 +2543,7 @@ abstract class BaseDocumentationPartPeer
     /**
      * Retrieve a single object by pkey.
      *
-     * @param      int $pk the primary key.
+     * @param int $pk the primary key.
      * @param      PropelPDO $con the connection to use
      * @return DocumentationPart
      */

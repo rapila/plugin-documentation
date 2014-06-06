@@ -24,7 +24,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     protected static $peer;
 
     /**
-     * The flag var to prevent infinit loop in deep copy
+     * The flag var to prevent infinite loop in deep copy
      * @var       boolean
      */
     protected $startCopy = false;
@@ -161,6 +161,12 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     protected $alreadyInValidation = false;
 
     /**
+     * Flag to prevent endless clearAllReferences($deep=true) loop, if this object is referenced
+     * @var        boolean
+     */
+    protected $alreadyInClearAllReferencesDeep = false;
+
+    /**
      * Applies default values to this object.
      * This method should be called from the object's constructor (or
      * equivalent initialization method).
@@ -189,6 +195,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      */
     public function getId()
     {
+
         return $this->id;
     }
 
@@ -199,6 +206,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      */
     public function getName()
     {
+
         return $this->name;
     }
 
@@ -209,6 +217,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      */
     public function getTitle()
     {
+
         return $this->title;
     }
 
@@ -219,6 +228,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      */
     public function getBody()
     {
+
         return $this->body;
     }
 
@@ -229,6 +239,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      */
     public function getKey()
     {
+
         return $this->key;
     }
 
@@ -239,6 +250,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      */
     public function getLanguageId()
     {
+
         return $this->language_id;
     }
 
@@ -249,6 +261,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      */
     public function getDocumentationId()
     {
+
         return $this->documentation_id;
     }
 
@@ -259,6 +272,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      */
     public function getImageId()
     {
+
         return $this->image_id;
     }
 
@@ -269,6 +283,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      */
     public function getSort()
     {
+
         return $this->sort;
     }
 
@@ -279,6 +294,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      */
     public function getIsOverview()
     {
+
         return $this->is_overview;
     }
 
@@ -289,6 +305,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      */
     public function getIsPublished()
     {
+
         return $this->is_published;
     }
 
@@ -311,22 +328,25 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
             // while technically this is not a default value of null,
             // this seems to be closest in meaning.
             return null;
-        } else {
-            try {
-                $dt = new DateTime($this->created_at);
-            } catch (Exception $x) {
-                throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->created_at, true), $x);
-            }
+        }
+
+        try {
+            $dt = new DateTime($this->created_at);
+        } catch (Exception $x) {
+            throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->created_at, true), $x);
         }
 
         if ($format === null) {
             // Because propel.useDateTimeClass is true, we return a DateTime object.
             return $dt;
-        } elseif (strpos($format, '%') !== false) {
-            return strftime($format, $dt->format('U'));
-        } else {
-            return $dt->format($format);
         }
+
+        if (strpos($format, '%') !== false) {
+            return strftime($format, $dt->format('U'));
+        }
+
+        return $dt->format($format);
+
     }
 
     /**
@@ -348,22 +368,25 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
             // while technically this is not a default value of null,
             // this seems to be closest in meaning.
             return null;
-        } else {
-            try {
-                $dt = new DateTime($this->updated_at);
-            } catch (Exception $x) {
-                throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->updated_at, true), $x);
-            }
+        }
+
+        try {
+            $dt = new DateTime($this->updated_at);
+        } catch (Exception $x) {
+            throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->updated_at, true), $x);
         }
 
         if ($format === null) {
             // Because propel.useDateTimeClass is true, we return a DateTime object.
             return $dt;
-        } elseif (strpos($format, '%') !== false) {
-            return strftime($format, $dt->format('U'));
-        } else {
-            return $dt->format($format);
         }
+
+        if (strpos($format, '%') !== false) {
+            return strftime($format, $dt->format('U'));
+        }
+
+        return $dt->format($format);
+
     }
 
     /**
@@ -373,6 +396,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      */
     public function getCreatedBy()
     {
+
         return $this->created_by;
     }
 
@@ -383,18 +407,19 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      */
     public function getUpdatedBy()
     {
+
         return $this->updated_by;
     }
 
     /**
      * Set the value of [id] column.
      *
-     * @param int $v new value
+     * @param  int $v new value
      * @return DocumentationPart The current object (for fluent API support)
      */
     public function setId($v)
     {
-        if ($v !== null) {
+        if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
@@ -410,7 +435,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Set the value of [name] column.
      *
-     * @param string $v new value
+     * @param  string $v new value
      * @return DocumentationPart The current object (for fluent API support)
      */
     public function setName($v)
@@ -431,7 +456,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Set the value of [title] column.
      *
-     * @param string $v new value
+     * @param  string $v new value
      * @return DocumentationPart The current object (for fluent API support)
      */
     public function setTitle($v)
@@ -452,7 +477,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Set the value of [body] column.
      *
-     * @param resource $v new value
+     * @param  resource $v new value
      * @return DocumentationPart The current object (for fluent API support)
      */
     public function setBody($v)
@@ -476,7 +501,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Set the value of [key] column.
      *
-     * @param string $v new value
+     * @param  string $v new value
      * @return DocumentationPart The current object (for fluent API support)
      */
     public function setKey($v)
@@ -497,7 +522,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Set the value of [language_id] column.
      *
-     * @param string $v new value
+     * @param  string $v new value
      * @return DocumentationPart The current object (for fluent API support)
      */
     public function setLanguageId($v)
@@ -522,12 +547,12 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Set the value of [documentation_id] column.
      *
-     * @param int $v new value
+     * @param  int $v new value
      * @return DocumentationPart The current object (for fluent API support)
      */
     public function setDocumentationId($v)
     {
-        if ($v !== null) {
+        if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
@@ -547,12 +572,12 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Set the value of [image_id] column.
      *
-     * @param int $v new value
+     * @param  int $v new value
      * @return DocumentationPart The current object (for fluent API support)
      */
     public function setImageId($v)
     {
-        if ($v !== null) {
+        if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
@@ -572,12 +597,12 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Set the value of [sort] column.
      *
-     * @param int $v new value
+     * @param  int $v new value
      * @return DocumentationPart The current object (for fluent API support)
      */
     public function setSort($v)
     {
-        if ($v !== null) {
+        if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
@@ -697,12 +722,12 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Set the value of [created_by] column.
      *
-     * @param int $v new value
+     * @param  int $v new value
      * @return DocumentationPart The current object (for fluent API support)
      */
     public function setCreatedBy($v)
     {
-        if ($v !== null) {
+        if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
@@ -722,12 +747,12 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Set the value of [updated_by] column.
      *
-     * @param int $v new value
+     * @param  int $v new value
      * @return DocumentationPart The current object (for fluent API support)
      */
     public function setUpdatedBy($v)
     {
-        if ($v !== null) {
+        if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
@@ -775,7 +800,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      * more tables.
      *
      * @param array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
-     * @param int $startcol 0-based offset column which indicates which restultset column to start with.
+     * @param int $startcol 0-based offset column which indicates which resultset column to start with.
      * @param boolean $rehydrate Whether this object is being re-hydrated from the database.
      * @return int             next starting column
      * @throws PropelException - Any caught Exception will be rewrapped as a PropelException.
@@ -812,6 +837,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
             if ($rehydrate) {
                 $this->ensureConsistency();
             }
+            $this->postHydrate($row, $startcol, $rehydrate);
 
             return $startcol + 15; // 15 = DocumentationPartPeer::NUM_HYDRATE_COLUMNS.
 
@@ -1053,7 +1079,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
             $this->alreadyInSave = true;
 
             // We call the save method on the following object(s) if they
-            // were passed to this object by their coresponding set
+            // were passed to this object by their corresponding set
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
@@ -1135,49 +1161,49 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
 
          // check the columns in natural order for more readable SQL queries
         if ($this->isColumnModified(DocumentationPartPeer::ID)) {
-            $modifiedColumns[':p' . $index++]  = '`ID`';
+            $modifiedColumns[':p' . $index++]  = '`id`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::NAME)) {
-            $modifiedColumns[':p' . $index++]  = '`NAME`';
+            $modifiedColumns[':p' . $index++]  = '`name`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::TITLE)) {
-            $modifiedColumns[':p' . $index++]  = '`TITLE`';
+            $modifiedColumns[':p' . $index++]  = '`title`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::BODY)) {
-            $modifiedColumns[':p' . $index++]  = '`BODY`';
+            $modifiedColumns[':p' . $index++]  = '`body`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::KEY)) {
-            $modifiedColumns[':p' . $index++]  = '`KEY`';
+            $modifiedColumns[':p' . $index++]  = '`key`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::LANGUAGE_ID)) {
-            $modifiedColumns[':p' . $index++]  = '`LANGUAGE_ID`';
+            $modifiedColumns[':p' . $index++]  = '`language_id`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::DOCUMENTATION_ID)) {
-            $modifiedColumns[':p' . $index++]  = '`DOCUMENTATION_ID`';
+            $modifiedColumns[':p' . $index++]  = '`documentation_id`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::IMAGE_ID)) {
-            $modifiedColumns[':p' . $index++]  = '`IMAGE_ID`';
+            $modifiedColumns[':p' . $index++]  = '`image_id`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::SORT)) {
-            $modifiedColumns[':p' . $index++]  = '`SORT`';
+            $modifiedColumns[':p' . $index++]  = '`sort`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::IS_OVERVIEW)) {
-            $modifiedColumns[':p' . $index++]  = '`IS_OVERVIEW`';
+            $modifiedColumns[':p' . $index++]  = '`is_overview`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::IS_PUBLISHED)) {
-            $modifiedColumns[':p' . $index++]  = '`IS_PUBLISHED`';
+            $modifiedColumns[':p' . $index++]  = '`is_published`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::CREATED_AT)) {
-            $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+            $modifiedColumns[':p' . $index++]  = '`created_at`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::UPDATED_AT)) {
-            $modifiedColumns[':p' . $index++]  = '`UPDATED_AT`';
+            $modifiedColumns[':p' . $index++]  = '`updated_at`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::CREATED_BY)) {
-            $modifiedColumns[':p' . $index++]  = '`CREATED_BY`';
+            $modifiedColumns[':p' . $index++]  = '`created_by`';
         }
         if ($this->isColumnModified(DocumentationPartPeer::UPDATED_BY)) {
-            $modifiedColumns[':p' . $index++]  = '`UPDATED_BY`';
+            $modifiedColumns[':p' . $index++]  = '`updated_by`';
         }
 
         $sql = sprintf(
@@ -1190,52 +1216,52 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case '`ID`':
+                    case '`id`':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case '`NAME`':
+                    case '`name`':
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
-                    case '`TITLE`':
+                    case '`title`':
                         $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
                         break;
-                    case '`BODY`':
+                    case '`body`':
                         if (is_resource($this->body)) {
                             rewind($this->body);
                         }
                         $stmt->bindValue($identifier, $this->body, PDO::PARAM_LOB);
                         break;
-                    case '`KEY`':
+                    case '`key`':
                         $stmt->bindValue($identifier, $this->key, PDO::PARAM_STR);
                         break;
-                    case '`LANGUAGE_ID`':
+                    case '`language_id`':
                         $stmt->bindValue($identifier, $this->language_id, PDO::PARAM_STR);
                         break;
-                    case '`DOCUMENTATION_ID`':
+                    case '`documentation_id`':
                         $stmt->bindValue($identifier, $this->documentation_id, PDO::PARAM_INT);
                         break;
-                    case '`IMAGE_ID`':
+                    case '`image_id`':
                         $stmt->bindValue($identifier, $this->image_id, PDO::PARAM_INT);
                         break;
-                    case '`SORT`':
+                    case '`sort`':
                         $stmt->bindValue($identifier, $this->sort, PDO::PARAM_INT);
                         break;
-                    case '`IS_OVERVIEW`':
+                    case '`is_overview`':
                         $stmt->bindValue($identifier, (int) $this->is_overview, PDO::PARAM_INT);
                         break;
-                    case '`IS_PUBLISHED`':
+                    case '`is_published`':
                         $stmt->bindValue($identifier, (int) $this->is_published, PDO::PARAM_INT);
                         break;
-                    case '`CREATED_AT`':
+                    case '`created_at`':
                         $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
                         break;
-                    case '`UPDATED_AT`':
+                    case '`updated_at`':
                         $stmt->bindValue($identifier, $this->updated_at, PDO::PARAM_STR);
                         break;
-                    case '`CREATED_BY`':
+                    case '`created_by`':
                         $stmt->bindValue($identifier, $this->created_by, PDO::PARAM_INT);
                         break;
-                    case '`UPDATED_BY`':
+                    case '`updated_by`':
                         $stmt->bindValue($identifier, $this->updated_by, PDO::PARAM_INT);
                         break;
                 }
@@ -1306,11 +1332,11 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
             $this->validationFailures = array();
 
             return true;
-        } else {
-            $this->validationFailures = $res;
-
-            return false;
         }
+
+        $this->validationFailures = $res;
+
+        return false;
     }
 
     /**
@@ -1318,10 +1344,10 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      *
      * In addition to checking the current object, all related objects will
      * also be validated.  If all pass then <code>true</code> is returned; otherwise
-     * an aggreagated array of ValidationFailed objects will be returned.
+     * an aggregated array of ValidationFailed objects will be returned.
      *
      * @param array $columns Array of column names to validate.
-     * @return mixed <code>true</code> if all validations pass; array of <code>ValidationFailed</code> objets otherwise.
+     * @return mixed <code>true</code> if all validations pass; array of <code>ValidationFailed</code> objects otherwise.
      */
     protected function doValidate($columns = null)
     {
@@ -1333,7 +1359,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
 
 
             // We call the validate method on the following object(s) if they
-            // were passed to this object by their coresponding set
+            // were passed to this object by their corresponding set
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
@@ -1498,6 +1524,11 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
             $keys[13] => $this->getCreatedBy(),
             $keys[14] => $this->getUpdatedBy(),
         );
+        $virtualColumns = $this->virtualColumns;
+        foreach ($virtualColumns as $key => $virtualColumn) {
+            $result[$key] = $virtualColumn;
+        }
+
         if ($includeForeignObjects) {
             if (null !== $this->aLanguage) {
                 $result['Language'] = $this->aLanguage->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
@@ -1796,7 +1827,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Declares an association between this object and a Language object.
      *
-     * @param             Language $v
+     * @param                  Language $v
      * @return DocumentationPart The current object (for fluent API support)
      * @throws PropelException
      */
@@ -1825,12 +1856,13 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      * Get the associated Language object
      *
      * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
      * @return Language The associated Language object.
      * @throws PropelException
      */
-    public function getLanguage(PropelPDO $con = null)
+    public function getLanguage(PropelPDO $con = null, $doQuery = true)
     {
-        if ($this->aLanguage === null && (($this->language_id !== "" && $this->language_id !== null))) {
+        if ($this->aLanguage === null && (($this->language_id !== "" && $this->language_id !== null)) && $doQuery) {
             $this->aLanguage = LanguageQuery::create()->findPk($this->language_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
@@ -1847,7 +1879,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Declares an association between this object and a Documentation object.
      *
-     * @param             Documentation $v
+     * @param                  Documentation $v
      * @return DocumentationPart The current object (for fluent API support)
      * @throws PropelException
      */
@@ -1876,12 +1908,13 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      * Get the associated Documentation object
      *
      * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
      * @return Documentation The associated Documentation object.
      * @throws PropelException
      */
-    public function getDocumentation(PropelPDO $con = null)
+    public function getDocumentation(PropelPDO $con = null, $doQuery = true)
     {
-        if ($this->aDocumentation === null && ($this->documentation_id !== null)) {
+        if ($this->aDocumentation === null && ($this->documentation_id !== null) && $doQuery) {
             $this->aDocumentation = DocumentationQuery::create()->findPk($this->documentation_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
@@ -1898,7 +1931,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Declares an association between this object and a Document object.
      *
-     * @param             Document $v
+     * @param                  Document $v
      * @return DocumentationPart The current object (for fluent API support)
      * @throws PropelException
      */
@@ -1927,12 +1960,13 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      * Get the associated Document object
      *
      * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
      * @return Document The associated Document object.
      * @throws PropelException
      */
-    public function getDocument(PropelPDO $con = null)
+    public function getDocument(PropelPDO $con = null, $doQuery = true)
     {
-        if ($this->aDocument === null && ($this->image_id !== null)) {
+        if ($this->aDocument === null && ($this->image_id !== null) && $doQuery) {
             $this->aDocument = DocumentQuery::create()->findPk($this->image_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
@@ -1949,7 +1983,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Declares an association between this object and a User object.
      *
-     * @param             User $v
+     * @param                  User $v
      * @return DocumentationPart The current object (for fluent API support)
      * @throws PropelException
      */
@@ -1978,12 +2012,13 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      * Get the associated User object
      *
      * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
      * @return User The associated User object.
      * @throws PropelException
      */
-    public function getUserRelatedByCreatedBy(PropelPDO $con = null)
+    public function getUserRelatedByCreatedBy(PropelPDO $con = null, $doQuery = true)
     {
-        if ($this->aUserRelatedByCreatedBy === null && ($this->created_by !== null)) {
+        if ($this->aUserRelatedByCreatedBy === null && ($this->created_by !== null) && $doQuery) {
             $this->aUserRelatedByCreatedBy = UserQuery::create()->findPk($this->created_by, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
@@ -2000,7 +2035,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
     /**
      * Declares an association between this object and a User object.
      *
-     * @param             User $v
+     * @param                  User $v
      * @return DocumentationPart The current object (for fluent API support)
      * @throws PropelException
      */
@@ -2029,12 +2064,13 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      * Get the associated User object
      *
      * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
      * @return User The associated User object.
      * @throws PropelException
      */
-    public function getUserRelatedByUpdatedBy(PropelPDO $con = null)
+    public function getUserRelatedByUpdatedBy(PropelPDO $con = null, $doQuery = true)
     {
-        if ($this->aUserRelatedByUpdatedBy === null && ($this->updated_by !== null)) {
+        if ($this->aUserRelatedByUpdatedBy === null && ($this->updated_by !== null) && $doQuery) {
             $this->aUserRelatedByUpdatedBy = UserQuery::create()->findPk($this->updated_by, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
@@ -2070,6 +2106,7 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
         $this->updated_by = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
+        $this->alreadyInClearAllReferencesDeep = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();
         $this->resetModified();
@@ -2082,13 +2119,31 @@ abstract class BaseDocumentationPart extends BaseObject implements Persistent
      *
      * This method is a user-space workaround for PHP's inability to garbage collect
      * objects with circular references (even in PHP 5.3). This is currently necessary
-     * when using Propel in certain daemon or large-volumne/high-memory operations.
+     * when using Propel in certain daemon or large-volume/high-memory operations.
      *
      * @param boolean $deep Whether to also clear the references on all referrer objects.
      */
     public function clearAllReferences($deep = false)
     {
-        if ($deep) {
+        if ($deep && !$this->alreadyInClearAllReferencesDeep) {
+            $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->aLanguage instanceof Persistent) {
+              $this->aLanguage->clearAllReferences($deep);
+            }
+            if ($this->aDocumentation instanceof Persistent) {
+              $this->aDocumentation->clearAllReferences($deep);
+            }
+            if ($this->aDocument instanceof Persistent) {
+              $this->aDocument->clearAllReferences($deep);
+            }
+            if ($this->aUserRelatedByCreatedBy instanceof Persistent) {
+              $this->aUserRelatedByCreatedBy->clearAllReferences($deep);
+            }
+            if ($this->aUserRelatedByUpdatedBy instanceof Persistent) {
+              $this->aUserRelatedByUpdatedBy->clearAllReferences($deep);
+            }
+
+            $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
         $this->aLanguage = null;

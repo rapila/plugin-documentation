@@ -38,21 +38,21 @@ class DocumentationTableMap extends TableMap
         $this->setPackage('model');
         $this->setUseIdGenerator(true);
         // columns
-        $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('NAME', 'Name', 'VARCHAR', true, 100, null);
-        $this->addColumn('TITLE', 'Title', 'VARCHAR', true, 255, null);
-        $this->addColumn('DESCRIPTION', 'Description', 'BLOB', true, null, null);
-        $this->addColumn('YOUTUBE_URL', 'YoutubeUrl', 'VARCHAR', false, 200, null);
-        $this->addColumn('KEY', 'Key', 'VARCHAR', false, 100, null);
-        $this->addColumn('NAME_SPACE', 'NameSpace', 'VARCHAR', false, 60, null);
-        $this->addColumn('VERSION', 'Version', 'VARCHAR', false, 20, null);
-        $this->addForeignKey('LANGUAGE_ID', 'LanguageId', 'VARCHAR', 'languages', 'ID', true, 3, null);
-        $this->addColumn('IS_PUBLISHED', 'IsPublished', 'BOOLEAN', false, 1, true);
-        $this->addColumn('SORT', 'Sort', 'INTEGER', false, null, null);
-        $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
-        $this->addForeignKey('CREATED_BY', 'CreatedBy', 'INTEGER', 'users', 'ID', false, null, null);
-        $this->addForeignKey('UPDATED_BY', 'UpdatedBy', 'INTEGER', 'users', 'ID', false, null, null);
+        $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
+        $this->addColumn('name', 'Name', 'VARCHAR', true, 100, null);
+        $this->addColumn('title', 'Title', 'VARCHAR', true, 255, null);
+        $this->addColumn('description', 'Description', 'BLOB', true, null, null);
+        $this->addColumn('youtube_url', 'YoutubeUrl', 'VARCHAR', false, 200, null);
+        $this->addColumn('key', 'Key', 'VARCHAR', false, 100, null);
+        $this->addColumn('name_space', 'NameSpace', 'VARCHAR', false, 60, null);
+        $this->addColumn('version', 'Version', 'VARCHAR', false, 20, null);
+        $this->addForeignKey('language_id', 'LanguageId', 'VARCHAR', 'languages', 'id', true, 3, null);
+        $this->addColumn('is_published', 'IsPublished', 'BOOLEAN', false, 1, true);
+        $this->addColumn('sort', 'Sort', 'INTEGER', false, null, null);
+        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
+        $this->addForeignKey('created_by', 'CreatedBy', 'INTEGER', 'users', 'id', false, null, null);
+        $this->addForeignKey('updated_by', 'UpdatedBy', 'INTEGER', 'users', 'id', false, null, null);
         // validators
     } // initialize()
 
@@ -76,10 +76,23 @@ class DocumentationTableMap extends TableMap
     public function getBehaviors()
     {
         return array(
-            'denyable' => array('mode' => '', 'role_key' => 'documentations', 'owner_allowed' => '', ),
-            'extended_timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_updated_at' => 'false', ),
-            'attributable' => array('create_column' => 'created_by', 'update_column' => 'updated_by', ),
-            'extended_keyable' => array('key_separator' => '_', ),
+            'denyable' =>  array (
+  'mode' => '',
+  'role_key' => 'documentations',
+  'owner_allowed' => '',
+),
+            'extended_timestampable' =>  array (
+  'create_column' => 'created_at',
+  'update_column' => 'updated_at',
+  'disable_updated_at' => 'false',
+),
+            'attributable' =>  array (
+  'create_column' => 'created_by',
+  'update_column' => 'updated_by',
+),
+            'extended_keyable' =>  array (
+  'key_separator' => '_',
+),
         );
     } // getBehaviors()
 

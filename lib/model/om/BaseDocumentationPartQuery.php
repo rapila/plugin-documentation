@@ -65,7 +65,6 @@
  * @method DocumentationPart findOne(PropelPDO $con = null) Return the first DocumentationPart matching the query
  * @method DocumentationPart findOneOrCreate(PropelPDO $con = null) Return the first DocumentationPart matching the query, or a new DocumentationPart object populated from the query conditions when no match is found
  *
- * @method DocumentationPart findOneById(int $id) Return the first DocumentationPart filtered by the id column
  * @method DocumentationPart findOneByName(string $name) Return the first DocumentationPart filtered by the name column
  * @method DocumentationPart findOneByTitle(string $title) Return the first DocumentationPart filtered by the title column
  * @method DocumentationPart findOneByBody(resource $body) Return the first DocumentationPart filtered by the body column
@@ -108,8 +107,14 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'rapila', $modelName = 'DocumentationPart', $modelAlias = null)
+    public function __construct($dbName = null, $modelName = null, $modelAlias = null)
     {
+        if (null === $dbName) {
+            $dbName = 'rapila';
+        }
+        if (null === $modelName) {
+            $modelName = 'DocumentationPart';
+        }
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
@@ -117,7 +122,7 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * Returns a new DocumentationPartQuery object.
      *
      * @param     string $modelAlias The alias of a model in the query
-     * @param     DocumentationPartQuery|Criteria $criteria Optional Criteria to build the query from
+     * @param   DocumentationPartQuery|Criteria $criteria Optional Criteria to build the query from
      *
      * @return DocumentationPartQuery
      */
@@ -126,10 +131,8 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
         if ($criteria instanceof DocumentationPartQuery) {
             return $criteria;
         }
-        $query = new DocumentationPartQuery();
-        if (null !== $modelAlias) {
-            $query->setModelAlias($modelAlias);
-        }
+        $query = new DocumentationPartQuery(null, null, $modelAlias);
+
         if ($criteria instanceof Criteria) {
             $query->mergeWith($criteria);
         }
@@ -157,7 +160,7 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
             return null;
         }
         if ((null !== ($obj = DocumentationPartPeer::getInstanceFromPool((string) $key))) && !$this->formatter) {
-            // the object is alredy in the instance pool
+            // the object is already in the instance pool
             return $obj;
         }
         if ($con === null) {
@@ -174,18 +177,32 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
     }
 
     /**
+     * Alias of findPk to use instance pooling
+     *
+     * @param     mixed $key Primary key to use for the query
+     * @param     PropelPDO $con A connection object
+     *
+     * @return                 DocumentationPart A model object, or null if the key is not found
+     * @throws PropelException
+     */
+     public function findOneById($key, $con = null)
+     {
+        return $this->findPk($key, $con);
+     }
+
+    /**
      * Find object by primary key using raw SQL to go fast.
      * Bypass doSelect() and the object formatter by using generated code.
      *
      * @param     mixed $key Primary key to use for the query
      * @param     PropelPDO $con A connection object
      *
-     * @return   DocumentationPart A model object, or null if the key is not found
-     * @throws   PropelException
+     * @return                 DocumentationPart A model object, or null if the key is not found
+     * @throws PropelException
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `ID`, `NAME`, `TITLE`, `BODY`, `KEY`, `LANGUAGE_ID`, `DOCUMENTATION_ID`, `IMAGE_ID`, `SORT`, `IS_OVERVIEW`, `IS_PUBLISHED`, `CREATED_AT`, `UPDATED_AT`, `CREATED_BY`, `UPDATED_BY` FROM `documentation_parts` WHERE `ID` = :p0';
+        $sql = 'SELECT `id`, `name`, `title`, `body`, `key`, `language_id`, `documentation_id`, `image_id`, `sort`, `is_overview`, `is_published`, `created_at`, `updated_at`, `created_by`, `updated_by` FROM `documentation_parts` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -281,7 +298,8 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * <code>
      * $query->filterById(1234); // WHERE id = 1234
      * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
-     * $query->filterById(array('min' => 12)); // WHERE id > 12
+     * $query->filterById(array('min' => 12)); // WHERE id >= 12
+     * $query->filterById(array('max' => 12)); // WHERE id <= 12
      * </code>
      *
      * @param     mixed $id The value to use as filter.
@@ -294,8 +312,22 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      */
     public function filterById($id = null, $comparison = null)
     {
-        if (is_array($id) && null === $comparison) {
-            $comparison = Criteria::IN;
+        if (is_array($id)) {
+            $useMinMax = false;
+            if (isset($id['min'])) {
+                $this->addUsingAlias(DocumentationPartPeer::ID, $id['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($id['max'])) {
+                $this->addUsingAlias(DocumentationPartPeer::ID, $id['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
         }
 
         return $this->addUsingAlias(DocumentationPartPeer::ID, $id, $comparison);
@@ -438,7 +470,8 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * <code>
      * $query->filterByDocumentationId(1234); // WHERE documentation_id = 1234
      * $query->filterByDocumentationId(array(12, 34)); // WHERE documentation_id IN (12, 34)
-     * $query->filterByDocumentationId(array('min' => 12)); // WHERE documentation_id > 12
+     * $query->filterByDocumentationId(array('min' => 12)); // WHERE documentation_id >= 12
+     * $query->filterByDocumentationId(array('max' => 12)); // WHERE documentation_id <= 12
      * </code>
      *
      * @see       filterByDocumentation()
@@ -481,7 +514,8 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * <code>
      * $query->filterByImageId(1234); // WHERE image_id = 1234
      * $query->filterByImageId(array(12, 34)); // WHERE image_id IN (12, 34)
-     * $query->filterByImageId(array('min' => 12)); // WHERE image_id > 12
+     * $query->filterByImageId(array('min' => 12)); // WHERE image_id >= 12
+     * $query->filterByImageId(array('max' => 12)); // WHERE image_id <= 12
      * </code>
      *
      * @see       filterByDocument()
@@ -524,7 +558,8 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * <code>
      * $query->filterBySort(1234); // WHERE sort = 1234
      * $query->filterBySort(array(12, 34)); // WHERE sort IN (12, 34)
-     * $query->filterBySort(array('min' => 12)); // WHERE sort > 12
+     * $query->filterBySort(array('min' => 12)); // WHERE sort >= 12
+     * $query->filterBySort(array('max' => 12)); // WHERE sort <= 12
      * </code>
      *
      * @param     mixed $sort The value to use as filter.
@@ -579,7 +614,7 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
     public function filterByIsOverview($isOverview = null, $comparison = null)
     {
         if (is_string($isOverview)) {
-            $is_overview = in_array(strtolower($isOverview), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            $isOverview = in_array(strtolower($isOverview), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
 
         return $this->addUsingAlias(DocumentationPartPeer::IS_OVERVIEW, $isOverview, $comparison);
@@ -606,7 +641,7 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
     public function filterByIsPublished($isPublished = null, $comparison = null)
     {
         if (is_string($isPublished)) {
-            $is_published = in_array(strtolower($isPublished), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            $isPublished = in_array(strtolower($isPublished), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
 
         return $this->addUsingAlias(DocumentationPartPeer::IS_PUBLISHED, $isPublished, $comparison);
@@ -619,7 +654,7 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * <code>
      * $query->filterByCreatedAt('2011-03-14'); // WHERE created_at = '2011-03-14'
      * $query->filterByCreatedAt('now'); // WHERE created_at = '2011-03-14'
-     * $query->filterByCreatedAt(array('max' => 'yesterday')); // WHERE created_at > '2011-03-13'
+     * $query->filterByCreatedAt(array('max' => 'yesterday')); // WHERE created_at < '2011-03-13'
      * </code>
      *
      * @param     mixed $createdAt The value to use as filter.
@@ -662,7 +697,7 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * <code>
      * $query->filterByUpdatedAt('2011-03-14'); // WHERE updated_at = '2011-03-14'
      * $query->filterByUpdatedAt('now'); // WHERE updated_at = '2011-03-14'
-     * $query->filterByUpdatedAt(array('max' => 'yesterday')); // WHERE updated_at > '2011-03-13'
+     * $query->filterByUpdatedAt(array('max' => 'yesterday')); // WHERE updated_at < '2011-03-13'
      * </code>
      *
      * @param     mixed $updatedAt The value to use as filter.
@@ -705,7 +740,8 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * <code>
      * $query->filterByCreatedBy(1234); // WHERE created_by = 1234
      * $query->filterByCreatedBy(array(12, 34)); // WHERE created_by IN (12, 34)
-     * $query->filterByCreatedBy(array('min' => 12)); // WHERE created_by > 12
+     * $query->filterByCreatedBy(array('min' => 12)); // WHERE created_by >= 12
+     * $query->filterByCreatedBy(array('max' => 12)); // WHERE created_by <= 12
      * </code>
      *
      * @see       filterByUserRelatedByCreatedBy()
@@ -748,7 +784,8 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * <code>
      * $query->filterByUpdatedBy(1234); // WHERE updated_by = 1234
      * $query->filterByUpdatedBy(array(12, 34)); // WHERE updated_by IN (12, 34)
-     * $query->filterByUpdatedBy(array('min' => 12)); // WHERE updated_by > 12
+     * $query->filterByUpdatedBy(array('min' => 12)); // WHERE updated_by >= 12
+     * $query->filterByUpdatedBy(array('max' => 12)); // WHERE updated_by <= 12
      * </code>
      *
      * @see       filterByUserRelatedByUpdatedBy()
@@ -790,8 +827,8 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * @param   Language|PropelObjectCollection $language The related object(s) to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return   DocumentationPartQuery The current query, for fluid interface
-     * @throws   PropelException - if the provided filter is invalid.
+     * @return                 DocumentationPartQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
      */
     public function filterByLanguage($language, $comparison = null)
     {
@@ -866,8 +903,8 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * @param   Documentation|PropelObjectCollection $documentation The related object(s) to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return   DocumentationPartQuery The current query, for fluid interface
-     * @throws   PropelException - if the provided filter is invalid.
+     * @return                 DocumentationPartQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
      */
     public function filterByDocumentation($documentation, $comparison = null)
     {
@@ -942,8 +979,8 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * @param   Document|PropelObjectCollection $document The related object(s) to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return   DocumentationPartQuery The current query, for fluid interface
-     * @throws   PropelException - if the provided filter is invalid.
+     * @return                 DocumentationPartQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
      */
     public function filterByDocument($document, $comparison = null)
     {
@@ -1018,8 +1055,8 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * @param   User|PropelObjectCollection $user The related object(s) to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return   DocumentationPartQuery The current query, for fluid interface
-     * @throws   PropelException - if the provided filter is invalid.
+     * @return                 DocumentationPartQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
      */
     public function filterByUserRelatedByCreatedBy($user, $comparison = null)
     {
@@ -1094,8 +1131,8 @@ abstract class BaseDocumentationPartQuery extends ModelCriteria
      * @param   User|PropelObjectCollection $user The related object(s) to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return   DocumentationPartQuery The current query, for fluid interface
-     * @throws   PropelException - if the provided filter is invalid.
+     * @return                 DocumentationPartQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
      */
     public function filterByUserRelatedByUpdatedBy($user, $comparison = null)
     {
