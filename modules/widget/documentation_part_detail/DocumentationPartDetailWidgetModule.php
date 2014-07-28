@@ -5,7 +5,7 @@
 class DocumentationPartDetailWidgetModule extends PersistentWidgetModule {
 	private $iDocumentationPartId = null;
 	private $aUnsavedDocuments = array();
-	
+
 	public function __construct($sSessionId) {
 		parent::__construct($sSessionId);
 		$iDocumentationPartCategory = 2;
@@ -17,22 +17,17 @@ class DocumentationPartDetailWidgetModule extends PersistentWidgetModule {
 		$oRichtext->setTemplate(PagePeer::getRootPage()->getTemplate());
 		$this->setSetting('richtext_session', $oRichtext->getSessionKey());
 	}
-	
-	public function getElementType() {
-		return "form";
-	}
 
 	public function setDocumentationPartId($iDocumentationPartId) {
 		$this->iDocumentationPartId = $iDocumentationPartId;
 	}
-	
+
 	public function loadData() {
 		$oDocumentationPart = DocumentationPartQuery::create()->findPk($this->iDocumentationPartId);
 		if($oDocumentationPart === null) {
 			return array();
 		}
 		$aResult = $oDocumentationPart->toArray();
-		
 		$aResult['CreatedInfo'] = Util::formatCreatedInfo($oDocumentationPart);
 		$aResult['UpdatedInfo'] = Util::formatUpdatedInfo($oDocumentationPart);
     $sBody = '';
@@ -42,8 +37,8 @@ class DocumentationPartDetailWidgetModule extends PersistentWidgetModule {
 		$aResult['Body'] = $sBody;
 		return $aResult;
 	}
-	
-	private function validate($aDocumentationPartData, $oDocumentationPart) {
+
+	private function validate($aDocumentationPartData) {
 		$oFlash = Flash::getFlash();
 		$oFlash->setArrayToCheck($aDocumentationPartData);
 		$oFlash->checkForValue('name', 'documentation_part_name_required');
@@ -59,18 +54,23 @@ class DocumentationPartDetailWidgetModule extends PersistentWidgetModule {
 		} else {
 		  $oDocumentationPart = DocumentationPartQuery::create()->findPk($this->iDocumentationPartId);
 		}
-		$oDocumentationPart->fromArray($aDocumentationPartData, BasePeer::TYPE_FIELDNAME);
+		$this->validate($aDocumentationPartData);
+		$oDocumentationPart->setName($aDocumentationPartData['name']);
+		$oDocumentationPart->setKey($aDocumentationPartData['key']);
+		$oDocumentationPart->setIsOverview($aDocumentationPartData['is_overview']);
+		$oDocumentationPart->setIsPublished($aDocumentationPartData['is_published']);
+		$oDocumentationPart->setDocumentationId($aDocumentationPartData['documentation_id']);
+		$oDocumentationPart->setLanguageId($oDocumentationPart->getDocumentation()->getLanguageId());
 		if($oDocumentationPart->getTitle() == null) {
 			$oDocumentationPart->setTitle(null);
 		}
 		$oDocumentationPart->setBody(RichtextUtil::parseInputFromEditorForStorage($aDocumentationPartData['body']));
-		if($oDocumentationPart->isNew() && $oDocumentationPart->getDocumentationId() !== null) {
-  		$oDocumentationPart->setSort(DocumentationPartQuery::create()->filterByDocumentationId($oDocumentationPart->getDocumentationId())->count()+1);
+		if($oDocumentationPart->isNew() && is_numeric($oDocumentationPart->getDocumentationId())) {
+			$oDocumentationPart->setSort(DocumentationPartQuery::create()->filterByDocumentationId($oDocumentationPart->getDocumentationId())->count()+1);
 		}
 		if($aDocumentationPartData['image_id'] == null && $oDocumentationPart->getDocument()) {
 			$oDocumentationPart->getDocument()->delete();
 		}
-		$this->validate($aDocumentationPartData, $oDocumentationPart);
 
 		if(!Flash::noErrors()) {
 			throw new ValidationException();

@@ -5,7 +5,7 @@
 class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 
 	private $iDocumentationId = null;
-	
+
 	public function __construct($sSessionId) {
 		parent::__construct($sSessionId);
 		$oRichtext = WidgetModule::getWidget('rich_text', null, null, 'documentation');
@@ -17,7 +17,7 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 	public function setDocumentationId($iDocumentationId) {
 		$this->iDocumentationId = $iDocumentationId;
 	}
-	
+
 	public function loadData() {
 		$oDocumentation = DocumentationQuery::create()->findPk($this->iDocumentationId);
 		$aResult = $oDocumentation->toArray();
@@ -39,6 +39,7 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 		$oFlash->checkForValue('name', 'name_required');
 		$oFlash->checkForValue('key', 'key_required');
 		if(!LanguageInputWidgetModule::isMonolingual()) {
+			$oDocumentation->setLanguageId($aDocumentationData['language_id']);
 			$oFlash->checkForValue('language_id', 'language_required');
 		} else {
 			$oLanguage = LanguageQuery::create()->findOne();
@@ -50,22 +51,28 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 		}
 		$oFlash->finishReporting();
 	}
-	
+
 	public function saveData($aDocumentationData) {
 		if($this->iDocumentationId === null) {
 			$oDocumentation = new Documentation();
 		} else {
 			$oDocumentation = DocumentationQuery::create()->findPk($this->iDocumentationId);
 		}
-		$oDocumentation->fromArray($aDocumentationData, BasePeer::TYPE_FIELDNAME);
 		$oDocumentation->setDescription(RichtextUtil::parseInputFromEditorForStorage($aDocumentationData['description']));
+		$oDocumentation->setName($aDocumentationData['name']);
+		$oDocumentation->setTitle($aDocumentationData['title']);
+		$oDocumentation->setKey($aDocumentationData['key']);
+		$oDocumentation->setNameSpace($aDocumentationData['name_space']);
+		$oDocumentation->setVersion($aDocumentationData['version']);
+		$oDocumentation->setTitle($aDocumentationData['title']);
+		$oDocumentation->setIsPublished($aDocumentationData['is_published']);
 		if($oDocumentation->getYoutubeUrl() == null) {
 			$oDocumentation->setYoutubeUrl(null);
 		}
 		$this->validate($aDocumentationData, $oDocumentation);
 		if(!Flash::noErrors()) {
 			throw new ValidationException();
-		}		
+		}
 		return $oDocumentation->save();
 	}
 }

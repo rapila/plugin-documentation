@@ -1,20 +1,20 @@
 Widget.types.documentation_part_detail = {
 	initialize: function() {
 		var _this = this;
-		this.content = Widget.parseHTML("{{includeTemplate=edit}}");
+		this._element = Widget.parseHTML("{{includeTemplate=edit}}");
+		this._element.find('div.hide_if_not_saved').hide();
 		this.uploader = Widget.create('file_upload');
-		this.content.find('div.hide_if_not_saved').hide();
-		this.documentation_part_body = this.content.find('div.documentation_part_body');
-		
+		this.documentation_part_body = this._element.find('div.documentation_part_body');
+
 		Widget.callStatic('detail', 'create_for_instance', this);
-		
+
 		// documentation_input
-		this.content.find("select[name='documentation_id']").prepareWidget(function(documentation_input_widget) {
+		this._element.find("select[name='documentation_id']").prepareWidget(function(documentation_input_widget) {
 			documentation_input_widget.settings.initial_selection = _this.settings.initial_documentation_id;
 		}, jQuery.noop);
-		
-		// documentation_part image		
-		var image_area = _this.content.find('.image_area');
+
+		// documentation_part image
+		var image_area = _this._element.find('.image_area');
 		image_area.find('.remove').click(function() {
 			_this.image_id = null;
 		});
@@ -25,7 +25,7 @@ Widget.types.documentation_part_detail = {
 			}
 			return {document_kind: 'image', document_id: _this.image_id, document_category_id: _this.settings.documentation_image_category_id, callback: _this.upload_success.bind(_this), error: _this.upload_error.bind(_this)};
 		}, true);
-		
+
 		var image_id = null;
 		Object.defineProperty(_this, 'image_id', {
 			get: function() {
@@ -45,7 +45,7 @@ Widget.types.documentation_part_detail = {
 				}
 			}
 		});
-		this.handle('opened', function() { 
+		this.handle('opened', function() {
 			this.init_textarea();
 		});
 		this.handle('saved', function(event, id) {
@@ -57,39 +57,39 @@ Widget.types.documentation_part_detail = {
 			data.body = _this.documentation_part_body_editor.get_data();
 		}.bind(_this));
 	},
-	
+
 	fill_data: function() {
-		this.detail_widget.disable();		
+		this.detail_widget.disable();
 		this.init_textarea();
 		this.loadData(function(documentation_part_data) {
 			this.current_detail_id = documentation_part_data.Id;
-			this.content.find("select[name='documentation_id']").val(documentation_part_data.DocumentationId);
-			this.content.find("input[name='name']").val(documentation_part_data.Name);
-			this.content.find("input[name='title']").val(documentation_part_data.Title);
-			this.content.find("input[name='key']").val(documentation_part_data.Key);
+			this._element.find("select[name='documentation_id']").val(documentation_part_data.DocumentationId);
+			this._element.find("input[name='name']").val(documentation_part_data.Name);
+			this._element.find("input[name='title']").val(documentation_part_data.Title);
+			this._element.find("input[name='key']").val(documentation_part_data.Key);
 			this.image_id = documentation_part_data.ImageId;
-			this.content.find(".updated_info").text(documentation_part_data.UpdatedInfo);
-			this.content.find(".created_info").text(documentation_part_data.CreatedInfo);
-			this.content.find("input[name='is_published']").prop('checked', documentation_part_data.IsPublished);
-			this.content.find("input[name='is_overview']").prop('checked', documentation_part_data.IsOverview);
-			this.content.find("span[class='detail_id']").text(documentation_part_data.Id);
+			this._element.find(".updated_info").text(documentation_part_data.UpdatedInfo);
+			this._element.find(".created_info").text(documentation_part_data.CreatedInfo);
+			this._element.find("input[name='is_published']").prop('checked', documentation_part_data.IsPublished);
+			this._element.find("input[name='is_overview']").prop('checked', documentation_part_data.IsOverview);
+			this._element.find("span[class='detail_id']").text(documentation_part_data.Id);
 			this.detail_widget.set_title(this.detail_widget.settings.title = documentation_part_data.Name);
 			this.documentation_part_body.ensureWidget(function(widget) {
 				widget.set_data(documentation_part_data.Body);
 			});
-			this.content.find('div.hide_if_not_saved').show();
-			this.detail_widget.enable();		
+			this._element.find('div.hide_if_not_saved').show();
+			this.detail_widget.enable();
 		});
 	},
-	
+
 	upload_success: function(document_id) {
 		this.image_id = document_id;
 		this.save(true);
 	},
-	
+
 	upload_error: function(error) {
 	},
-	
+
 	save: function(should_remain_open) {
 		if(should_remain_open) {
 			this.settings.remains_open = true;
@@ -108,7 +108,7 @@ Widget.types.documentation_part_detail = {
 			}, jQuery.noop);
 		}
 	},
-	
+
 	settings: {
 		detail_widget: {
 			title: "{{writeString=wns.documentation_part.create}}",

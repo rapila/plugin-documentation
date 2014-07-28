@@ -6,20 +6,20 @@ class DocumentationPartListWidgetModule extends PersistentWidgetModule {
 
 	private $oListWidget;
 	public $oDelegateProxy;
-	
+
 	public function __construct() {
 		$this->oDelegateProxy = new CriteriaListWidgetDelegate($this, 'DocumentationPart', 'sort');
 		$this->oListWidget = WidgetModule::getWidget('list', null, $this->oDelegateProxy);
 	}
-	
+
 	public function doWidget() {
 		return $this->oListWidget->doWidget('documentation_part_list');
 	}
-	
+
 	public function allowSort($sSortColumn) {
 		return $this->oDelegateProxy->getDocumentationId() !== CriteriaListWidgetDelegate::SELECT_ALL;
 	}
-	
+
 	public function doSort($sColumnIdentifier, $oPartToSort, $oRelatedPart, $sPosition = 'before') {
 		$iNewPosition = $oRelatedPart->getSort() + ($sPosition === 'before' ? 0 : 1);
 		if($oPartToSort->getSort() < $oRelatedPart->getSort()) {
@@ -42,21 +42,20 @@ class DocumentationPartListWidgetModule extends PersistentWidgetModule {
 	}
 
 	public function getColumnIdentifiers() {
-		return array('id', 'name', 'body_truncated', 'documentation_name', 'sort', 'has_image', 'is_published', 'delete');
+		return array('id', 'name', 'key', 'documentation_name', 'sort', 'has_image', 'is_published', 'delete');
 	}
-	
+
 	public function getMetadataForColumn($sColumnIdentifier) {
 		$aResult = array('is_sortable' => true);
 		switch($sColumnIdentifier) {
 			case 'name':
 				$aResult['heading'] = StringPeer::getString('wns.documentation_part.name');
-				break;			
+				break;
 			case 'documentation_name':
 				$aResult['heading'] = StringPeer::getString('wns.documentation');
 				break;
-			case 'body_truncated':
-				$aResult['heading'] = StringPeer::getString('wns.documentation_part.body');
-				$aResult['is_sortable'] = false;
+			case 'key':
+				$aResult['heading'] = StringPeer::getString('wns.documentation_part.key');
 				break;
 			case 'sort':
 				$aResult['heading'] = StringPeer::getString('wns.sort');
@@ -78,7 +77,7 @@ class DocumentationPartListWidgetModule extends PersistentWidgetModule {
 		}
 		return $aResult;
 	}
-	
+
 	public function getDatabaseColumnForColumn($sColumnIdentifier) {
 		if($sColumnIdentifier === 'documentation_name') {
 			return DocumentationPartPeer::DOCUMENTATION_ID;
@@ -110,7 +109,7 @@ class DocumentationPartListWidgetModule extends PersistentWidgetModule {
 		}
 		return null;
 	}
-	
+
 	public function getCriteria() {
 		return DocumentationPartQuery::create();
 	}

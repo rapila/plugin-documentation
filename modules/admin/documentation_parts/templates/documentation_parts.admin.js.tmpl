@@ -3,9 +3,9 @@ jQuery(function() {
 	var sidebar = AdminInterface.sidebar;
 	var content_list = AdminInterface.content;
 	var info_bar = AdminInterface.info_bar;
-	
+
 	var handlers = [];
-	
+
 	sidebar.children('[data-widget-type]').prepareWidget(function(widget) {
 		sidebar = widget;
 	}.deferred(handlers));
@@ -54,18 +54,18 @@ jQuery(function() {
 				});
 			}
 		}).disable();
-		
+
 		var edit_item = info_bar.add_button('edit-item', function() {
 			Widget.create('documentation_detail', function(widget) {
 				widget.setDocumentationId(sidebar.active_row_datas()[0].documentation_id);
 				widget.open();
 				widget.fill_data();
 				widget.save_callback = function() {
-					sidebar.reload();
+					sidebar.update_row(sidebar.active_row());
 				};
 			});
 		}).disable();
-	
+
 		// Sidebar
 		sidebar.settings.row_click_active_mode = 'activate';
 		sidebar.handle('list-selection_changed', function(event, selection) {
@@ -76,6 +76,8 @@ jQuery(function() {
 			content_list.setOption('documentation_id', documentation_id);
 			content_list.reload();
 		});
+
+		AdminInterface.strings.handle_strings_for_list_result('wns.documentation_parts.no_result', ['documentation_name'], content_list);
 	});
 });
 
