@@ -3,7 +3,7 @@ class DocumentationFilterModule extends FilterModule {
 	const ITEM_TYPE = 'documentation';
 	const ITEM_TYPE_UNCATEGORIZED = 'documentation-uncategorized';
 	const PARENT_PAGE_IDENTIFIER = 'documentation-page';
-	
+
 	public function onNavigationItemChildrenRequested(NavigationItem $oNavigationItem) {
 		if(!($oNavigationItem instanceof PageNavigationItem && $oNavigationItem->getIdentifier() === self::PARENT_PAGE_IDENTIFIER)) {
 			return;
@@ -34,12 +34,12 @@ class DocumentationFilterModule extends FilterModule {
 			$oNavItem = new VirtualNavigationItem(self::ITEM_TYPE, $aParams['Key'], $sTitle, $aParams['Name'], $aConfiguredParts);
 			$oNavigationItem->addChild($oNavItem);
 		}
-		if(count($aDocumentationPartKeys) > 0) {
-			$oNavItem = new VirtualNavigationItem(self::ITEM_TYPE_UNCATEGORIZED, 'uncategorized', StringPeer::getString('documentations.uncategorized'), null, $aDocumentationPartKeys);
-			$oNavigationItem->addChild($oNavItem);
-		}
+		// if(count($aDocumentationPartKeys) > 0) {
+		// 	$oNavItem = new VirtualNavigationItem(self::ITEM_TYPE_UNCATEGORIZED, 'uncategorized', StringPeer::getString('documentations.uncategorized'), null, $aDocumentationPartKeys);
+		// 	$oNavigationItem->addChild($oNavItem);
+		// }
 	}
-	
+
 	public function onPageHasBeenSet($oPage, $bIsNotFound, $oNavigationItem) {
 		if($bIsNotFound || !($oNavigationItem instanceof VirtualNavigationItem) || ($oNavigationItem->getType() !== self::ITEM_TYPE && $oNavigationItem->getType() !== self::ITEM_TYPE_UNCATEGORIZED)) {
 				return;

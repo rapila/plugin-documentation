@@ -24,7 +24,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 		}
 
 		$this->sVersion = isset($aOptions['version']) ? $aOptions['version'] : self::DEFAULT_RAPILA_VERSION;
-		
+
 		// onPageHasBeenSet in DocumentationFilterModule
 		if(self::$DOCUMENTATION !== null || self::$DOCUMENTATION_PARTS !== null) {
 			return $this->renderDetail(self::$DOCUMENTATION);
@@ -42,7 +42,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 		// Detail is displayed if exists
 		return $this->renderDetail(DocumentationQuery::create()->findPk($aOptions['documentation_id']));
 	}
-	
+
 	private function setLinkPage() {
 		$this->oPage = FrontendManager::$CURRENT_PAGE;
 		if($this->oPage->getIdentifier() !== 'documentation-page') {
@@ -52,7 +52,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 			}
 		}
 	}
-	
+
 	public function renderList($bExtendedList = false) {
 		$aDocumentations = self::listQuery()->find();
 		if(count($aDocumentations) === 0) {
@@ -62,7 +62,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 		$oTemplate = $this->constructTemplate('list');
 		$oItemPrototype = $this->constructTemplate($bExtendedList ? 'list_extended_item' : 'list_item');
 		$oPartLinkPrototype = $this->constructTemplate('part_link');
-		
+
 		$sHasVideoString = StringPeer::getString('wns.documentation.with_video_tutorial');
 		foreach($aDocumentations as $oDocumentation) {
 			$oItemTemplate = clone $oItemPrototype;
@@ -71,7 +71,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 				$oItemTemplate->replaceIdentifier('title', $oDocumentation->getTitle());
 			} else {
 				$oItemTemplate->replaceIdentifier('title_or_name', $oDocumentation->getName());
-			}			
+			}
 			$oItemTemplate->replaceIdentifier('name', $oDocumentation->getName());
 			$oItemTemplate->replaceIdentifier('detail_link', LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))));
 			if($oDocumentation->getYoutubeUrl() != null) {
@@ -93,29 +93,29 @@ class DocumentationsFrontendModule extends FrontendModule {
 		}
 		return $oTemplate;
 	}
-	
+
 	public static function listQuery() {
 		return DocumentationQuery::create()->active()->filterByLanguageId(Session::language())->orderBySort();
 	}
-	
+
 	public function renderMostRecentTeaser() {
 		$oDocumentation = DocumentationQuery::create()->active()->filterByLanguageId(Session::language())->filterByYoutubeUrl(null, Criteria::ISNOTNULL)->orderByCreatedAt(Criteria::DESC)->findOne();
 		if($oDocumentation === null) {
 			return null;
 		}
 		$this->setLinkPage();
-		
+
 		$oTemplate = $this->constructTemplate('teaser');
 		$oTemplate->replaceIdentifier('title', $oDocumentation->getTitle());
 		$oTemplate->replaceIdentifier('name', $oDocumentation->getName());
 		if($oDocumentation->getYoutubeUrl() != null) {
 			$this->embedVideo($oTemplate, $oDocumentation->getYoutubeUrl());
-		}		
+		}
 		$oLink = TagWriter::quickTag('a', array('rel' => 'internal', 'href' => LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))), 'class' => 'read_more'), StringPeer::getString('wns.read_more'));
 		$oTemplate->replaceIdentifier('link_to_detail', $oLink);
 		return $oTemplate;
 	}
-	
+
 	public function embedVideo($oTemplate, $sLocation) {
 		$oVideoTempl = $this->constructTemplate('iframe');
 		$oVideoTempl->replaceIdentifier('src', $sLocation);
@@ -139,18 +139,18 @@ class DocumentationsFrontendModule extends FrontendModule {
 		}
 
 		$oTemplate = $this->constructTemplate('documentation');
-		
+
 		// render video if exists
 		if($sEmbedUrl != null) {
 			$this->embedVideo($oTemplate, $sEmbedUrl);
 		}
 		$oTemplate->replaceIdentifier('documentation_name', $sName);
 		$oTemplate->replaceIdentifier('description', $sDescription);
-		
+
 		// render parts
 		$oPartTmpl = $this->constructTemplate('part');
 		$sLinkToSelf = LinkUtil::linkToSelf();
-		
+
 		$bRequiresQuicklinks = count(self::$DOCUMENTATION_PARTS) > 1;
 		$oPartLinkPrototype = $this->constructTemplate('part_link');
 
@@ -185,7 +185,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 		  if($bRequiresQuicklinks) {
 				$oPartLink = clone $oPartLinkPrototype;
 				$oPartLink->replaceIdentifier('href', $sLinkToSelf.'#'.$sKey);
-				
+
 				$oPartLink->replaceIdentifier('link_text', $sLinkText);
 				if($sTitle != null) {
 					$oPartLink->replaceIdentifier('title', $sTitle);
@@ -197,7 +197,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 			$oPartTemplate->replaceIdentifier('name', $sLinkText);
 			$oPartTemplate->replaceIdentifier('anchor', $sKey);
 			$oPartTemplate->replaceIdentifier('href_top', $sLinkToSelf."#top_of_page");
-			
+
 			$oPartTemplate->replaceIdentifier('external_link', $sExternalLink);
 			if($sImageUrl) {
 				$oPartTemplate->replaceIdentifier('image', TagWriter::quickTag('img', array('class' => (!$bIsOverview ? 'image_float' : "image_fullwidth"), 'src' => $sImageUrl, 'alt' => 'Bildschirmfoto von '.$sLinkText)));

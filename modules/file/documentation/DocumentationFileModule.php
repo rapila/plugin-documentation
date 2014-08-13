@@ -6,14 +6,14 @@ class DocumentationFileModule extends FileModule {
 		header("Content-Type: application/json;charset=utf-8");
 		print json_encode($this->$sRequestType(), JSON_FORCE_OBJECT);
 	}
-	
+
 	private static function container($sTitle, $sURL) {
 		$oContainer = new stdClass();
 		$oContainer->title = $sTitle;
 		$oContainer->url = LinkUtil::absoluteLink($sURL, null, LinkUtil::isSSL());
 		return $oContainer;
 	}
-	
+
 	private function metadataAction() {
 		$aResult = array();
 		$cAddToResult = function ($sLanguageId, $sKey, $oContainer) use (&$aResult) {
@@ -33,7 +33,7 @@ class DocumentationFileModule extends FileModule {
 		}
 		return $aResult;
 	}
-	
+
 	private function contentAction() {
 		$sLanguageId = Manager::usePath();
 		$sDocumentationKey = Manager::usePath();

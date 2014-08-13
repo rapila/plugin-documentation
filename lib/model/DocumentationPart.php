@@ -4,18 +4,18 @@
  * @package    propel.generator.model
  */
 class DocumentationPart extends BaseDocumentationPart {
-	
+
 	public function getDisplayTitle() {
 		if(parent::getTitle()) {
 			return parent::getTitle();
 		}
 		return $this->getName();
 	}
-	
+
 	public function getDocumentationName() {
 		return $this->getDocumentation()->getName();
 	}
-	
+
 	public function getBodyTruncated($iLength = 70) {
 		$sText = '';
 		if(is_resource($this->getBody())) {
@@ -27,7 +27,7 @@ class DocumentationPart extends BaseDocumentationPart {
 		}
 		return $sText;
 	}
-	
+
 	public function getHasImage() {
 		return $this->getImageId() !== null;
 	}
@@ -35,15 +35,15 @@ class DocumentationPart extends BaseDocumentationPart {
 	public function getIsActive() {
 		return !$this->getIsInactive();
 	}
-	
+
 	public function getFullKey() {
 		return implode('/', $this->getKeys());
 	}
-	
+
 	public function getKeys() {
 		return array($this->getDocumentation()->getKey(), $this->getKey());
 	}
-	
+
 	/**
 	 * @deprecated use getURL
 	*/
@@ -52,13 +52,11 @@ class DocumentationPart extends BaseDocumentationPart {
 	}
 
 	public function getLinkArray($oPage = null) {
-		$aLink = $this->getDocumentation()->getLinkArray($oPage);
-		$aLink[] = '#'.$this->getKey();
-		return LinkUtil::link($aLink, 'FrontendManager');
+		return $this->getDocumentation()->getLinkArray($oPage);
 	}
-	
+
 	public function getURL() {
-		return LinkUtil::link($this->getLinkArray(), 'FrontendManager');
+		return LinkUtil::link($this->getLinkArray(), 'FrontendManager').'#'.$this->getKey();
 	}
 
 	public function delete(PropelPDO $oConnection = null) {
