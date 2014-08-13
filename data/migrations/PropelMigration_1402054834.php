@@ -17,12 +17,12 @@ class PropelMigration_1402054834
     {
 			require __DIR__.'/../../base/lib/inc.php';
 			foreach(DocumentationPartQuery::create()->find() as $oDocumentationPart) {
-				$aKey = explode('.', $oDocumentationPart->getKey());
-				if(count($aKey) < 2) {
+				$sDocumentationKey = $oDocumentationPart->getDocumentation()->getKey().'.';
+				$sKey = $oDocumentationPart->getKey();
+				if(strpos($sKey, $sDocumentationKey) !== 0) {
 					continue;
 				}
-				array_shift($aKey);
-				$oDocumentationPart->setKey(implode('.', $aKey));
+				$oDocumentationPart->setKey(substr($sKey, strlen($sDocumentationKey)));
 				$oDocumentationPart->save();
 			}
     }
