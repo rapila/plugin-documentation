@@ -7,11 +7,10 @@ class DocumentationFileModule extends FileModule {
 		print json_encode($this->$sRequestType(), JSON_FORCE_OBJECT);
 	}
 
-	private static function container($sTitle, $sURL, $bIsPart) {
+	private static function container($sTitle, $sURL) {
 		$oContainer = new stdClass();
 		$oContainer->title = $sTitle;
 		$oContainer->url = LinkUtil::absoluteLink($sURL, null, LinkUtil::isSSL());
-		$oContainer->is_part = $bIsPart;
 		return $oContainer;
 	}
 
@@ -25,10 +24,10 @@ class DocumentationFileModule extends FileModule {
 			}
 		};
 		foreach(DocumentationQuery::create()->active()->orderByName()->find() as $oDocumentation) {
-			$oContainer = self::container($oDocumentation->getTitle(), $oDocumentation->getURL(), false);
+			$oContainer = self::container($oDocumentation->getTitle(), $oDocumentation->getURL());
 			$cAddToResult($oDocumentation->getLanguageId(), $oDocumentation->getKey(), $oContainer);
 			foreach($oDocumentation->getDocumentationPartsOrdered() as $oPart) {
-				$oContainer = self::container($oPart->getDisplayTitle(), $oPart->getURL(), true);
+				$oContainer = self::container($oPart->getDisplayTitle(), $oPart->getURL());
 				$cAddToResult($oPart->getLanguageId(), $oPart->getFullKey(), $oContainer);
 			}
 		}
