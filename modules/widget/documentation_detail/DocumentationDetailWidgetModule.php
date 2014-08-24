@@ -62,7 +62,9 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 		$oDocumentation->setName($aDocumentationData['name']);
 		$oDocumentation->setTitle($aDocumentationData['title']);
 		$oDocumentation->setKey($aDocumentationData['key']);
-		$oDocumentation->setNameSpace($aDocumentationData['name_space']);
+		if(isset($aDocumentationData['name_space'])) {
+			$oDocumentation->setNameSpace($aDocumentationData['name_space']);
+		}
 		$oDocumentation->setVersion($aDocumentationData['version']);
 		$oDocumentation->setTitle($aDocumentationData['title']);
 		$oDocumentation->setIsPublished($aDocumentationData['is_published']);
