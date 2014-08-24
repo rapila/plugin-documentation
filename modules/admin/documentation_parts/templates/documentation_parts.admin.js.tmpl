@@ -22,7 +22,7 @@ jQuery(function() {
 		info_bar.add_button('add-new-item', function() {
 			Widget.create('documentation_part_detail', function(widget) {
 				widget.settings.initial_documentation_id = sidebar.active_row().data('documentation_id');
-				widget.content.find("select[name='documentation_id']").val(content_list.getOption('documentation_id'));
+				widget._element.find("select[name='documentation_id']").val(content_list.getOption('documentation_id'));
 				widget.open();
 				widget.save_callback = function() {
 					content_list.reload();
