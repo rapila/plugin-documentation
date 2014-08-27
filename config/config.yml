@@ -1,0 +1,12 @@
+documentation:
+  # Richtext editor toolbar configuration
+  text_module:
+    toolbar:
+      -
+        - ["Bold", "Italic"]
+        - ["Link", "Unlink"]
+        - ["BulletedList"]
+        - ["Undo", "Redo"]
+        - ["Blockquote", "Format", "Superscript"]
+        - ["RemoveFormat", "Source"]
+    richtext_width: 700
