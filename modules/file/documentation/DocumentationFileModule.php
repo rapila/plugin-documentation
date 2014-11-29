@@ -27,7 +27,7 @@ class DocumentationFileModule extends FileModule {
 			$oContainer = self::container($oDocumentation->getTitle(), $oDocumentation->getURL());
 			$cAddToResult($oDocumentation->getLanguageId(), $oDocumentation->getKey(), $oContainer);
 			foreach($oDocumentation->getDocumentationPartsOrdered() as $oPart) {
-				$oContainer = self::container($oPart->getDisplayTitle(), $oPart->getURL());
+				$oContainer = self::container($oPart->getName(), $oPart->getURL());
 				$cAddToResult($oPart->getLanguageId(), $oPart->getFullKey(), $oContainer);
 			}
 		}
@@ -50,7 +50,22 @@ class DocumentationFileModule extends FileModule {
 			if(!$oDocumentation) {
 				return null;
 			}
-			return RichtextUtil::parseStorageForFrontendOutput($oDocumentation->getDescription())->render();
+			$sHtmlOutput = RichtextUtil::parseStorageForFrontendOutput($oDocumentation->getDescription())->render();
+			if($oDocumentation->getYoutubeUrl()) {
+				// overkill?
+				// $sHtmlOutput .= $this->embedVideo($oDocumentation->getYoutubeUrl());
+			}
+			return $sHtmlOutput;
 		}
 	}
+
+	private function embedVideo($sLocation) {
+		$oTemplateLocation = ResourceFinder::create(array('modules', 'frontend', 'media_object', 'templates', 'text', 'html.tmpl'))->returnObjects()->find();
+		$oVideoTempl = new Template($oTemplateLocation);
+		$oVideoTempl->replaceIdentifier('src', $sLocation);
+		$oVideoTempl->replaceIdentifier('width', 420);
+		$oVideoTempl->replaceIdentifier('height', 250);
+		return $oVideoTempl->render();
+	}
+
 }
