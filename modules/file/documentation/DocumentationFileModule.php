@@ -51,9 +51,9 @@ class DocumentationFileModule extends FileModule {
 				return null;
 			}
 			$sHtmlOutput = RichtextUtil::parseStorageForFrontendOutput($oDocumentation->getDescription())->render();
-			if($oDocumentation->getYoutubeUrl()) {
-				// overkill?
-				// $sHtmlOutput .= $this->embedVideo($oDocumentation->getYoutubeUrl());
+			$bDisplayVideo = false;
+			if($bDisplayVideo && $oDocumentation->getYoutubeUrl()) {
+				$sHtmlOutput .= $this->embedVideo($oDocumentation->getYoutubeUrl());
 			}
 			return $sHtmlOutput;
 		}
