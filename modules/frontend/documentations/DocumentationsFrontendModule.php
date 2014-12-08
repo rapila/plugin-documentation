@@ -5,7 +5,7 @@
 
 class DocumentationsFrontendModule extends FrontendModule {
 
-	public static $DISPLAY_MODES = array('detail', 'list', 'extended_list', 'most_recent_teaser');
+	public static $DISPLAY_MODES = array('detail', 'list', 'extended_list', 'most_recent_teaser', 'tutorial');
 
 	public $sVersion = null;
 
@@ -22,25 +22,22 @@ class DocumentationsFrontendModule extends FrontendModule {
 		if(!isset($aOptions[self::MODE_SELECT_KEY])) {
 			return null;
 		}
-
 		$this->sVersion = isset($aOptions['version']) ? $aOptions['version'] : self::DEFAULT_RAPILA_VERSION;
-
-		// onPageHasBeenSet in DocumentationFilterModule
+		if($aOptions[self::MODE_SELECT_KEY] === 'tutorial' && self::$DOCUMENTATION) {
+			return $this->renderTutorial(self::$DOCUMENTATION);
+		}
 		if(self::$DOCUMENTATION !== null || self::$DOCUMENTATION_PARTS !== null) {
 			return $this->renderDetail(self::$DOCUMENTATION);
 		}
-
 		switch($aOptions[self::MODE_SELECT_KEY]) {
 			case 'most_recent_teaser' : return $this->renderMostRecentTeaser();
 			case 'list' : return $this->renderList();
 			case 'extended_list' : return $this->renderList(true);
 		}
-		// Detail is configured but no documentation_id
-		if($aOptions[self::MODE_SELECT_KEY] === 'detail' && !isset($aOptions['documentation_id'])) {
-			return;
+		// Detail if configured
+		if($aOptions[self::MODE_SELECT_KEY] === 'detail' && isset($aOptions['documentation_id'])) {
+			return $this->renderDetail(DocumentationQuery::create()->findPk($aOptions['documentation_id']));
 		}
-		// Detail is displayed if exists
-		return $this->renderDetail(DocumentationQuery::create()->findPk($aOptions['documentation_id']));
 	}
 
 	private function setLinkPage() {
@@ -124,10 +121,17 @@ class DocumentationsFrontendModule extends FrontendModule {
 		$oTemplate->replaceIdentifier('youtube_video', $oVideoTempl);
 	}
 
+	public function renderTutorial(Documentation $oDocumentation = null) {
+		$oTemplate = $this->constructTemplate('documentation');
+		$this->embedVideo($oTemplate, $oDocumentation->getYoutubeUrl());
+		return $oTemplate;
+	}
+
 	public function renderDetail(Documentation $oDocumentation = null) {
 		if(self::$DOCUMENTATION_PARTS == null) {
 			self::$DOCUMENTATION_PARTS = DocumentationPartQuery::create()->filterByDocumentationId($oDocumentation->getId())->filterByIsPublished(true)->orderBySort()->find();
 		}
+
 		if($oDocumentation) {
 			$sName = $oDocumentation->getName();
 			$sEmbedUrl = $oDocumentation->getYoutubeUrl();
@@ -137,7 +141,6 @@ class DocumentationsFrontendModule extends FrontendModule {
 			$sEmbedUrl = null;
 			$sDescription = null;
 		}
-
 		$oTemplate = $this->constructTemplate('documentation');
 
 		// render video if exists
@@ -146,7 +149,6 @@ class DocumentationsFrontendModule extends FrontendModule {
 		}
 		$oTemplate->replaceIdentifier('documentation_name', $sName);
 		$oTemplate->replaceIdentifier('description', $sDescription);
-
 		// render parts
 		$oPartTmpl = $this->constructTemplate('part');
 		$sLinkToSelf = LinkUtil::linkToSelf();
