@@ -68,6 +68,7 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 		$oDocumentation->setVersion($aDocumentationData['version']);
 		$oDocumentation->setTitle($aDocumentationData['title']);
 		$oDocumentation->setIsPublished($aDocumentationData['is_published']);
+		$oDocumentation->setYoutubeUrl($aDocumentationData['youtube_url']);
 		if($oDocumentation->getYoutubeUrl() == null) {
 			$oDocumentation->setYoutubeUrl(null);
 		}
