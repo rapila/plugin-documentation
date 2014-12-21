@@ -10,7 +10,7 @@ class DocumentationFilterModule extends FilterModule {
 		}
 
 		$aDocumentationPartKeys = array();
-		foreach(DocumentationProviderTypeModule::completeMetadata() as $sPart => $aLanguages) {
+		foreach(DocumentationProviderTypeModule::completeMetaData() as $sPart => $aLanguages) {
 			if(isset($aLanguages[Session::language()])) {
 				$aDocumentationPartKeys[$sPart] = false;
 			}
