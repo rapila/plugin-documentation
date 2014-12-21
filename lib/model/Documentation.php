@@ -23,7 +23,7 @@ class Documentation extends BaseDocumentation {
 	}
 
 	public function getURL() {
-		return LinkUtil::link($this->getLinkArray(), 'FrontendManager');
+		return LinkUtil::link($this->getLinkArray(), 'FrontendManager', array(), $this->getLanguageId());
 	}
 
 	public function getFullName() {
