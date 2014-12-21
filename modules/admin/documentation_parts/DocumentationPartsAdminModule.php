@@ -3,13 +3,14 @@
  * @package modules.admin
  */
 class DocumentationPartsAdminModule extends AdminModule {
-	
+
 	private $oListWidget;
 	private $oSidebarWidget;
 	private $oInputWidget;
-	
+
 	public function __construct() {
 		$this->oListWidget = new DocumentationPartListWidgetModule();
+		$this->oListWidget->addPaging();
 
 		$this->oSidebarWidget = new ListWidgetModule();
 		$this->oSidebarWidget->setListTag(new TagWriter('ul'));
@@ -18,19 +19,19 @@ class DocumentationPartsAdminModule extends AdminModule {
 
 		$this->oInputWidget = new SidebarInputWidgetModule();
 	}
-	
+
 	public function mainContent() {
 		return $this->oListWidget->doWidget();
 	}
-	
+
 	public function sidebarContent() {
 		return $this->oSidebarWidget->doWidget();
 	}
-	
+
 	public function getColumnIdentifiers() {
 		return array('documentation_id', 'full_name', 'magic_column');
 	}
-	
+
 	public function getMetadataForColumn($sColumnIdentifier) {
 		$aResult = array();
 		switch($sColumnIdentifier) {
@@ -48,7 +49,7 @@ class DocumentationPartsAdminModule extends AdminModule {
 		}
 		return $aResult;
 	}
-	
+
 	public function getCustomListElements() {
 		if(DocumentationQuery::create()->count() > 0) {
 			return array(
@@ -58,7 +59,7 @@ class DocumentationPartsAdminModule extends AdminModule {
 		}
 		return array();
 	}
-	
+
 	public function getDatabaseColumnForColumn($sColumnIdentifier) {
 		if($sColumnIdentifier === 'full_name') {
 			return DocumentationPeer::NAME;

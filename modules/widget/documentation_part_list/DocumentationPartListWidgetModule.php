@@ -2,18 +2,16 @@
 /**
  * @package modules.widget
  */
-class DocumentationPartListWidgetModule extends PersistentWidgetModule {
+class DocumentationPartListWidgetModule extends SpecializedListWidgetModule {
 
-	private $oListWidget;
 	public $oDelegateProxy;
 
-	public function __construct() {
-		$this->oDelegateProxy = new CriteriaListWidgetDelegate($this, 'DocumentationPart', 'sort');
-		$this->oListWidget = WidgetModule::getWidget('list', null, $this->oDelegateProxy);
-	}
 
-	public function doWidget() {
-		return $this->oListWidget->doWidget('documentation_part_list');
+	protected function createListWidget() {
+		$oListWidget = new ListWidgetModule();
+		$this->oDelegateProxy = new CriteriaListWidgetDelegate($this, 'DocumentationPart', 'sort');
+		$oListWidget->setDelegate($this->oDelegateProxy);
+		return $oListWidget;
 	}
 
 	public function allowSort($sSortColumn) {

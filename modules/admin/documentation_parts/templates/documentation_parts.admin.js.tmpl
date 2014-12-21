@@ -36,7 +36,7 @@ jQuery(function() {
 			if(content_list.setSearch(search)) {
 				content_list.reload();
 			}
-		}).add_row_count_info_for_list(content_list);
+		}).add_row_count_info_for_list(content_list).add_pager_for_list(content_list);
 
 		var remove_item = info_bar.add_button('remove-item', function() {
 			var rowData = sidebar.collect_row_data(sidebar.active_row());
