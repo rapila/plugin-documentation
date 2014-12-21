@@ -7,10 +7,11 @@ class DocumentationFileModule extends FileModule {
 		print json_encode($this->$sRequestType(), JSON_FORCE_OBJECT);
 	}
 
-	private static function container($sTitle, $sURL) {
+	private static function container($sTitle, $sURL, $bDocumentationWithOnlyTutoral) {
 		$oContainer = new stdClass();
 		$oContainer->title = $sTitle;
 		$oContainer->url = LinkUtil::absoluteLink($sURL, null, LinkUtil::isSSL());
+		$oContainer->tutorial_only = $bDocumentationWithOnlyTutoral;
 		return $oContainer;
 	}
 
@@ -24,10 +25,11 @@ class DocumentationFileModule extends FileModule {
 			}
 		};
 		foreach(DocumentationQuery::create()->active()->withTutorialOrParts()->orderByName()->find() as $oDocumentation) {
-			$oContainer = self::container($oDocumentation->getTitle(), $oDocumentation->getURL());
+			$aParts = $oDocumentation->getDocumentationPartsOrdered();
+			$oContainer = self::container($oDocumentation->getTitleForDocumentation(), $oDocumentation->getURL(), count($aParts) === 0 && $oDocumentation->hasTutorial());
 			$cAddToResult($oDocumentation->getLanguageId(), $oDocumentation->getKey(), $oContainer);
-			foreach($oDocumentation->getDocumentationPartsOrdered() as $oPart) {
-				$oContainer = self::container($oPart->getName(), $oPart->getURL());
+			foreach($aParts as $oPart) {
+				$oContainer = self::container($oPart->getName(), $oPart->getURL(), false);
 				$cAddToResult($oPart->getLanguageId(), $oPart->getFullKey(), $oContainer);
 			}
 		}

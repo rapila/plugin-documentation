@@ -33,5 +33,16 @@ class Documentation extends BaseDocumentation {
 	public function getDocumentationPartsOrdered() {
 		return $this->getDocumentationParts(DocumentationPartQuery::create()->active()->orderBySort());
 	}
+
+	public function hasTutorial() {
+		return $this->getYoutubeUrl() !== null;
+	}
+
+	public function getTitleForDocumentation() {
+		if($this->getTitle()) {
+			return $this->getTitle();
+		}
+		return $this->getName();
+	}
 }
 
