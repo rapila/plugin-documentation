@@ -1,4 +1,7 @@
-<li><a href="{{detail_link}}" rel="internal">{{title_or_name}}</a>{{identifierContext=start;name=has_video_tutorial}}
+<li>
+	<a href="{{detail_link}}" rel="internal">{{title_or_name}}</a>{{identifierContext=start;name=has_video_tutorial}}
 	{{has_video_tutorial}}<br />{{identifierContext=end;name=has_video_tutorial}}{{identifierContext=start;name=part_links}}
-	<div class="part_links">{{part_links}}</div>{{identifierContext=end;name=part_links}}
+	<ul class="part_links">
+		{{part_links}}
+	</ul>{{identifierContext=end;name=part_links}}
 </li>
