@@ -24,7 +24,7 @@ class DocumentationFileModule extends FileModule {
 				$aResult[$sKey][$sLanguageId] = $oContainer;
 			}
 		};
-		foreach(DocumentationQuery::create()->active()->withTutorialOrParts()->orderByName()->find() as $oDocumentation) {
+		foreach(DocumentationQuery::create()->active()->orderByName()->find() as $oDocumentation) {
 			$aParts = $oDocumentation->getDocumentationPartsOrdered();
 			$oContainer = self::container($oDocumentation->getTitleForDocumentation(), $oDocumentation->getURL(), count($aParts) === 0 && $oDocumentation->hasTutorial());
 			$cAddToResult($oDocumentation->getLanguageId(), $oDocumentation->getKey(), $oContainer);
