@@ -78,7 +78,7 @@ class DocumentationFileModule extends FileModule {
 			return;
 		}
 		$sLink = LinkUtil::absoluteLink(LinkUtil::link(array_merge(self::$DOCUMENTATION_PAGE->getFullPathArray(), array($oPart->getDocumentation()->getKey())), 'FrontendManager'));
-		return TagWriter::quickTag('a', array('href' => $sLink.'#'.$oPart->getKey()), $oPart->getName());
+		return TagWriter::quickTag('a', array('target' => 'documentation', 'href' => $sLink.'#'.$oPart->getKey()), $oPart->getName());
 	}
 
 	private function embedVideo($sLocation) {
