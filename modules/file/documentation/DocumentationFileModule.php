@@ -1,6 +1,7 @@
 <?php
 class DocumentationFileModule extends FileModule {
 
+	private static $DOCUMENTATION_PAGE;
 	public function renderFile() {
 		$sRequestType = StringUtil::camelize(Manager::usePath().'_action');
 		header("Content-Type: application/json;charset=utf-8");
@@ -53,12 +54,31 @@ class DocumentationFileModule extends FileModule {
 				return null;
 			}
 			$sHtmlOutput = RichtextUtil::parseStorageForFrontendOutput($oDocumentation->getDescription())->render();
+			$aParts = $oDocumentation->getDocumentationPartsOrdered();
+			if(count($aParts) > 0) {
+				$sHtmlOutput .= '<ul class="documentation_parts">';
+				foreach($aParts as $i => $oPart) {
+					$sHtmlOutput .= TagWriter::quickTag('li', array(), self::addPartLink($oPart));
+				}
+				$sHtmlOutput .= '</ul>';
+			}
 			$bDisplayVideo = false;
 			if($bDisplayVideo && $oDocumentation->getYoutubeUrl()) {
 				$sHtmlOutput .= $this->embedVideo($oDocumentation->getYoutubeUrl());
 			}
 			return $sHtmlOutput;
 		}
+	}
+
+	private function addPartLink($oPart) {
+		if(!self::$DOCUMENTATION_PAGE) {
+			self::$DOCUMENTATION_PAGE = PageQuery::create()->filterByIdentifier('documentation-page')->findOne();
+		}
+		if(!self::$DOCUMENTATION_PAGE) {
+			return;
+		}
+		$sLink = LinkUtil::absoluteLink(LinkUtil::link(array_merge(self::$DOCUMENTATION_PAGE->getFullPathArray(), array($oPart->getDocumentation()->getKey())), 'FrontendManager'));
+		return TagWriter::quickTag('a', array('href' => $sLink.'#'.$oPart->getKey()), $oPart->getName());
 	}
 
 	private function embedVideo($sLocation) {
