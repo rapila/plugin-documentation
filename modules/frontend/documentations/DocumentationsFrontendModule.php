@@ -51,7 +51,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 	}
 
 	public function renderList($bExtendedList = false) {
-		$aDocumentations = self::listQuery()->find();
+		$aDocumentations = self::listQuery()->orderByName()->find();
 		if(count($aDocumentations) === 0) {
 			return;
 		}
@@ -92,7 +92,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 	}
 
 	public static function listQuery() {
-		return DocumentationQuery::create()->active()->filterByLanguageId(Session::language())->orderBySort();
+		return DocumentationQuery::create()->active()->filterByLanguageId(Session::language());
 	}
 
 	public function renderMostRecentTeaser() {

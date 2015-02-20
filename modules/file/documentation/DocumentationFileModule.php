@@ -72,7 +72,7 @@ class DocumentationFileModule extends FileModule {
 
 	private function addPartLink($oPart) {
 		if(!self::$DOCUMENTATION_PAGE) {
-			self::$DOCUMENTATION_PAGE = PageQuery::create()->filterByIdentifier('documentation-page')->findOne();
+			self::$DOCUMENTATION_PAGE = PageQuery::create()->filterByIdentifier(DocumentationFilterModule::PARENT_PAGE_IDENTIFIER)->findOne();
 		}
 		if(!self::$DOCUMENTATION_PAGE) {
 			return;
