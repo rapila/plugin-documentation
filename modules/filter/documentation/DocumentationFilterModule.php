@@ -19,7 +19,7 @@ class DocumentationFilterModule extends FilterModule {
 			$aDocumentationPartKeys[$sPart] = true;
 		}
 		ksort($aDocumentationPartKeys);
-		$aDocumentations = DocumentationsFrontendModule::listQuery()->select(array('Key', 'Name', 'Title', 'NameSpace'))->orderByName()->find();
+		$aDocumentations = DocumentationsFrontendModule::listQuery()->select(array('Key', 'Name', 'Title', 'NameSpace'))->find();
 		foreach($aDocumentations as $aParams) {
 			$aConfiguredParts = array();
 			foreach($aDocumentationPartKeys as $sKey => $bIsInternal) {
