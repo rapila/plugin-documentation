@@ -60,7 +60,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 		$oItemPrototype = $this->constructTemplate($bExtendedList ? 'list_extended_item' : 'list_item');
 		$oPartLinkPrototype = $this->constructTemplate('part_link');
 
-		$sHasVideoString = StringPeer::getString('wns.documentation.with_video_tutorial');
+		$sHasVideoString = StringPeer::getString('documentation.with_video_tutorial');
 		foreach($aDocumentations as $oDocumentation) {
 			$oItemTemplate = clone $oItemPrototype;
 			if($oDocumentation->getTitle()) {
@@ -76,6 +76,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 			}
 			if($bExtendedList) {
 				$aDocumentationParts = $oDocumentation->getDocumentationPartsOrdered();
+
 				foreach($aDocumentationParts as $oPart) {
 					$oPartLink = clone $oPartLinkPrototype;
 					$oPartLink->replaceIdentifier('href', LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))).'#'.$oPart->getKey());
@@ -84,6 +85,12 @@ class DocumentationsFrontendModule extends FrontendModule {
 						$oPartLink->replaceIdentifier('title', $oPart->getTitle());
 					}
 	  			$oItemTemplate->replaceIdentifierMultiple('part_links', $oPartLink, null, Template::NO_NEW_CONTEXT);
+				}
+				if(count($aDocumentationParts) === 0) {
+					$oPartLink = clone $oPartLinkPrototype;
+					$oPartLink->replaceIdentifier('href', LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))));
+					$oPartLink->replaceIdentifier('link_text', StringPeer::getString('wns.documentation.intro_link_text'));
+					$oItemTemplate->replaceIdentifier('part_links', $oPartLink);
 				}
 			}
 			$oTemplate->replaceIdentifierMultiple('list_item', $oItemTemplate);
@@ -155,7 +162,6 @@ class DocumentationsFrontendModule extends FrontendModule {
 
 		$bRequiresQuicklinks = count(self::$DOCUMENTATION_PARTS) > 1;
 		$oPartLinkPrototype = $this->constructTemplate('part_link');
-
 		foreach(self::$DOCUMENTATION_PARTS as $sKey => $mPart) {
 			if($mPart === true) {
 				$mPart = DocumentationPartQuery::create()->filterByKey($sKey)->findOne();

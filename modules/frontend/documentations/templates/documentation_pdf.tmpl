@@ -21,7 +21,7 @@
 </style>
 {{identifierContext=start;name=description}}
 <p>{{description}}<br />{{pdf_link}}</p>{{identifierContext=end;name=description}}{{identifierContext=start;name=youtube_video}}
-<h4 class="not_to_be_printed">{{writeString=wns.documentation.video_tutorial}} «{{documentation_name}}»</h4>
+<h4 class="not_to_be_printed">{{writeParameterizedString=documentation.video_tutorial_with_name;documentation_name=\{\{documentation_name\}\}}}</h4>
 {{youtube_video}}{{identifierContext=end;name=youtube_video}}{{identifierContext=start;name=part_links}}
-<div class="part_links not_to_be_printed"><h4>{{writeString=wns.documentation.quick_choice_links}}</h4>{{part_links}}</div>{{identifierContext=end;name=part_links}}
+<div class="part_links not_to_be_printed"><h4>{{writeString=documentation.quick_choice_links}}</h4>{{part_links}}</div>{{identifierContext=end;name=part_links}}
 {{part}}
