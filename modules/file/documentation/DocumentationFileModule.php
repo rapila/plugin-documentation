@@ -48,6 +48,9 @@ class DocumentationFileModule extends FileModule {
 		if($sPartKey) {
 			$oPart = DocumentationPartQuery::create()->filterByLanguageId($sLanguageId)->filterByKeys($sDocumentationKey, $sPartKey)->findOne();
 			if(!$oPart) {
+				if($sPartKey === '_tutorial') {
+					return StringPeer::getString('wns.documentation.video_tutorial', $sLanguageId, "Tutorial");
+				}
 				return null;
 			}
 			return RichtextUtil::parseStorageForFrontendOutput($oPart->getBody())->render();
