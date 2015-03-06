@@ -2,6 +2,8 @@
 class DocumentationFileModule extends FileModule {
 
 	private static $DOCUMENTATION_PAGE;
+	const TUTORIAL_KEY = '_tutorial';
+
 	public function renderFile() {
 		$sRequestType = StringUtil::camelize(Manager::usePath().'_action');
 		header("Content-Type: application/json;charset=utf-8");
@@ -30,7 +32,7 @@ class DocumentationFileModule extends FileModule {
 			$cAddToResult($oDocumentation->getLanguageId(), $oDocumentation->getKey(), $oContainer);
 			if($oDocumentation->hasTutorial()) {
 				$oContainer = self::container(StringPeer::getString('wns.documentation.video_tutorial', $oDocumentation->getLanguageId(), "Tutorial"), $oDocumentation->getURL());
-				$cAddToResult($oDocumentation->getLanguageId(), $oDocumentation->getKey().'/_tutorial', $oContainer);
+				$cAddToResult($oDocumentation->getLanguageId(), $oDocumentation->getKey().'/'.self::TUTORIAL_KEY, $oContainer);
 			}
 			foreach($aParts as $oPart) {
 				$oContainer = self::container($oPart->getName(), $oPart->getURL());
@@ -48,7 +50,7 @@ class DocumentationFileModule extends FileModule {
 		if($sPartKey) {
 			$oPart = DocumentationPartQuery::create()->filterByLanguageId($sLanguageId)->filterByKeys($sDocumentationKey, $sPartKey)->findOne();
 			if(!$oPart) {
-				if($sPartKey === '_tutorial') {
+				if($sPartKey === self::TUTORIAL_KEY) {
 					return StringPeer::getString('wns.documentation.video_tutorial', $sLanguageId, "Tutorial");
 				}
 				return null;
