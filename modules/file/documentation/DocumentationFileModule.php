@@ -8,12 +8,10 @@ class DocumentationFileModule extends FileModule {
 		print json_encode($this->$sRequestType(), JSON_FORCE_OBJECT);
 	}
 
-	private static function container($sTitle, $sURL, $iCountParts, $bHasTutorial) {
+	private static function container($sTitle, $sURL) {
 		$oContainer = new stdClass();
 		$oContainer->title = $sTitle;
 		$oContainer->url = LinkUtil::absoluteLink($sURL, null, LinkUtil::isSSL());
-		$oContainer->count_parts = $iCountParts;
-		$oContainer->has_tutorial = $bHasTutorial;
 		return $oContainer;
 	}
 
@@ -28,10 +26,14 @@ class DocumentationFileModule extends FileModule {
 		};
 		foreach(DocumentationQuery::create()->active()->orderByName()->find() as $oDocumentation) {
 			$aParts = $oDocumentation->getDocumentationPartsOrdered();
-			$oContainer = self::container($oDocumentation->getTitleForDocumentation(), $oDocumentation->getURL(), count($aParts), $oDocumentation->hasTutorial());
+			$oContainer = self::container($oDocumentation->getTitleForDocumentation(), $oDocumentation->getURL());
 			$cAddToResult($oDocumentation->getLanguageId(), $oDocumentation->getKey(), $oContainer);
+			if($oDocumentation->hasTutorial()) {
+				$oContainer = self::container(StringPeer::getString('wns.documentation.video_tutorial', $oDocumentation->getLanguageId(), "Tutorial"), $oDocumentation->getURL());
+				$cAddToResult($oDocumentation->getLanguageId(), $oDocumentation->getKey().'/_tutorial', $oContainer);
+			}
 			foreach($aParts as $oPart) {
-				$oContainer = self::container($oPart->getName(), $oPart->getURL(), null, null);
+				$oContainer = self::container($oPart->getName(), $oPart->getURL());
 				$cAddToResult($oPart->getLanguageId(), $oPart->getFullKey(), $oContainer);
 			}
 		}
