@@ -61,6 +61,7 @@ class DocumentationPartDetailWidgetModule extends PersistentWidgetModule {
 		$oDocumentationPart->setIsPublished($aDocumentationPartData['is_published']);
 		$oDocumentationPart->setDocumentationId($aDocumentationPartData['documentation_id']);
 		$oDocumentationPart->setLanguageId($oDocumentationPart->getDocumentation()->getLanguageId());
+		$oDocumentationPart->setImageId($aDocumentationPartData['image_id'] != null ? $aDocumentationPartData['image_id'] : null);
 		if($oDocumentationPart->getTitle() == null) {
 			$oDocumentationPart->setTitle(null);
 		}
