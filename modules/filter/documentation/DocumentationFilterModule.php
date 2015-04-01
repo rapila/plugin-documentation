@@ -31,7 +31,7 @@ class DocumentationFilterModule extends FilterModule {
 				}
 			}
 			$sTitle = $aParams['Title'] != null ? $aParams['Title'] : $aParams['Name'];
-			$oNavItem = new VirtualNavigationItem(self::ITEM_TYPE, $aParams['Key'], $sTitle, $aParams['Name'], $aConfiguredParts);
+			$oNavItem = new VirtualNavigationItem(self::ITEM_TYPE, $aParams['Key'], 'Dokumentation '.$sTitle, $aParams['Name'], $aConfiguredParts);
 			$oNavigationItem->addChild($oNavItem);
 		}
 		// if(count($aDocumentationPartKeys) > 0) {
