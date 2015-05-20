@@ -5,6 +5,7 @@ Widget.types.documentation_part_detail = {
 		this._element.find('div.hide_if_not_saved').hide();
 		this.uploader = Widget.create('file_upload');
 		this.documentation_part_body = this._element.find('div.documentation_part_body');
+		this.is_file_upload = false;
 
 		Widget.callStatic('detail', 'create_for_instance', this);
 
@@ -53,6 +54,7 @@ Widget.types.documentation_part_detail = {
 			this.setDocumentationPartId(id);
 		});
 		this.handle('saving', function(event, data) {
+			data.is_file_upload = _this.is_file_upload;
 			data.image_id = _this.image_id;
 			data.body = _this.documentation_part_body_editor.get_data();
 		}.bind(_this));
@@ -84,6 +86,7 @@ Widget.types.documentation_part_detail = {
 
 	upload_success: function(document_id) {
 		this.image_id = document_id;
+		this.is_file_upload = true;
 		this.save(true);
 	},
 

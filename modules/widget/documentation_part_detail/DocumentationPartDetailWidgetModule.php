@@ -42,9 +42,11 @@ class DocumentationPartDetailWidgetModule extends PersistentWidgetModule {
 		$oFlash = Flash::getFlash();
 		$oFlash->setArrayToCheck($aDocumentationPartData);
 		$oFlash->checkForValue('name', 'documentation_part_name_required');
-		$oFlash->checkForValue('body', 'documentation_part_body_required');
-		$oFlash->checkForValue('key', 'key_required');
 		$oFlash->checkForValue('documentation_id', 'documentation_required');
+		if($aDocumentationPartData['is_published']) {
+			$oFlash->checkForValue('body', 'documentation_part_body_required');
+			$oFlash->checkForValue('key', 'key_required');
+		}
 		$oFlash->finishReporting();
 	}
 
@@ -54,6 +56,7 @@ class DocumentationPartDetailWidgetModule extends PersistentWidgetModule {
 		} else {
 		  $oDocumentationPart = DocumentationPartQuery::create()->findPk($this->iDocumentationPartId);
 		}
+
 		$this->validate($aDocumentationPartData);
 		$oDocumentationPart->setName($aDocumentationPartData['name']);
 		$oDocumentationPart->setKey($aDocumentationPartData['key']);
@@ -74,7 +77,12 @@ class DocumentationPartDetailWidgetModule extends PersistentWidgetModule {
 		}
 
 		if(!Flash::noErrors()) {
-			throw new ValidationException();
+			// Don't validate on file upload but set is_published to false if there are errors
+			if($aDocumentationPartData['documentation_id'] != null && $aDocumentationPartData['is_file_upload']) {
+				$oDocumentationPart->setIsPublished(false);
+			} else {
+				throw new ValidationException();
+			}
 		}
 		$oDocumentationPart->save();
 		return $oDocumentationPart->getId();
