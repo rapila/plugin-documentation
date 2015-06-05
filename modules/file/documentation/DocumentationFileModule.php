@@ -85,7 +85,7 @@ class DocumentationFileModule extends FileModule {
 		if(!self::$DOCUMENTATION_PAGE) {
 			return;
 		}
-		$sLink = LinkUtil::absoluteLink(LinkUtil::link(array_merge(self::$DOCUMENTATION_PAGE->getFullPathArray(), array($oPart->getDocumentation()->getKey())), 'FrontendManager'),null, 'http://');
+		$sLink = LinkUtil::absoluteLink(LinkUtil::link(array_merge(self::$DOCUMENTATION_PAGE->getFullPathArray(), array($oPart->getDocumentation()->getKey())), 'FrontendManager'), null, 'auto');
 		return TagWriter::quickTag('a', array('target' => 'documentation', 'href' => $sLink.'#'.$oPart->getKey()), $oPart->getName());
 	}
 
