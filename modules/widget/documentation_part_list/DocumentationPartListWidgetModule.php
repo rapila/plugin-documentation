@@ -47,24 +47,24 @@ class DocumentationPartListWidgetModule extends SpecializedListWidgetModule {
 		$aResult = array('is_sortable' => true);
 		switch($sColumnIdentifier) {
 			case 'name':
-				$aResult['heading'] = StringPeer::getString('wns.documentation_part.name');
+				$aResult['heading'] = TranslationPeer::getString('wns.documentation_part.name');
 				break;
 			case 'documentation_name':
-				$aResult['heading'] = StringPeer::getString('wns.documentation');
+				$aResult['heading'] = TranslationPeer::getString('wns.documentation');
 				break;
 			case 'key':
-				$aResult['heading'] = StringPeer::getString('wns.documentation_part.key');
+				$aResult['heading'] = TranslationPeer::getString('wns.documentation_part.key');
 				break;
 			case 'sort':
-				$aResult['heading'] = StringPeer::getString('wns.sort');
+				$aResult['heading'] = TranslationPeer::getString('wns.sort');
 				$aResult['display_type'] = ListWidgetModule::DISPLAY_TYPE_REORDERABLE;
 				break;
 			case 'has_image':
-				$aResult['heading'] = StringPeer::getString('wns.documentation_part.has_image');
+				$aResult['heading'] = TranslationPeer::getString('wns.documentation_part.has_image');
 				$aResult['is_sortable'] = false;
 				break;
 			case 'is_published':
-				$aResult['heading'] = StringPeer::getString('wns.documentation_part.is_published');
+				$aResult['heading'] = TranslationPeer::getString('wns.documentation_part.is_published');
 				break;
 			case 'delete':
 				$aResult['heading'] = ' ';
@@ -92,7 +92,7 @@ class DocumentationPartListWidgetModule extends SpecializedListWidgetModule {
 			return $oDocumentation->getName();
 		}
 		if($this->oDelegateProxy->getDocumentationId() === CriteriaListWidgetDelegate::SELECT_WITHOUT) {
-			return StringPeer::getString('wns.documentation_part.without_documentation');
+			return TranslationPeer::getString('wns.documentation_part.without_documentation');
 		}
 		return $this->oDelegateProxy->getDocumentationId();
 	}

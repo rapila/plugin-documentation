@@ -35,7 +35,7 @@ class DocumentationFilterModule extends FilterModule {
 			$oNavigationItem->addChild($oNavItem);
 		}
 		// if(count($aDocumentationPartKeys) > 0) {
-		// 	$oNavItem = new VirtualNavigationItem(self::ITEM_TYPE_UNCATEGORIZED, 'uncategorized', StringPeer::getString('documentations.uncategorized'), null, $aDocumentationPartKeys);
+		// 	$oNavItem = new VirtualNavigationItem(self::ITEM_TYPE_UNCATEGORIZED, 'uncategorized', TranslationPeer::getString('documentations.uncategorized'), null, $aDocumentationPartKeys);
 		// 	$oNavigationItem->addChild($oNavItem);
 		// }
 	}

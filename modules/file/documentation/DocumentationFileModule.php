@@ -31,7 +31,7 @@ class DocumentationFileModule extends FileModule {
 			$oContainer = self::container($oDocumentation->getTitleForDocumentation(), $oDocumentation->getURL());
 			$cAddToResult($oDocumentation->getLanguageId(), $oDocumentation->getKey(), $oContainer);
 			if($oDocumentation->hasTutorial()) {
-				$oContainer = self::container(StringPeer::getString('wns.documentation.video_tutorial', $oDocumentation->getLanguageId(), "Tutorial"), $oDocumentation->getURL());
+				$oContainer = self::container(TranslationPeer::getString('wns.documentation.video_tutorial', $oDocumentation->getLanguageId(), "Tutorial"), $oDocumentation->getURL());
 				$cAddToResult($oDocumentation->getLanguageId(), $oDocumentation->getKey().'/'.self::TUTORIAL_KEY, $oContainer);
 			}
 			foreach($aParts as $oPart) {
@@ -51,7 +51,7 @@ class DocumentationFileModule extends FileModule {
 			$oPart = DocumentationPartQuery::create()->filterByLanguageId($sLanguageId)->filterByKeys($sDocumentationKey, $sPartKey)->findOne();
 			if(!$oPart) {
 				if($sPartKey === self::TUTORIAL_KEY) {
-					return StringPeer::getString('wns.documentation.video_tutorial', $sLanguageId, "Tutorial");
+					return TranslationPeer::getString('wns.documentation.video_tutorial', $sLanguageId, "Tutorial");
 				}
 				return null;
 			}

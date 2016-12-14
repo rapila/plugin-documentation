@@ -40,7 +40,7 @@ class DocumentationPartsAdminModule extends AdminModule {
 				$aResult['field_name'] = 'id';
 				break;
 			case 'full_name':
-				$aResult['heading'] = StringPeer::getString('wns.documentation.sidebar_heading');
+				$aResult['heading'] = TranslationPeer::getString('wns.documentation.sidebar_heading');
 				break;
 			case 'magic_column':
 				$aResult['display_type'] = ListWidgetModule::DISPLAY_TYPE_CLASSNAME;
@@ -54,7 +54,7 @@ class DocumentationPartsAdminModule extends AdminModule {
 		if(DocumentationQuery::create()->count() > 0) {
 			return array(
 				array('documentation_id' => CriteriaListWidgetDelegate::SELECT_ALL,
-							'full_name' => StringPeer::getString('wns.sidebar.select_all'),
+							'full_name' => TranslationPeer::getString('wns.sidebar.select_all'),
 							'magic_column' => 'all'));
 		}
 		return array();

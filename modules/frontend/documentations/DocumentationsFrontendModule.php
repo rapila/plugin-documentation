@@ -60,7 +60,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 		$oItemPrototype = $this->constructTemplate($bExtendedList ? 'list_extended_item' : 'list_item');
 		$oPartLinkPrototype = $this->constructTemplate('part_link');
 
-		$sHasVideoString = StringPeer::getString('documentation.with_video_tutorial');
+		$sHasVideoString = TranslationPeer::getString('documentation.with_video_tutorial');
 		foreach($aDocumentations as $oDocumentation) {
 			$oItemTemplate = clone $oItemPrototype;
 			if($oDocumentation->getTitle()) {
@@ -89,7 +89,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 				if(count($aDocumentationParts) === 0) {
 					$oPartLink = clone $oPartLinkPrototype;
 					$oPartLink->replaceIdentifier('href', LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))));
-					$oPartLink->replaceIdentifier('link_text', StringPeer::getString('wns.documentation.intro_link_text'));
+					$oPartLink->replaceIdentifier('link_text', TranslationPeer::getString('wns.documentation.intro_link_text'));
 					$oItemTemplate->replaceIdentifier('part_links', $oPartLink);
 				}
 			}
@@ -115,7 +115,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 		if($oDocumentation->getYoutubeUrl() != null) {
 			$this->embedVideo($oTemplate, $oDocumentation->getYoutubeUrl());
 		}
-		$oLink = TagWriter::quickTag('a', array('rel' => 'internal', 'href' => LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))), 'class' => 'read_more'), StringPeer::getString('wns.read_more'));
+		$oLink = TagWriter::quickTag('a', array('rel' => 'internal', 'href' => LinkUtil::link($this->oPage->getFullPathArray(array($oDocumentation->getKey()))), 'class' => 'read_more'), TranslationPeer::getString('wns.read_more'));
 		$oTemplate->replaceIdentifier('link_to_detail', $oLink);
 		return $oTemplate;
 	}
@@ -144,7 +144,7 @@ class DocumentationsFrontendModule extends FrontendModule {
 			$sEmbedUrl = $oDocumentation->getYoutubeUrl();
 			$sDescription = RichtextUtil::parseStorageForFrontendOutput(stream_get_contents($oDocumentation->getDescription()));
 		} else {
-			$sName = StringPeer::getString('documentations.uncategorized');
+			$sName = TranslationPeer::getString('documentations.uncategorized');
 			$sEmbedUrl = null;
 			$sDescription = null;
 		}

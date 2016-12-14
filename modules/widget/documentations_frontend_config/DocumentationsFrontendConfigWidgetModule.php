@@ -3,12 +3,12 @@ class DocumentationsFrontendConfigWidgetModule extends FrontendConfigWidgetModul
 	public function __construct($sSessionKey, $oFrontendModule) {
 		parent::__construct($sSessionKey, $oFrontendModule);
 	}
-	
+
 	public function options() {
 		$aData['display_options'] = $this->getDisplayOptions();
 		$aData['documentation_options'] = $this->getDocumentationOptions();
 		return $aData;
-	}	
+	}
 
 	public function listDocumentationParts($aData) {
 		// how to display internal and external documentation(s parts)
@@ -23,12 +23,12 @@ class DocumentationsFrontendConfigWidgetModule extends FrontendConfigWidgetModul
 			return $oDocumentationPartQuery->orderByDocumentationId()->orderBySort()->select(array('Id', 'Name'))->find()->toKeyValue('Id', 'Name');
 		}
 		return null;
-	}	
-	
+	}
+
 	private function getDisplayOptions() {
 		$aResult = array();
 		foreach(DocumentationsFrontendModule::$DISPLAY_MODES as $sDisplayMode) {
-			$aResult[$sDisplayMode] = StringPeer::getString('documentation.display_option.'.$sDisplayMode, null, $sDisplayMode);
+			$aResult[$sDisplayMode] = TranslationPeer::getString('documentation.display_option.'.$sDisplayMode, null, $sDisplayMode);
 		}
 		return $aResult;
 	}
