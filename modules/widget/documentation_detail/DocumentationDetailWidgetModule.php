@@ -58,7 +58,11 @@ class DocumentationDetailWidgetModule extends PersistentWidgetModule {
 		} else {
 			$oDocumentation = DocumentationQuery::create()->findPk($this->iDocumentationId);
 		}
-		$oDocumentation->setDescription(RichtextUtil::parseInputFromEditorForStorage($aDocumentationData['description']));
+
+		$oRichtextUtil = new RichtextUtil();
+		$oRichtextUtil->setTrackReferences($oDocumentation);
+		$oDocumentation->setDescription($oRichtextUtil->parseInputFromEditor($aDocumentationData['description']));
+
 		$oDocumentation->setName($aDocumentationData['name']);
 		$oDocumentation->setTitle($aDocumentationData['title']);
 		$oDocumentation->setKey($aDocumentationData['key']);

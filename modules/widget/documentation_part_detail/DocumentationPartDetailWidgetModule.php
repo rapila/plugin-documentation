@@ -68,7 +68,11 @@ class DocumentationPartDetailWidgetModule extends PersistentWidgetModule {
 		if($oDocumentationPart->getTitle() == null) {
 			$oDocumentationPart->setTitle(null);
 		}
-		$oDocumentationPart->setBody(RichtextUtil::parseInputFromEditorForStorage($aDocumentationPartData['body']));
+
+		$oRichtextUtil = new RichtextUtil();
+		$oRichtextUtil->setTrackReferences($oDocumentationPart);
+		$oNewsletter->setBody($oRichtextUtil->parseInputFromEditor($aDocumentationPartData['body']));
+
 		if($oDocumentationPart->isNew() && is_numeric($oDocumentationPart->getDocumentationId())) {
 			$oDocumentationPart->setSort(DocumentationPartQuery::create()->filterByDocumentationId($oDocumentationPart->getDocumentationId())->count()+1);
 		}
