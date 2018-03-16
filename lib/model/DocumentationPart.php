@@ -56,7 +56,7 @@ class DocumentationPart extends BaseDocumentationPart {
 	}
 
 	public function getURL() {
-		return LinkUtil::link($this->getLinkArray(), 'FrontendManager').'#'.$this->getKey();
+		return LinkUtil::link($this->getLinkArray(), 'FrontendManager', array(), $this->getDocumentation()->getLanguageId()).'#'.$this->getKey();
 	}
 
 	public function delete(PropelPDO $oConnection = null) {
