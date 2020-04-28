@@ -15,7 +15,7 @@ class DocumentationFilterModule extends FilterModule {
 				$aDocumentationPartKeys[$sPart] = false;
 			}
 		}
-		foreach(DocumentationPartQuery::create()->filterByLanguageId(Session::language())->select('Key')->find() as $sPart) {
+		foreach(DocumentationPartQuery::create()->filterByLanguageId(Session::language())->select(['Key'])->find() as $sPart) {
 			$aDocumentationPartKeys[$sPart] = true;
 		}
 		ksort($aDocumentationPartKeys);
